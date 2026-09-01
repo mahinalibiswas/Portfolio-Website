@@ -279,7 +279,7 @@ const DEFAULT_SITE_DATA = {
 
     // 8. Contact & Socials
     contact: {
-        email: "mahinalibiswas@gmail.com",
+        email: "mahinali2322@gmail.com",
         whatsapp: "+8801700000000",
         behanceUrl: "https://www.behance.net/mahinalibiswas",
         youtubeUrl: "https://www.youtube.com/@mahinalibiswas",

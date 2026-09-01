@@ -83,7 +83,7 @@ function openForgotPassModal() {
 
 function sendEmailResetOtp() {
     const data = (typeof getSiteData === 'function') ? getSiteData() : {};
-    const adminEmail = (data.contact && data.contact.email) ? data.contact.email : 'mahinalibiswas@gmail.com';
+    const adminEmail = (data.contact && data.contact.email) ? data.contact.email : 'mahinali2322@gmail.com';
     
     currentResetOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
