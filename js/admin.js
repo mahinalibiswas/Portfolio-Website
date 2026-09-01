@@ -78,6 +78,7 @@ function openForgotPassModal() {
             sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send 6-Digit Code to Email';
         }
         modal.classList.add('active');
+        modal.style.display = 'flex';
     }
 }
 
@@ -114,7 +115,10 @@ function sendEmailResetOtp() {
 
 function closeForgotPassModal() {
     const modal = document.getElementById('forgotPassModal');
-    if (modal) modal.classList.remove('active');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+    }
 }
 
 function togglePassVisibility(inputId, btn) {
