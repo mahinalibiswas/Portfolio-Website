@@ -527,26 +527,56 @@
                     <button type="submit" class="btn btn-primary">Save Project</button>
                 </div>
             </form>
-    <!-- Forgot Password Emergency Reset Modal -->
+    <!-- Forgot Password 2-Step Authentication & New Password Modal -->
     <div class="modal-backdrop" id="forgotPassModal">
         <div class="modal-content admin-modal-box">
             <div class="modal-header">
-                <h3 style="color: #ffffff; margin: 0; font-size: 1.1rem;"><i class="fa-solid fa-key" style="color: var(--accent-neon); margin-right: 0.5rem;"></i> Emergency Password Reset</h3>
+                <h3 style="color: #ffffff; margin: 0; font-size: 1.1rem;"><i class="fa-solid fa-key" style="color: var(--accent-neon); margin-right: 0.5rem;"></i> Forgot Password Recovery</h3>
                 <button type="button" class="modal-close" onclick="closeForgotPassModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body" style="padding: 1.5rem 0 0 0;">
+            
+            <!-- Step 1: Security Authentication -->
+            <div id="resetStep1" class="modal-body" style="padding: 1.5rem 0 0 0;">
                 <p style="color: var(--text-dim); font-size: 0.88rem; margin-bottom: 1.2rem; line-height: 1.5;">
-                    Enter your <strong>Emergency Reset Key</strong> (<code>mahin-reset-2026</code> or <code>mahinalibiswas</code>) to reset your admin password back to default (<code>mahin2026</code>).
+                    Verify your identity by entering your <strong>Master Security Recovery Key</strong> (e.g. <code>mahin-reset-2026</code> or <code>mahinalibiswas</code>).
                 </p>
                 <div class="form-group">
-                    <label style="color: var(--accent-neon); font-size: 0.82rem;">Master Emergency Reset Key</label>
-                    <input type="text" id="masterResetKeyInput" placeholder="e.g. mahin-reset-2026 or mahinalibiswas">
+                    <label style="color: var(--accent-neon); font-size: 0.82rem;">Master Security Recovery Key *</label>
+                    <input type="password" id="masterResetKeyInput" placeholder="Enter recovery key (e.g. mahin-reset-2026)">
                 </div>
-                <div id="resetErrorMsg" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+                <div id="resetErrorMsgStep1" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
                 <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end;">
                     <button type="button" class="btn btn-hero-secondary" onclick="closeForgotPassModal()">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="executePasswordReset()">
-                        <i class="fa-solid fa-rotate-left"></i> Reset Password
+                    <button type="button" class="btn btn-primary" onclick="verifyResetSecurityKey()">
+                        <span>Verify Identity</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Set New Password -->
+            <div id="resetStep2" class="modal-body" style="padding: 1.5rem 0 0 0; display: none;">
+                <p style="color: var(--accent-neon); font-size: 0.88rem; margin-bottom: 1.2rem; line-height: 1.5;">
+                    <i class="fa-solid fa-circle-check"></i> Identity Verified! Enter your brand new admin password below.
+                </p>
+                <div class="form-group">
+                    <label style="color: var(--accent-neon); font-size: 0.82rem;">New Admin Password *</label>
+                    <div class="password-input-wrap">
+                        <input type="password" id="newAdminPasswordInput" placeholder="Enter new password">
+                        <button type="button" class="toggle-pass-btn" onclick="togglePassVisibility('newAdminPasswordInput', this)"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--accent-neon); font-size: 0.82rem;">Confirm New Admin Password *</label>
+                    <div class="password-input-wrap">
+                        <input type="password" id="confirmAdminPasswordInput" placeholder="Confirm new password">
+                        <button type="button" class="toggle-pass-btn" onclick="togglePassVisibility('confirmAdminPasswordInput', this)"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <div id="resetErrorMsgStep2" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-hero-secondary" onclick="closeForgotPassModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveNewAdminPassword()">
+                        <i class="fa-solid fa-lock"></i> Save New Password & Login
                     </button>
                 </div>
             </div>

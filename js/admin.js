@@ -61,10 +61,16 @@ function initAuthGate() {
     });
 }
 
-/* --- Forgot Password Emergency Reset Handlers --- */
+/* --- Forgot Password 2-Step Authentication & Reset Handlers --- */
 function openForgotPassModal() {
     const modal = document.getElementById('forgotPassModal');
-    if (modal) modal.classList.add('active');
+    if (modal) {
+        document.getElementById('resetStep1').style.display = 'block';
+        document.getElementById('resetStep2').style.display = 'none';
+        document.getElementById('masterResetKeyInput').value = '';
+        if (document.getElementById('resetErrorMsgStep1')) document.getElementById('resetErrorMsgStep1').style.display = 'none';
+        modal.classList.add('active');
+    }
 }
 
 function closeForgotPassModal() {
@@ -72,25 +78,62 @@ function closeForgotPassModal() {
     if (modal) modal.classList.remove('active');
 }
 
-function executePasswordReset() {
+function togglePassVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input) {
+        const isPass = input.type === 'password';
+        input.type = isPass ? 'text' : 'password';
+        if (btn) btn.innerHTML = isPass ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+    }
+}
+
+function verifyResetSecurityKey() {
     const keyInput = document.getElementById('masterResetKeyInput')?.value.trim();
-    const errorEl = document.getElementById('resetErrorMsg');
-    
+    const errorEl = document.getElementById('resetErrorMsgStep1');
+
     if (keyInput === 'mahin-reset-2026' || keyInput === 'mahinalibiswas' || keyInput === 'mahin2026') {
-        if (typeof setAdminPassword === 'function') {
-            setAdminPassword('mahin2026');
-        }
         if (errorEl) errorEl.style.display = 'none';
-        closeForgotPassModal();
-        showToast('Password reset to default (mahin2026) successfully!', 'success');
-        const passInput = document.getElementById('adminPasswordInput');
-        if (passInput) passInput.value = 'mahin2026';
+        document.getElementById('resetStep1').style.display = 'none';
+        document.getElementById('resetStep2').style.display = 'block';
     } else {
         if (errorEl) {
-            errorEl.textContent = 'Invalid Recovery Key! Use: mahin-reset-2026 or mahinalibiswas';
+            errorEl.textContent = 'Invalid Security Key! Use: mahin-reset-2026 or mahinalibiswas';
             errorEl.style.display = 'block';
         }
     }
+}
+
+function saveNewAdminPassword() {
+    const newPass = document.getElementById('newAdminPasswordInput')?.value.trim();
+    const confirmPass = document.getElementById('confirmAdminPasswordInput')?.value.trim();
+    const errorEl = document.getElementById('resetErrorMsgStep2');
+
+    if (!newPass || newPass.length < 4) {
+        if (errorEl) {
+            errorEl.textContent = 'Password must be at least 4 characters long.';
+            errorEl.style.display = 'block';
+        }
+        return;
+    }
+
+    if (newPass !== confirmPass) {
+        if (errorEl) {
+            errorEl.textContent = 'Passwords do not match! Please verify.';
+            errorEl.style.display = 'block';
+        }
+        return;
+    }
+
+    if (typeof setAdminPassword === 'function') {
+        setAdminPassword(newPass);
+    }
+
+    closeForgotPassModal();
+    sessionStorage.setItem('mahin_admin_auth', 'true');
+    showToast('New Password set successfully! Logging in...', 'success');
+    setTimeout(() => {
+        window.location.reload();
+    }, 800);
 }
 
 /* --- 2. Sidebar Tab Navigation --- */
