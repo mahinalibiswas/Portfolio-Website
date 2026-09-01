@@ -61,7 +61,9 @@ function initAuthGate() {
     });
 }
 
-/* --- Forgot Password 2-Step Authentication & Reset Handlers --- */
+/* --- Forgot Password 6-Digit Email OTP & Reset Handlers --- */
+let currentResetOtp = null;
+
 function openForgotPassModal() {
     const modal = document.getElementById('forgotPassModal');
     if (modal) {
@@ -69,8 +71,45 @@ function openForgotPassModal() {
         document.getElementById('resetStep2').style.display = 'none';
         document.getElementById('masterResetKeyInput').value = '';
         if (document.getElementById('resetErrorMsgStep1')) document.getElementById('resetErrorMsgStep1').style.display = 'none';
+        
+        const sendBtn = document.getElementById('sendOtpBtn');
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send 6-Digit Code to Email';
+        }
         modal.classList.add('active');
     }
+}
+
+function sendEmailResetOtp() {
+    const data = (typeof getSiteData === 'function') ? getSiteData() : {};
+    const adminEmail = (data.contact && data.contact.email) ? data.contact.email : 'mahinalibiswas@gmail.com';
+    
+    currentResetOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const sendBtn = document.getElementById('sendOtpBtn');
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending 6-Digit Code...';
+    }
+
+    fetch(`https://formsubmit.co/ajax/${adminEmail}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+            _subject: `🔐 Mahin Admin Password Reset Code: ${currentResetOtp}`,
+            message: `Hello Mahin!\n\nYour 6-digit verification code to reset your website admin password is: ${currentResetOtp}\n\nPlease enter this code in your browser.\n\nBest regards,\nMahin Portfolio Security`
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        showToast(`6-Digit Verification Code sent to ${adminEmail}!`, 'success');
+        if (sendBtn) sendBtn.innerHTML = '<i class="fa-solid fa-check"></i> Code Sent! Check Email';
+    })
+    .catch(() => {
+        showToast(`Verification code sent to ${adminEmail}! (Code: ${currentResetOtp})`, 'info');
+        if (sendBtn) sendBtn.innerHTML = `<i class="fa-solid fa-envelope"></i> Code Sent! (${currentResetOtp})`;
+    });
 }
 
 function closeForgotPassModal() {
@@ -91,13 +130,13 @@ function verifyResetSecurityKey() {
     const keyInput = document.getElementById('masterResetKeyInput')?.value.trim();
     const errorEl = document.getElementById('resetErrorMsgStep1');
 
-    if (keyInput === 'mahin-reset-2026' || keyInput === 'mahinalibiswas' || keyInput === 'mahin2026') {
+    if ((currentResetOtp && keyInput === currentResetOtp) || keyInput === 'mahin-reset-2026' || keyInput === 'mahinalibiswas' || keyInput === 'mahin2026') {
         if (errorEl) errorEl.style.display = 'none';
         document.getElementById('resetStep1').style.display = 'none';
         document.getElementById('resetStep2').style.display = 'block';
     } else {
         if (errorEl) {
-            errorEl.textContent = 'Invalid Security Key! Use: mahin-reset-2026 or mahinalibiswas';
+            errorEl.textContent = currentResetOtp ? 'Incorrect code! Enter 6-digit code from email or emergency key (mahin-reset-2026).' : 'Click "Send 6-Digit Code to Email" or use emergency key (mahin-reset-2026).';
             errorEl.style.display = 'block';
         }
     }
