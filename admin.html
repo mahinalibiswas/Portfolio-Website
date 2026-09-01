@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin CMS Control Panel | Mahin Ali Biswas</title>
+    
+    <!-- Google Fonts (Nohemi & Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6 Pro Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Login Authentication Gate Overlay -->
+    <div class="admin-auth-overlay" id="adminAuthOverlay">
+        <div class="admin-auth-card">
+            <div class="auth-icon-box">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h2>Mahin Admin Portal</h2>
+            <p>Enter your security password to access full website management controls.</p>
+
+            <form id="adminLoginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="adminPasswordInput">Admin Password</label>
+                    <div class="password-input-wrap">
+                        <input type="password" id="adminPasswordInput" placeholder="Enter password (default: mahin2026)" required autofocus>
+                        <button type="button" class="toggle-pass-btn" id="togglePassBtn"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="auth-error-msg" id="authErrorMsg"></div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <span>Login to Dashboard</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Admin Dashboard Layout -->
+    <div class="admin-wrapper" id="adminDashboard" style="display: none;">
+        <!-- Top Admin Header Bar -->
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <div class="nav-avatar-box">
+                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas" class="nav-avatar-img">
+                </div>
+                <div>
+                    <h2 class="admin-brand-name">Mahin Ali Biswas</h2>
+                    <span class="admin-brand-tag">// CMS CONTROL PANEL</span>
+                </div>
+            </div>
+
+            <div class="admin-header-right">
+                <a href="index.html" target="_blank" class="btn btn-hero-secondary btn-sm">
+                    <i class="fa-solid fa-external-link"></i> View Live Site
+                </a>
+                <button class="btn btn-hero-secondary btn-sm" id="adminLogoutBtn">
+                    <i class="fa-solid fa-lock"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <div class="admin-container">
+            <!-- Sidebar Navigation Tabs -->
+            <aside class="admin-sidebar">
+                <nav class="admin-tabs">
+                    <button class="admin-tab-btn active" data-tab="tab-hero">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Hero & Showreel</span>
+                    </button>
+                    <button class="admin-tab-btn" data-tab="tab-about">
+                        <i class="fa-solid fa-user-astronaut"></i>
+                        <span>About Me & Bio</span>
+                    </button>
+                    <button class="admin-tab-btn" data-tab="tab-projects">
+                        <i class="fa-solid fa-film"></i>
+                        <span>Video Projects (<span id="tabProjectsCount">6</span>)</span>
+                    </button>
+                    <button class="admin-tab-btn" data-tab="tab-services">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Services Offered</span>
+                    </button>
+                    <button class="admin-tab-btn" data-tab="tab-software">
+                        <i class="fa-solid fa-laptop-code"></i>
+                        <span>Software & Toolkit</span>
+                    </button>
+                    <button class="admin-tab-btn" data-tab="tab-contact">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Contact & Socials</span>
+                    </button>
+                    <button class="admin-tab-btn" data-tab="tab-settings">
+                        <i class="fa-solid fa-gears"></i>
+                        <span>Backup & Security</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area (Tab Content Pages) -->
+            <main class="admin-main">
+
+                <!-- TAB 1: HERO & SHOWREEL -->
+                <section class="admin-tab-content active" id="tab-hero">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Hero Section & Top Headline Controls</h3>
+                                <p>Customize your primary introduction text, subheadline, showreel video URL, and key stats.</p>
+                            </div>
+                            <button class="btn btn-primary btn-save" onclick="saveHeroSection()">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Hero Changes
+                            </button>
+                        </div>
+
+                        <form id="heroForm" class="admin-form-grid">
+                            <div class="form-group full-width">
+                                <label>Hero Pill Badge Text</label>
+                                <input type="text" id="heroBadge" placeholder="e.g. MOTION & VIDEO ARTIST">
+                            </div>
+                            <div class="form-group">
+                                <label>Title Top Line</label>
+                                <input type="text" id="heroTitleTop" placeholder="e.g. MAHIN ALI">
+                            </div>
+                            <div class="form-group">
+                                <label>Title Bottom Line (Gradient Text)</label>
+                                <input type="text" id="heroTitleBottom" placeholder="e.g. BISWAS">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Headline Accent Subtag</label>
+                                <input type="text" id="heroSubtitleTag" placeholder="e.g. Motion Graphics Artist & Senior Video Editor">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Main Bio Paragraph</label>
+                                <textarea id="heroSubtitle" rows="3" placeholder="Enter your hero bio paragraph..."></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Hero Video Teaser (YouTube Embed Code)</label>
+                                <textarea id="heroShowreelVideo" rows="3" placeholder="Paste YouTube Embed Code (<iframe...</iframe>)"></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Hero Video Poster Cover Image</label>
+                                <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                                    <input type="file" id="heroPosterFileInput" accept="image/*" style="display: none;" onchange="handleHeroPosterUpload(event)">
+                                    <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('heroPosterFileInput').click()">
+                                        <i class="fa-solid fa-upload"></i> Choose Cover Image from PC
+                                    </button>
+                                    <input type="text" id="heroShowreelPoster" placeholder="e.g. assets/images/project_3d_cyber.jpg" style="flex: 1; min-width: 250px;">
+                                    <div id="heroPosterPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                                        <img id="heroPosterPreview" src="" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;">
+                                        <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer;" onclick="removeHeroPosterImage()"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section-title full-width" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: 2rem;">
+                                <h4>Hero Call-To-Action (CTA) Buttons</h4>
+                                <button type="button" class="btn btn-hero-secondary btn-sm" onclick="addNewHeroCtaButton()">
+                                    <i class="fa-solid fa-plus"></i> Add New CTA Button
+                                </button>
+                            </div>
+                            <div class="full-width" id="adminCtaButtonsList" style="display: flex; flex-direction: column; gap: 1rem;">
+                                <!-- Dynamic CTA Buttons Cards Populated by JS -->
+                            </div>
+
+                            <div class="form-section-title full-width">
+                                <h4>Key Statistics Counters (Hero Banner)</h4>
+                            </div>
+                            <div class="form-group">
+                                <label>Videos Edited Count</label>
+                                <input type="text" id="heroStatsEdited" placeholder="e.g. 100+">
+                            </div>
+                            <div class="form-group">
+                                <label>Happy Clients Count</label>
+                                <input type="text" id="heroStatsClients" placeholder="e.g. 50+">
+                            </div>
+                            <div class="form-group">
+                                <label>On-Time Delivery %</label>
+                                <input type="text" id="heroStatsDelivery" placeholder="e.g. 100%">
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- TAB 2: ABOUT ME & BIO -->
+                <section class="admin-tab-content" id="tab-about">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3>About Me Section & 4 Feature Boxes</h3>
+                                <p>Update your bio paragraph, years of experience badge, and 4 core video editing superpowers.</p>
+                            </div>
+                            <button class="btn btn-primary btn-save" onclick="saveAboutSection()">
+                                <i class="fa-solid fa-floppy-disk"></i> Save About Changes
+                            </button>
+                        </div>
+
+                        <form id="aboutForm" class="admin-form-grid">
+                            <div class="form-group">
+                                <label>Section Tag Badge</label>
+                                <input type="text" id="aboutTagBadge" placeholder="e.g. ABOUT THE ARTIST">
+                            </div>
+                            <div class="form-group">
+                                <label>Years Experience Number</label>
+                                <input type="text" id="aboutExpYears" placeholder="e.g. 3+">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Title (First Part)</label>
+                                <input type="text" id="aboutTitleTop" placeholder="e.g. Elevating Content Through">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Title (Gradient Highlight Part)</label>
+                                <input type="text" id="aboutTitleGradient" placeholder="e.g. Motion & Storytelling">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>About Me Bio Text</label>
+                                <textarea id="aboutBio" rows="4" placeholder="Enter full About Me description..."></textarea>
+                            </div>
+
+                            <div class="form-section-title full-width">
+                                <h4>About Me Action CTA Buttons</h4>
+                            </div>
+                            <div class="form-group">
+                                <label>Behance Profile Button Text</label>
+                                <input type="text" id="aboutBtnBehanceText" placeholder="Visit Behance Profile">
+                            </div>
+                            <div class="form-group">
+                                <label>Behance Profile Target URL</label>
+                                <input type="url" id="aboutBtnBehanceUrl" placeholder="https://www.behance.net/mahinalibiswas">
+                            </div>
+                            <div class="form-group">
+                                <label>Contact Direct Button Text</label>
+                                <input type="text" id="aboutBtnContactText" placeholder="Contact Direct">
+                            </div>
+                            <div class="form-group">
+                                <label>Contact Direct Target Link</label>
+                                <input type="text" id="aboutBtnContactLink" placeholder="#contact">
+                            </div>
+
+                            <div class="form-section-title full-width">
+                                <h4>4 Core Superpowers / Feature Cards</h4>
+                            </div>
+                            
+                            <!-- Feature 1 -->
+                            <div class="form-group">
+                                <label>Feature 1 Title</label>
+                                <input type="text" id="featTitle0">
+                                <label style="margin-top: 0.5rem;">Feature 1 Icon Class</label>
+                                <input type="text" id="featIcon0" placeholder="e.g. fa-solid fa-bolt">
+                                <label style="margin-top: 0.5rem;">Feature 1 Description</label>
+                                <input type="text" id="featDesc0">
+                            </div>
+
+                            <!-- Feature 2 -->
+                            <div class="form-group">
+                                <label>Feature 2 Title</label>
+                                <input type="text" id="featTitle1">
+                                <label style="margin-top: 0.5rem;">Feature 2 Icon Class</label>
+                                <input type="text" id="featIcon1" placeholder="e.g. fa-solid fa-closed-captioning">
+                                <label style="margin-top: 0.5rem;">Feature 2 Description</label>
+                                <input type="text" id="featDesc1">
+                            </div>
+
+                            <!-- Feature 3 -->
+                            <div class="form-group">
+                                <label>Feature 3 Title</label>
+                                <input type="text" id="featTitle2">
+                                <label style="margin-top: 0.5rem;">Feature 3 Icon Class</label>
+                                <input type="text" id="featIcon2" placeholder="e.g. fa-solid fa-sliders">
+                                <label style="margin-top: 0.5rem;">Feature 3 Description</label>
+                                <input type="text" id="featDesc2">
+                            </div>
+
+                            <!-- Feature 4 -->
+                            <div class="form-group">
+                                <label>Feature 4 Title</label>
+                                <input type="text" id="featTitle3">
+                                <label style="margin-top: 0.5rem;">Feature 4 Icon Class</label>
+                                <input type="text" id="featIcon3" placeholder="e.g. fa-solid fa-compact-disc">
+                                <label style="margin-top: 0.5rem;">Feature 4 Description</label>
+                                <input type="text" id="featDesc3">
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- TAB 3: PORTFOLIO PROJECTS MANAGER -->
+                <section class="admin-tab-content" id="tab-projects">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Video Projects Manager</h3>
+                                <p>Add new video edits, update details, or delete existing portfolio items.</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="openAddProjectModal()">
+                                <i class="fa-solid fa-plus"></i> Add New Video Project
+                            </button>
+                        </div>
+
+                        <div class="admin-projects-list" id="adminProjectsList">
+                            <!-- Dynamically populated via JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: SERVICES OFFERED -->
+                <section class="admin-tab-content" id="tab-services">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Services Offered Manager</h3>
+                                <p>Edit your 6 service packages, descriptions, icons, and bullet point checklists.</p>
+                            </div>
+                            <button class="btn btn-primary btn-save" onclick="saveServicesSection()">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Services Changes
+                            </button>
+                        </div>
+
+                        <div class="admin-services-list" id="adminServicesList">
+                            <!-- Dynamically populated via JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 5: SOFTWARE & TOOLKIT -->
+                <section class="admin-tab-content" id="tab-software">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Software & Toolkit Manager</h3>
+                                <p>Manage software names, subtitles, icon image URLs, and progress bar skill percentages.</p>
+                            </div>
+                            <button class="btn btn-primary btn-save" onclick="saveSoftwareSection()">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Software Changes
+                            </button>
+                        </div>
+
+                        <div class="admin-software-list" id="adminSoftwareList">
+                            <!-- Dynamically populated via JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 6: CONTACT & SOCIALS -->
+                <section class="admin-tab-content" id="tab-contact">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Contact Information & Social Links</h3>
+                                <p>Update your email address, WhatsApp number, Behance, YouTube, and Facebook URLs.</p>
+                            </div>
+                            <button class="btn btn-primary btn-save" onclick="saveContactSection()">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Contact Changes
+                            </button>
+                        </div>
+
+                        <form id="contactForm" class="admin-form-grid">
+                            <div class="form-group">
+                                <label>Contact Email Address</label>
+                                <input type="email" id="contactEmail" placeholder="mahinalibiswas@gmail.com">
+                            </div>
+                            <div class="form-group">
+                                <label>WhatsApp Phone Number</label>
+                                <input type="text" id="contactWhatsApp" placeholder="+8801700000000">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Location Text</label>
+                                <input type="text" id="contactLocation" placeholder="Dhaka, Bangladesh (Available Worldwide)">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Behance Profile URL</label>
+                                <input type="url" id="contactBehance" placeholder="https://www.behance.net/mahinalibiswas">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>YouTube Channel URL</label>
+                                <input type="url" id="contactYoutube" placeholder="https://www.youtube.com/@mahinalibiswas">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Facebook Profile URL</label>
+                                <input type="url" id="contactFacebook" placeholder="https://www.facebook.com/mahinalibiswas">
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- TAB 7: BACKUP & SECURITY -->
+                <section class="admin-tab-content" id="tab-settings">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Data Backup, Restore & Security</h3>
+                                <p>Export site data as JSON backup, import backups, or change admin password.</p>
+                            </div>
+                        </div>
+
+                        <div class="admin-settings-grid">
+                            <!-- Password Change Box -->
+                            <div class="settings-box">
+                                <h4><i class="fa-solid fa-key"></i> Change Admin Password</h4>
+                                <form id="changePasswordForm">
+                                    <div class="form-group">
+                                        <label>New Admin Password</label>
+                                        <input type="password" id="newAdminPass" placeholder="Enter new password (min 4 chars)" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">Update Password</button>
+                                </form>
+                            </div>
+
+                            <!-- Export JSON Backup Box -->
+                            <div class="settings-box">
+                                <h4><i class="fa-solid fa-download"></i> Export Data Backup (JSON)</h4>
+                                <p>Download a complete JSON file containing all your site text, video projects, and settings.</p>
+                                <button class="btn btn-hero-secondary btn-sm" onclick="exportDataBackup()">
+                                    <i class="fa-solid fa-file-export"></i> Download Backup JSON
+                                </button>
+                            </div>
+
+                            <!-- Import JSON Backup Box -->
+                            <div class="settings-box">
+                                <h4><i class="fa-solid fa-upload"></i> Restore / Import JSON Backup</h4>
+                                <p>Upload a saved JSON backup file to instantly restore all website content.</p>
+                                <input type="file" id="importJsonInput" accept=".json" style="display: none;" onchange="importDataBackup(event)">
+                                <button class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('importJsonInput').click()">
+                                    <i class="fa-solid fa-file-import"></i> Upload JSON File
+                                </button>
+                            </div>
+
+                            <!-- Reset Defaults Box -->
+                            <div class="settings-box danger-box">
+                                <h4><i class="fa-solid fa-rotate-left"></i> Reset to Factory Defaults</h4>
+                                <p>Reset all site content back to initial original default values. Warning: Custom edits will be cleared unless backed up.</p>
+                                <button class="btn btn-hero-secondary btn-sm danger-btn" onclick="resetToDefaultsConfirm()">
+                                    <i class="fa-solid fa-trash"></i> Reset All Data to Default
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Project Edit / Add Modal -->
+    <div class="modal-backdrop" id="projectEditModal">
+        <div class="modal-content admin-project-modal-card">
+            <button class="modal-close" onclick="closeProjectEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="projectModalTitle">Add New Video Project</h3>
+            
+            <form id="projectEditForm" class="admin-form-grid" style="margin-top: 1.5rem;">
+                <input type="hidden" id="editProjectId">
+                
+                <div class="form-group full-width">
+                    <label>Project Title *</label>
+                    <input type="text" id="editProjTitle" placeholder="e.g. Cinematic Commercial Ad" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Category Filter Tag Badge *</label>
+                    <input type="text" id="editProjCategoryBadge" placeholder="e.g. YouTube, Reels / Shorts, Motion Graphics" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Category Space-Separated Filter Slug *</label>
+                    <input type="text" id="editProjCategory" placeholder="e.g. featured youtube documentary" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Thumbnail Cover Image *</label>
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                        <input type="file" id="editProjImageFileInput" accept="image/*" style="display: none;" onchange="handleProjImageUpload(event)">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editProjImageFileInput').click()">
+                            <i class="fa-solid fa-upload"></i> Choose Cover Image from PC
+                        </button>
+                        <input type="text" id="editProjImage" placeholder="assets/images/project_youtube_doc.jpg" style="flex: 1; min-width: 250px;" required>
+                        <div id="editProjImagePreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            <img id="editProjImagePreview" src="" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;">
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer;" onclick="removeProjImage()"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Project YouTube Embed Code *</label>
+                    <textarea id="editProjVideo" rows="3" placeholder="Paste YouTube Embed Code (<iframe...</iframe>)" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Duration Tag (e.g. 03:22)</label>
+                    <input type="text" id="editProjDuration" placeholder="03:22">
+                </div>
+
+                <div class="form-group">
+                    <label>Client Name</label>
+                    <input type="text" id="editProjClient" placeholder="e.g. Mahin Ali Biswas / Agency">
+                </div>
+
+                <div class="form-group">
+                    <label>Year / Date</label>
+                    <input type="text" id="editProjDate" placeholder="2026">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Tools Used (Comma separated)</label>
+                    <input type="text" id="editProjTools" placeholder="Adobe Premiere Pro, After Effects, Photoshop">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Full Project Description</label>
+                    <textarea id="editProjDesc" rows="3" placeholder="Enter detailed project description..."></textarea>
+                </div>
+
+                <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
+                    <button type="button" class="btn btn-hero-secondary" onclick="closeProjectEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Popup Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- JS Files -->
+    <script src="js/siteData.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

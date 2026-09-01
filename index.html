@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahin Ali Biswas | Motion & Video Artist</title>
+    <meta name="description" content="Official portfolio of Mahin Ali Biswas — Professional Motion & Video Artist specializing in YouTube edits, Reels, Shorts, corporate video storytelling, color grading, and motion graphics.">
+    <meta name="keywords" content="Mahin Ali Biswas, mahinalibiswas, Motion & Video Artist, Video Editor Bangladesh, Motion Graphics Designer, YouTube Video Editing, Reels, Shorts, Color Grading, Sound Design">
+
+    <!-- Fonts: Nohemi (Headlines), Outfit (Fallback) & Inter (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=nohemi@700,800,600,500&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dark-theme">
+
+    <!-- Ambient Radial Glows -->
+    <div class="ambient-glow orb-blue"></div>
+    <div class="ambient-glow orb-purple"></div>
+    <div class="ambient-glow orb-cyan"></div>
+
+    <!-- Interactive Canvas Background -->
+    <canvas id="kineticCanvas"></canvas>
+
+    <!-- Glowing Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-outline" id="cursorOutline"></div>
+
+    <!-- Floating Navbar -->
+    <header class="navbar-wrapper">
+        <nav class="navbar container" id="navbar">
+            <a href="#" class="brand-logo">
+                <div class="nav-avatar-box">
+                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas" class="nav-avatar-img">
+                </div>
+                <div class="logo-text-group">
+                    <span class="brand-name">Mahin Ali Biswas</span>
+                    <span class="brand-tag">MOTION & VIDEO ARTIST</span>
+                </div>
+            </a>
+
+            <div class="nav-links" id="navLinks">
+                <a href="#hero" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About Me</a>
+                <a href="#showreel" class="nav-link">Showreel</a>
+                <a href="#works" class="nav-link">Projects</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#pipeline" class="nav-link">Toolkit</a>
+                <a href="#estimator" class="nav-link">Estimator</a>
+            </div>
+
+            <div class="nav-actions">
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Available for Work</span>
+                </div>
+                <a href="#contact" class="btn btn-primary nav-cta">
+                    <span>Contact Me</span>
+                    <span class="btn-icon-circle"><i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="Toggle Navigation">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section (Balanced Alignment Layout) -->
+        <section id="hero" class="hero-section">
+            <div class="container hero-container">
+                <!-- Left Column -->
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        <span>MOTION & VIDEO ARTIST</span>
+                    </div>
+
+                    <h1 class="hero-title">
+                        <span class="title-top">MAHIN ALI</span>
+                        <span class="gradient-text title-bottom">BISWAS</span>
+                    </h1>
+
+                    <p class="hero-subtitle-tag font-accent">
+                        Motion Graphics Artist & Senior Video Editor
+                    </p>
+
+                    <p class="hero-subtitle">
+                        Transforming concepts into high-impact motion graphics, 2D/3D title animations, kinetic typography, and high-retention video edits for YouTubers, agencies, and global brands.
+                    </p>
+
+                    <div class="hero-cta-group">
+                        <button class="btn btn-hero-primary trigger-reel" id="heroPlayReelBtn">
+                            <span class="play-icon-wrap"><i class="fa-solid fa-play"></i></span>
+                            <span>Watch Showreel</span>
+                        </button>
+                        <a href="#contact" class="btn btn-primary">
+                            <span>Hire Me</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="#about" class="btn btn-hero-secondary">
+                            <span>About & Photo</span>
+                            <i class="fa-solid fa-user"></i>
+                        </a>
+                    </div>
+                    <!-- Hero Quick Social Links (With Icon Circles) -->
+                    <div class="hero-social-row">
+                        <a href="https://www.behance.net/mahinalibiswas" target="_blank" class="hero-social-link">
+                            <span class="social-icon-circle"><i class="fa-brands fa-behance"></i></span>
+                            <span>Behance</span>
+                        </a>
+                        <a href="https://www.youtube.com/@mahinalibiswas" target="_blank" class="hero-social-link">
+                            <span class="social-icon-circle"><i class="fa-brands fa-youtube"></i></span>
+                            <span>YouTube</span>
+                        </a>
+                        <a href="https://www.facebook.com/mahinalibiswas" target="_blank" class="hero-social-link">
+                            <span class="social-icon-circle"><i class="fa-brands fa-facebook-f"></i></span>
+                            <span>Facebook</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Column (Video Showcase + Stats Box Below) -->
+                <div class="hero-right-col">
+                    <!-- Hero Interactive Video Showcase -->
+                    <div class="hero-showcase-wrapper">
+                        <!-- Main Showcase Card -->
+                        <div class="hero-main-card" id="heroMainCard">
+                            <!-- Dynamically populated by siteRenderer.js -->
+                        </div>
+                    </div>
+
+                    <!-- Glassmorphic Stats Counter -->
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">100+</span>
+                            <span class="stat-label">Videos Edited</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Happy Clients</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">On-Time Delivery</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Me Section (World-Class Redesign) -->
+        <section id="about" class="about-section">
+            <div class="container">
+                <div class="about-card">
+                    <div class="about-grid">
+                        <div class="about-image-wrapper">
+                            <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas - Motion & Video Artist" class="about-img">
+                            <div class="profile-glow-ring"></div>
+                                                        <!-- Ultra-Clean Floating Experience Pill Badge -->
+                            <div class="experience-badge">
+                                <div class="exp-badge-inner">
+                                    <span class="exp-years">3+</span>
+                                    <div class="exp-text-block">
+                                        <strong class="exp-title">Years Experience</strong>
+                                        <span class="exp-sub">Motion & Video Specialist</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="about-text-content">
+                            <div class="about-tag-badge">
+                                <i class="fa-solid fa-user-astronaut"></i>
+                                <span>ABOUT THE ARTIST</span>
+                            </div>
+                            <h2 class="section-title">Elevating Content Through <span class="gradient-text">Motion & Storytelling</span></h2>
+                            <p class="about-desc">
+                                Hi, I'm <strong>Mahin Ali Biswas</strong> (@mahinalibiswas) — a <strong>Motion Graphics Artist & Senior Video Editor</strong> based in Bangladesh. I work with content creators, digital agencies, and global brands to deliver high-impact motion graphics, 2D/3D title intros, kinetic typography, and cinematic video editing.
+                            </p>
+
+                            <div class="about-highlights-grid">
+                                <div class="about-feature-box">
+                                    <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
+                                    <div>
+                                        <h4>High-Retention Pacing</h4>
+                                        <p>YouTube, Shorts & Reels editing for maximum watch time.</p>
+                                    </div>
+                                </div>
+                                <div class="about-feature-box">
+                                    <div class="feature-icon"><i class="fa-solid fa-closed-captioning"></i></div>
+                                    <div>
+                                        <h4>Motion Subtitles</h4>
+                                        <p>Dynamic Bangla & English kinetic captions & pop-ups.</p>
+                                    </div>
+                                </div>
+                                <div class="about-feature-box">
+                                    <div class="feature-icon"><i class="fa-solid fa-sliders"></i></div>
+                                    <div>
+                                        <h4>Cinematic Color Pass</h4>
+                                        <p>Log footage color balancing & filmic grading passes.</p>
+                                    </div>
+                                </div>
+                                <div class="about-feature-box">
+                                    <div class="feature-icon"><i class="fa-solid fa-compact-disc"></i></div>
+                                    <div>
+                                        <h4>Immersive Audio SFX</h4>
+                                        <p>Custom sound design layering & audio noise cleanup.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="about-cta-group">
+                                <a href="https://www.behance.net/mahinalibiswas" target="_blank" class="btn btn-primary">
+                                    <span>Visit Behance Profile</span>
+                                    <span class="btn-icon-circle"><i class="fa-brands fa-behance"></i></span>
+                                </a>
+                                <a href="#contact" class="btn btn-hero-secondary">Contact Direct</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Showreel Section (Dedicated Main Showreel Video) -->
+        <section id="showreel" class="showreel-section">
+            <div class="container">
+                <div class="section-header center">
+                    <span class="section-subtitle">// HIGHLIGHT SHOWREEL</span>
+                    <h2 class="section-title">Featured Motion & <span class="gradient-text">Video Reel</span></h2>
+                    <p class="section-desc">A compilation of YouTube edits, talking head videos, dynamic reels, motion graphics, and sound design passes by Mahin Ali Biswas.</p>
+                </div>
+
+                <div class="showreel-wrapper">
+                    <div class="showreel-player-box">
+                        <video id="directShowreelVideo" src="assets/videos/main_showreel.mp4" class="showreel-video-element" controls playsinline poster="assets/images/hero_showreel_cover.jpg"></video>
+                        <div class="showreel-controls-overlay" id="showreelOverlay">
+                            <button class="big-play-btn" id="mainPlayBtn">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <div class="showreel-meta">
+                                <h3>Mahin Ali Biswas Official Video Showcase</h3>
+                                <p>Tools: Premiere Pro, After Effects, DaVinci Resolve, Audition</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Projects / Portfolio Showcase (All 12 Reference Categories) -->
+        <section id="works" class="works-section">
+            <div class="container">
+                <!-- Centered Headline Header -->
+                <div class="section-header center">
+                    <span class="section-subtitle">// PORTFOLIO SHOWCASE</span>
+                    <h2 class="section-title">Selected <span class="gradient-text">Projects</span></h2>
+                </div>
+
+                <!-- Centered Filter Bar with All 12 Categories from Reference Image -->
+                <div class="works-filter-wrapper">
+                    <div class="filter-bar" id="portfolioFilter">
+                        <button class="filter-btn active" data-filter="all">
+                            <span>All</span>
+                            <span class="filter-count">73</span>
+                        </button>
+                        <button class="filter-btn" data-filter="featured">
+                            <span>Featured Projects</span>
+                            <span class="filter-count">8</span>
+                        </button>
+                        <button class="filter-btn" data-filter="motion-graphics">
+                            <span>Motion Graphics</span>
+                            <span class="filter-count">7</span>
+                        </button>
+                        <button class="filter-btn" data-filter="documentary">
+                            <span>Documentary</span>
+                            <span class="filter-count">2</span>
+                        </button>
+                        <button class="filter-btn" data-filter="promotional">
+                            <span>Promotional Videos</span>
+                            <span class="filter-count">2</span>
+                        </button>
+                        <button class="filter-btn" data-filter="corporate">
+                            <span>Corporate Videos</span>
+                            <span class="filter-count">3</span>
+                        </button>
+                        <button class="filter-btn" data-filter="music">
+                            <span>Music Videos</span>
+                            <span class="filter-count">14</span>
+                        </button>
+                        <button class="filter-btn" data-filter="talking-head">
+                            <span>Talking Head</span>
+                            <span class="filter-count">9</span>
+                        </button>
+                        <button class="filter-btn" data-filter="event">
+                            <span>Event Videos</span>
+                            <span class="filter-count">9</span>
+                        </button>
+                        <button class="filter-btn" data-filter="tutorial">
+                            <span>Tutorial</span>
+                            <span class="filter-count">6</span>
+                        </button>
+                        <button class="filter-btn" data-filter="logo-animation">
+                            <span>Logo Animation</span>
+                            <span class="filter-count">3</span>
+                        </button>
+                        <button class="filter-btn" data-filter="motion-reel">
+                            <span>Motion Reel</span>
+                            <span class="filter-count">2</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="works-grid" id="worksGrid">
+                    <!-- Project Card 1: YouTube Documentary Edit -->
+                    <div class="work-card" data-category="featured documentary youtube tutorial motion-graphics">
+                        <div class="card-media-frame">
+                            <img src="assets/images/project_youtube_doc.jpg" alt="YouTube Documentary Edit" class="card-img">
+                            <button class="card-glass-play-btn view-project-btn" data-id="project-1" aria-label="Play Video">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <span class="card-category-pill">YouTube</span>
+                            <h3 class="card-title">YouTube Documentary Edit</h3>
+                            <p class="card-desc">High-retention pacing with cinematic B-rolls & audio SFX.</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-author-info">
+                                <div class="card-author-avatar">
+                                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas">
+                                </div>
+                                <div class="card-author-text">
+                                    <span class="author-name">Mahin Ali Biswas</span>
+                                    <span class="project-date">2026</span>
+                                </div>
+                            </div>
+                            <button class="card-details-btn" data-id="project-1">Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 2: Viral Instagram Reel & TikTok Edit -->
+                    <div class="work-card" data-category="featured motion-graphics motion-reel promotional music">
+                        <div class="card-media-frame">
+                            <img src="assets/images/project_reels_shorts.jpg" alt="Viral Reels & TikToks" class="card-img">
+                            <button class="card-glass-play-btn view-project-btn" data-id="project-2" aria-label="Play Video">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <span class="card-category-pill">Reels / Shorts</span>
+                            <h3 class="card-title">Viral Reels & TikToks</h3>
+                            <p class="card-desc">Dynamic Bangla & English kinetic motion captions.</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-author-info">
+                                <div class="card-author-avatar">
+                                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas">
+                                </div>
+                                <div class="card-author-text">
+                                    <span class="author-name">Mahin Ali Biswas</span>
+                                    <span class="project-date">2026</span>
+                                </div>
+                            </div>
+                            <button class="card-details-btn" data-id="project-2">Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 3: Talking Head & Educational Course Edit -->
+                    <div class="work-card" data-category="featured corporate talking-head tutorial promotional">
+                        <div class="card-media-frame">
+                            <img src="assets/images/project_talking_head.jpg" alt="Talking Head Corporate" class="card-img">
+                            <button class="card-glass-play-btn view-project-btn" data-id="project-3" aria-label="Play Video">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <span class="card-category-pill">Corporate</span>
+                            <h3 class="card-title">Talking Head Corporate</h3>
+                            <p class="card-desc">Clean jump-cut smoothing & background noise cleanup.</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-author-info">
+                                <div class="card-author-avatar">
+                                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas">
+                                </div>
+                                <div class="card-author-text">
+                                    <span class="author-name">Mahin Ali Biswas</span>
+                                    <span class="project-date">2025</span>
+                                </div>
+                            </div>
+                            <button class="card-details-btn" data-id="project-3">Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 4: Animated Logo Reveal & Motion Graphics -->
+                    <div class="work-card" data-category="featured motion-graphics logo-animation motion-reel">
+                        <div class="card-media-frame">
+                            <img src="assets/images/project_motion_logo.jpg" alt="Animated Logo Reveals" class="card-img">
+                            <button class="card-glass-play-btn view-project-btn" data-id="project-4" aria-label="Play Video">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <span class="card-category-pill">Motion Design</span>
+                            <h3 class="card-title">Animated Logo Reveals</h3>
+                            <p class="card-desc">Sleek 2D/3D logo motion presets & brand intros.</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-author-info">
+                                <div class="card-author-avatar">
+                                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas">
+                                </div>
+                                <div class="card-author-text">
+                                    <span class="author-name">Mahin Ali Biswas</span>
+                                    <span class="project-date">2025</span>
+                                </div>
+                            </div>
+                            <button class="card-details-btn" data-id="project-4">Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 5: Color Grading & B-Roll Pass -->
+                    <div class="work-card" data-category="featured event music documentary">
+                        <div class="card-media-frame">
+                            <img src="assets/images/project_color_pass.jpg" alt="Cinematic Color Pass" class="card-img">
+                            <button class="card-glass-play-btn view-project-btn" data-id="project-5" aria-label="Play Video">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <span class="card-category-pill">Color Grading</span>
+                            <h3 class="card-title">Cinematic Color Pass</h3>
+                            <p class="card-desc">Log footage color balancing & filmic grading LUTs.</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-author-info">
+                                <div class="card-author-avatar">
+                                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas">
+                                </div>
+                                <div class="card-author-text">
+                                    <span class="author-name">Mahin Ali Biswas</span>
+                                    <span class="project-date">2025</span>
+                                </div>
+                            </div>
+                            <button class="card-details-btn" data-id="project-5">Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 6: Brand Promotional Video Commercial -->
+                    <div class="work-card" data-category="featured promotional corporate event">
+                        <div class="card-media-frame">
+                            <img src="assets/images/project_commercial_ad.jpg" alt="Brand Commercial Ad" class="card-img">
+                            <button class="card-glass-play-btn view-project-btn" data-id="project-6" aria-label="Play Video">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <span class="card-category-pill">Commercial Ad</span>
+                            <h3 class="card-title">Brand Commercial Ad</h3>
+                            <p class="card-desc">High-converting social media ad sync & graphics.</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-author-info">
+                                <div class="card-author-avatar">
+                                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas">
+                                </div>
+                                <div class="card-author-text">
+                                    <span class="author-name">Mahin Ali Biswas</span>
+                                    <span class="project-date">2025</span>
+                                </div>
+                            </div>
+                            <button class="card-details-btn" data-id="project-6">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- See All / Load More Projects Button -->
+                <div class="works-see-all-wrapper" id="seeAllWrapper">
+                    <button class="btn btn-hero-secondary see-all-btn" id="seeAllProjectsBtn">
+                        <span>See All Projects</span>
+                        <span class="see-all-count-badge" id="seeAllBadge">6</span>
+                        <i class="fa-solid fa-chevron-down" id="seeAllIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services & Capabilities -->
+        <section id="services" class="services-section">
+            <div class="container">
+                <div class="section-header center">
+                    <span class="section-subtitle">// SERVICES OFFERED</span>
+                    <h2 class="section-title">Video Editing & <span class="gradient-text">Motion Services</span></h2>
+                    <p class="section-desc">Professional video production and motion design services tailored for YouTubers, agencies, and brands.</p>
+                </div>
+
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon-box"><i class="fa-solid fa-clapperboard"></i></div>
+                        <h3>YouTube Video Editing</h3>
+                        <p>Engaging storytelling edits optimized for watch-time retention, featuring sound FX, zoom cuts, and B-roll transitions.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> High-Retention Pacing</li>
+                            <li><i class="fa-solid fa-check"></i> B-Roll & Visual Enhancements</li>
+                            <li><i class="fa-solid fa-check"></i> Custom Thumbnails & Intros</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon-box"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                        <h3>Reels, Shorts & TikToks</h3>
+                        <p>High-energy vertical video edits with animated subtitles, pop-up graphics, and trending audio sync.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Animated Bangla/English Subtitles</li>
+                            <li><i class="fa-solid fa-check"></i> Fast Hook & Visual Effects</li>
+                            <li><i class="fa-solid fa-check"></i> 9:16 Vertical Optimization</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon-box"><i class="fa-solid fa-microphone-lines"></i></div>
+                        <h3>Talking Head & Course Videos</h3>
+                        <p>Polished corporate talking head videos, podcast editing, online course modules, and educational videos.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Seamless Jump-cut Smoothing</li>
+                            <li><i class="fa-solid fa-check"></i> Lower Thirds & Screen Graphics</li>
+                            <li><i class="fa-solid fa-check"></i> Audio Noise Reduction</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon-box"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <h3>Motion Graphics & Captions</h3>
+                        <p>Eye-catching 2D/3D title animations, animated infographics, lower thirds, and logo reveals.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Dynamic Motion Captions</li>
+                            <li><i class="fa-solid fa-check"></i> 2D/3D Animated Logo Intros</li>
+                            <li><i class="fa-solid fa-check"></i> Custom Motion Elements</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon-box"><i class="fa-solid fa-palette"></i></div>
+                        <h3>Color Grading & Correction</h3>
+                        <p>Cinematic color grading passes to give your raw video footage a vibrant, high-budget film look.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Log Footage Color Balancing</li>
+                            <li><i class="fa-solid fa-check"></i> Filmic LUTs & Tone Matching</li>
+                            <li><i class="fa-solid fa-check"></i> Skin Tone Perfection</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon-box"><i class="fa-solid fa-sliders"></i></div>
+                        <h3>Audio Mixing & Sound Design</h3>
+                        <p>Immersive sound design with impact SFX, swooshes, background music mixing, and crystal clear voiceovers.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Custom Sound Effects Layering</li>
+                            <li><i class="fa-solid fa-check"></i> Dialogue Audio Mastering</li>
+                            <li><i class="fa-solid fa-check"></i> Background Music Balance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Software Pipeline & Toolkit -->
+        <section id="pipeline" class="pipeline-section">
+            <div class="container">
+                <div class="section-header center">
+                    <span class="section-subtitle">// THE TOOLKIT</span>
+                    <h2 class="section-title">Editing & Motion <span class="gradient-text">Software</span></h2>
+                    <p class="section-desc">Mastering professional video editing software to deliver high-quality 4K renders.</p>
+                </div>
+
+                <div class="tools-grid">
+                    <!-- 1. After Effects -->
+                    <div class="tool-badge-card">
+                        <div class="tool-icon-frame">
+                            <img src="assets/images/software/ae_icon.png" alt="After Effects" class="software-logo-img">
+                        </div>
+                        <div class="tool-info">
+                            <h4>After Effects</h4>
+                            <span>Motion Graphics & Kinetic Subtitles</span>
+                        </div>
+                        <div class="tool-level"><div class="level-bar" style="width: 98%;"></div></div>
+                    </div>
+
+                    <!-- 2. Premiere Pro -->
+                    <div class="tool-badge-card">
+                        <div class="tool-icon-frame">
+                            <img src="assets/images/software/pr_icon.png" alt="Premiere Pro" class="software-logo-img">
+                        </div>
+                        <div class="tool-info">
+                            <h4>Premiere Pro</h4>
+                            <span>Primary Video Editing Suite</span>
+                        </div>
+                        <div class="tool-level"><div class="level-bar" style="width: 96%;"></div></div>
+                    </div>
+
+                    <!-- 3. Adobe Photoshop -->
+                    <div class="tool-badge-card">
+                        <div class="tool-icon-frame">
+                            <img src="assets/images/software/ps_icon.png" alt="Adobe Photoshop" class="software-logo-img">
+                        </div>
+                        <div class="tool-info">
+                            <h4>Adobe Photoshop</h4>
+                            <span>Thumbnail & Visual Asset Design</span>
+                        </div>
+                        <div class="tool-level"><div class="level-bar" style="width: 94%;"></div></div>
+                    </div>
+
+                    <!-- 4. Adobe Illustrator -->
+                    <div class="tool-badge-card">
+                        <div class="tool-icon-frame">
+                            <img src="assets/images/software/ai_icon.png" alt="Adobe Illustrator" class="software-logo-img">
+                        </div>
+                        <div class="tool-info">
+                            <h4>Adobe Illustrator</h4>
+                            <span>Vector Graphics & Motion Asset Prep</span>
+                        </div>
+                        <div class="tool-level"><div class="level-bar" style="width: 92%;"></div></div>
+                    </div>
+
+                    <!-- 5. Canva -->
+                    <div class="tool-badge-card">
+                        <div class="tool-icon-frame">
+                            <img src="assets/images/software/canva_icon.png" alt="Canva" class="software-logo-img canva-logo">
+                        </div>
+                        <div class="tool-info">
+                            <h4>Canva</h4>
+                            <span>Social Media Templates & Design</span>
+                        </div>
+                        <div class="tool-level"><div class="level-bar" style="width: 90%;"></div></div>
+                    </div>
+
+                    <!-- 6. Figma -->
+                    <div class="tool-badge-card">
+                        <div class="tool-icon-frame">
+                            <img src="assets/images/software/figma_icon.png" alt="Figma" class="software-logo-img">
+                        </div>
+                        <div class="tool-info">
+                            <h4>Figma</h4>
+                            <span>UI Layouts, Overlays & Web Assets</span>
+                        </div>
+                        <div class="tool-level"><div class="level-bar" style="width: 88%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Brands Marquee Section (Seamless Infinite Loop Ticker) -->
+        <section class="marquee-section">
+            <div class="marquee-track">
+                <div class="marquee-content">
+                    <span class="brand-tag-item"><i class="fa-brands fa-youtube"></i> YOUTUBE CONTENT</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-film"></i> REELS & SHORTS</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-bolt"></i> MOTION GRAPHICS</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-sliders"></i> COLOR GRADING</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-microphone"></i> TALKING HEADS</span>
+                    <span class="brand-tag-item"><i class="fa-brands fa-behance"></i> BEHANCE PORTFOLIO</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-wand-magic-sparkles"></i> 2D/3D TITLE ANIMATION</span>
+                </div>
+                <div class="marquee-content" aria-hidden="true">
+                    <span class="brand-tag-item"><i class="fa-brands fa-youtube"></i> YOUTUBE CONTENT</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-film"></i> REELS & SHORTS</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-bolt"></i> MOTION GRAPHICS</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-sliders"></i> COLOR GRADING</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-microphone"></i> TALKING HEADS</span>
+                    <span class="brand-tag-item"><i class="fa-brands fa-behance"></i> BEHANCE PORTFOLIO</span>
+                    <span class="brand-tag-item"><i class="fa-solid fa-wand-magic-sparkles"></i> 2D/3D TITLE ANIMATION</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Project Estimator -->
+        <section id="estimator" class="estimator-section">
+            <div class="container">
+                <div class="estimator-card">
+                    <div class="section-header center">
+                        <span class="section-subtitle">// INSTANT PROJECT ESTIMATOR</span>
+                        <h2 class="section-title">Calculate Your Video <span class="gradient-text">Scope & Budget</span></h2>
+                        <p class="section-desc">Select your video requirements below to calculate an instant cost estimate and send a direct inquiry to Mahin Ali Biswas.</p>
+                    </div>
+
+                    <form id="estimatorForm" class="estimator-form">
+                        <!-- Step 1: Project Type -->
+                        <div class="form-group">
+                            <label class="form-label">1. What type of video editing do you need?</label>
+                            <div class="option-grid" id="typeOptions">
+                                <label class="option-card active">
+                                    <input type="radio" name="projectType" value="youtube_edit" checked>
+                                    <i class="fa-brands fa-youtube"></i>
+                                    <span>YouTube Video Edit</span>
+                                </label>
+                                <label class="option-card">
+                                    <input type="radio" name="projectType" value="reels_shorts">
+                                    <i class="fa-solid fa-mobile-screen"></i>
+                                    <span>Reels / Shorts (Vertical)</span>
+                                </label>
+                                <label class="option-card">
+                                    <input type="radio" name="projectType" value="talking_head">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                    <span>Talking Head / Course</span>
+                                </label>
+                                <label class="option-card">
+                                    <input type="radio" name="projectType" value="motion_logo">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>Motion Graphics & Logo</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Duration Slider -->
+                        <div class="form-group">
+                            <div class="flex-between">
+                                <label class="form-label">2. Estimated Video Length:</label>
+                                <span class="val-display" id="durationVal">5 Minutes</span>
+                            </div>
+                            <input type="range" id="durationRange" min="1" max="30" step="1" value="5" class="range-slider">
+                        </div>
+
+                        <!-- Step 3: Turnaround Speed -->
+                        <div class="form-group">
+                            <label class="form-label">3. Desired Turnaround Speed:</label>
+                            <div class="option-grid" id="speedOptions">
+                                <label class="option-card">
+                                    <input type="radio" name="speed" value="standard" checked>
+                                    <i class="fa-solid fa-calendar"></i>
+                                    <span>Standard (3-5 Days)</span>
+                                </label>
+                                <label class="option-card">
+                                    <input type="radio" name="speed" value="express">
+                                    <i class="fa-solid fa-gauge-high"></i>
+                                    <span>Express Rush (24-48 Hours)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Calculated Result Box -->
+                        <div class="estimate-result-box">
+                            <div class="estimate-details">
+                                <span>Estimated Range:</span>
+                                <h3 class="estimate-price" id="priceDisplay">$150 - $250 USD</h3>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="sendEstimateBtn">
+                                <i class="fa-solid fa-paper-plane"></i> Book Video Project With Mahin
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="contact-card">
+                    <div class="contact-info">
+                        <span class="section-subtitle">// GET IN TOUCH</span>
+                        <h2 class="section-title">Let's Work Together on Your <span class="gradient-text">Next Video</span></h2>
+                        <p class="contact-text">
+                            Have a YouTube video, commercial reel, or long-term video editing project? Feel free to reach out to Mahin Ali Biswas directly!
+                        </p>
+
+                        <div class="contact-methods">
+                            <div class="method-item">
+                                <div class="method-icon"><i class="fa-solid fa-envelope"></i></div>
+                                <div>
+                                    <span class="method-label">Direct Email</span>
+                                    <a href="mailto:mahinalibiswas@gmail.com" class="method-val">mahinalibiswas@gmail.com</a>
+                                </div>
+                            </div>
+                            <div class="method-item">
+                                <div class="method-icon"><i class="fa-brands fa-facebook"></i></div>
+                                <div>
+                                    <span class="method-label">Facebook Profile</span>
+                                    <a href="https://www.facebook.com/mahinalibiswas" target="_blank" class="method-val">facebook.com/mahinalibiswas</a>
+                                </div>
+                            </div>
+                            <div class="method-item">
+                                <div class="method-icon"><i class="fa-brands fa-behance"></i></div>
+                                <div>
+                                    <span class="method-label">Behance Portfolio</span>
+                                    <a href="https://www.behance.net/mahinalibiswas" target="_blank" class="method-val">behance.net/mahinalibiswas</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="social-links">
+                            <a href="https://www.behance.net/mahinalibiswas" target="_blank" aria-label="Behance" class="social-btn"><i class="fa-brands fa-behance"></i></a>
+                            <a href="https://www.youtube.com/@mahinalibiswas" target="_blank" aria-label="YouTube" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+                            <a href="https://www.facebook.com/mahinalibiswas" target="_blank" aria-label="Facebook" class="social-btn"><i class="fa-brands fa-facebook"></i></a>
+                            <a href="mailto:mahinalibiswas@gmail.com" aria-label="Email" class="social-btn"><i class="fa-solid fa-envelope"></i></a>
+                        </div>
+                    </div>
+
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-row">
+                            <div class="input-field">
+                                <label for="clientName">Your Name *</label>
+                                <input type="text" id="clientName" placeholder="e.g. Alex Rivera" required>
+                            </div>
+                            <div class="input-field">
+                                <label for="clientEmail">Email Address *</label>
+                                <input type="email" id="clientEmail" placeholder="alex@channel.com" required>
+                            </div>
+                        </div>
+                        <div class="input-field">
+                            <label for="clientSubject">Project Type / Video Goal *</label>
+                            <input type="text" id="clientSubject" placeholder="YouTube Channel Video / Reels Package" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="clientMessage">Project Details & Requirements *</label>
+                            <textarea id="clientMessage" rows="5" placeholder="Tell me about your video topic, motion graphics ideas, references, and deadline..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" id="submitContactBtn">
+                            <span>Send Inquiry to Mahin</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container flex-between">
+            <p>Made by <strong>Mahin Ali Biswas</strong> (@mahinalibiswas) © 2026. All rights reserved.</p>
+            <p>Motion & Video Artist • Visual Storyteller • <a href="admin.html" target="_blank" style="color: var(--accent-neon); text-decoration: none; font-size: 0.8rem; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin Portal</a></p>
+        </div>
+    </footer>
+
+    <!-- Fullscreen Direct HTML5 Video Modal -->
+    <div class="modal-backdrop" id="videoModal">
+        <div class="modal-content modal-video-container">
+            <button class="modal-close" id="closeVideoModal" aria-label="Close Video"><i class="fa-solid fa-xmark"></i></button>
+            <div class="video-responsive-wrapper">
+                <video id="modalHtml5Video" src="assets/videos/main_showreel.mp4" controls playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>
+            </div>
+            <div style="padding: 0.8rem 1.2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(15,23,42,0.95); border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 0.8rem;">
+                <button class="btn btn-hero-secondary" id="modalBackToProjectsBtn" style="padding: 0.45rem 1.1rem; font-size: 0.82rem; gap: 0.5rem;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Projects
+                </button>
+                <span style="font-size: 0.85rem; color: var(--accent-neon); font-weight: 600;"><i class="fa-solid fa-circle-play"></i> Mahin Ali Biswas - Direct Showreel Video</span>
+                <a href="https://www.youtube.com/watch?v=deQijHls--0" target="_blank" class="btn btn-hero-secondary" style="padding: 0.45rem 1.1rem; font-size: 0.82rem; gap: 0.5rem;">
+                    <i class="fa-brands fa-youtube"></i> Watch on YouTube
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Detail Popup Modal -->
+    <div class="modal-backdrop" id="projectModal">
+        <div class="modal-content modal-detail-card">
+            <button class="modal-close" id="closeProjectModal" aria-label="Close Detail"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-body" id="projectModalBody">
+                <!-- Dynamically injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Dedicated Project Detail Overlay View (Matches Saif Studio Details Page) -->
+    <div id="projectDetailOverlay" class="project-detail-overlay">
+        <div class="container project-detail-container">
+            <!-- Top Back Navigation Bar -->
+            <div class="project-detail-topbar">
+                <button id="closeDetailOverlay" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Projects
+                </button>
+            </div>
+
+            <!-- Content Container (Populated by JS) -->
+            <div id="projectDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Popup -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Site Data Store & Dynamic Renderer -->
+    <script src="js/siteData.js"></script>
+    <script src="js/siteRenderer.js"></script>
+    <!-- Custom JS -->
+    <script src="js/main.js"></script>
+</body>
+</html>

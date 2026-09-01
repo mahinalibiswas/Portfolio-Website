@@ -1,0 +1,665 @@
+/* ==========================================================================
+   PORTFOLIO WEBSITE ADMIN CMS CONTROLLER LOGIC
+   Handles login password verification, tab management, CRUD projects,
+   section updates, and JSON backup export/import.
+   ========================================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+    initAuthGate();
+    initTabNavigation();
+});
+
+/* --- 1. Authentication Security Gate --- */
+function initAuthGate() {
+    const authOverlay = document.getElementById('adminAuthOverlay');
+    const adminDashboard = document.getElementById('adminDashboard');
+    const loginForm = document.getElementById('adminLoginForm');
+    const passwordInput = document.getElementById('adminPasswordInput');
+    const authErrorMsg = document.getElementById('authErrorMsg');
+    const togglePassBtn = document.getElementById('togglePassBtn');
+    const logoutBtn = document.getElementById('adminLogoutBtn');
+
+    // Check if session is already authenticated
+    const isAuthenticated = sessionStorage.getItem('mahin_admin_auth') === 'true';
+
+    if (isAuthenticated) {
+        authOverlay.style.display = 'none';
+        adminDashboard.style.display = 'flex';
+        loadAllAdminData();
+    } else {
+        authOverlay.style.display = 'flex';
+        adminDashboard.style.display = 'none';
+    }
+
+    togglePassBtn?.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        togglePassBtn.querySelector('i').className = type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+    });
+
+    loginForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const entered = passwordInput.value.trim();
+        const currentPass = getAdminPassword();
+
+        if (entered === currentPass) {
+            sessionStorage.setItem('mahin_admin_auth', 'true');
+            authOverlay.style.display = 'none';
+            adminDashboard.style.display = 'flex';
+            showToast('Welcome Mahin! Login Successful', 'success');
+            loadAllAdminData();
+        } else {
+            authErrorMsg.textContent = 'Incorrect Password! Please try again.';
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
+    });
+
+    logoutBtn?.addEventListener('click', () => {
+        sessionStorage.removeItem('mahin_admin_auth');
+        window.location.reload();
+    });
+}
+
+/* --- 2. Sidebar Tab Navigation --- */
+function initTabNavigation() {
+    const tabBtns = document.querySelectorAll('.admin-tab-btn');
+    const tabContents = document.querySelectorAll('.admin-tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            document.getElementById(targetTab)?.classList.add('active');
+        });
+    });
+}
+
+/* --- 3. Load All Current Site Data into Admin Forms --- */
+function loadAllAdminData() {
+    const data = getSiteData();
+
+    // 1. Load Hero Section Data
+    if (data.hero) {
+        document.getElementById('heroBadge').value = data.hero.badge || '';
+        document.getElementById('heroTitleTop').value = data.hero.titleTop || '';
+        document.getElementById('heroTitleBottom').value = data.hero.titleBottom || '';
+        document.getElementById('heroSubtitleTag').value = data.hero.subtitleTag || '';
+        document.getElementById('heroSubtitle').value = data.hero.subtitle || '';
+        document.getElementById('heroShowreelVideo').value = data.hero.showreelVideo || '';
+        document.getElementById('heroShowreelPoster').value = data.hero.showreelPoster || '';
+        document.getElementById('heroStatsEdited').value = data.hero.statsEdited || '100+';
+        document.getElementById('heroStatsClients').value = data.hero.statsClients || '50+';
+        document.getElementById('heroStatsDelivery').value = data.hero.statsDelivery || '100%';
+        renderAdminCtaButtons(data.hero.ctaButtons || []);
+    }
+
+    // 2. Load About Section Data
+    if (data.about) {
+        document.getElementById('aboutTagBadge').value = data.about.tagBadge || '';
+        document.getElementById('aboutExpYears').value = data.about.expYears || '';
+        document.getElementById('aboutTitleTop').value = data.about.titleTop || '';
+        document.getElementById('aboutTitleGradient').value = data.about.titleGradient || '';
+        document.getElementById('aboutBio').value = data.about.bio || '';
+        if (document.getElementById('aboutBtnBehanceText')) document.getElementById('aboutBtnBehanceText').value = data.about.btnBehanceText || 'Visit Behance Profile';
+        if (document.getElementById('aboutBtnBehanceUrl')) document.getElementById('aboutBtnBehanceUrl').value = data.about.btnBehanceUrl || 'https://www.behance.net/mahinalibiswas';
+        if (document.getElementById('aboutBtnContactText')) document.getElementById('aboutBtnContactText').value = data.about.btnContactText || 'Contact Direct';
+        if (document.getElementById('aboutBtnContactLink')) document.getElementById('aboutBtnContactLink').value = data.about.btnContactLink || '#contact';
+
+        if (data.about.features && Array.isArray(data.about.features)) {
+            data.about.features.forEach((feat, i) => {
+                if (document.getElementById(`featTitle${i}`)) document.getElementById(`featTitle${i}`).value = feat.title || '';
+                if (document.getElementById(`featIcon${i}`)) document.getElementById(`featIcon${i}`).value = feat.icon || '';
+                if (document.getElementById(`featDesc${i}`)) document.getElementById(`featDesc${i}`).value = feat.desc || '';
+            });
+        }
+    }
+
+    // 3. Render Projects List
+    renderAdminProjectsList(data.projects || []);
+
+    // 4. Render Services List Form Cards
+    renderAdminServicesList(data.services || []);
+
+    // 5. Render Software List Form Cards
+    renderAdminSoftwareList(data.software || []);
+
+    // 6. Load Contact Info
+    if (data.contact) {
+        document.getElementById('contactEmail').value = data.contact.email || '';
+        document.getElementById('contactWhatsApp').value = data.contact.whatsapp || '';
+        document.getElementById('contactLocation').value = data.contact.location || '';
+        document.getElementById('contactBehance').value = data.contact.behanceUrl || '';
+        document.getElementById('contactYoutube').value = data.contact.youtubeUrl || '';
+        document.getElementById('contactFacebook').value = data.contact.facebookUrl || '';
+    }
+}
+
+/* --- 4. Dynamic CTA Button List Manager --- */
+function renderAdminCtaButtons(ctaButtons) {
+    const listContainer = document.getElementById('adminCtaButtonsList');
+    if (!listContainer) return;
+
+    listContainer.innerHTML = ctaButtons.map((btn, index) => `
+        <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
+                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem;">CTA Button #${index + 1}: ${btn.text}</h4>
+                <button type="button" class="action-btn delete-btn" onclick="deleteHeroCtaButton('${btn.id}')" title="Delete Button">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+            <div class="admin-form-grid">
+                <div class="form-group">
+                    <label>Button Text</label>
+                    <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}">
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Custom Icon from PC (PNG / SVG)</label>
+                    <div style="display: flex; align-items: center; gap: 0.8rem;">
+                        <input type="file" id="ctaBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleCtaIconUpload(event, '${btn.id}')">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('ctaBtnFileInput_${btn.id}').click()">
+                            <i class="fa-solid fa-upload"></i> Choose File from PC
+                        </button>
+                        <div id="ctaIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            <img id="ctaIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;" onclick="removeCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="ctaBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
+                </div>
+
+
+                <div class="form-group full-width">
+                    <label>Target Link / Section ID / Video URL</label>
+                    <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="e.g. #contact or #about or video URL">
+                </div>
+
+                <div class="form-group full-width">
+                    <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; color: #ffffff;">
+                        <input type="checkbox" id="ctaBtnModal_${btn.id}" ${btn.isModal ? 'checked' : ''} style="width: auto;">
+                        <span>Opens Showreel Video Lightbox Modal (Play Video Action)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function handleHeroPosterUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        document.getElementById('heroShowreelPoster').value = dataUrl;
+        const previewImg = document.getElementById('heroPosterPreview');
+        const previewWrap = document.getElementById('heroPosterPreviewWrap');
+        if (previewImg) previewImg.src = dataUrl;
+        if (previewWrap) previewWrap.style.display = 'flex';
+        showToast('Hero cover image uploaded from PC!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeHeroPosterImage() {
+    document.getElementById('heroShowreelPoster').value = '';
+    const previewWrap = document.getElementById('heroPosterPreviewWrap');
+    if (previewWrap) previewWrap.style.display = 'none';
+    showToast('Hero cover image removed', 'info');
+}
+
+function handleProjImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        document.getElementById('editProjImage').value = dataUrl;
+        const previewImg = document.getElementById('editProjImagePreview');
+        const previewWrap = document.getElementById('editProjImagePreviewWrap');
+        if (previewImg) previewImg.src = dataUrl;
+        if (previewWrap) previewWrap.style.display = 'flex';
+        showToast('Project thumbnail image uploaded from PC!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeProjImage() {
+    document.getElementById('editProjImage').value = '';
+    const previewWrap = document.getElementById('editProjImagePreviewWrap');
+    if (previewWrap) previewWrap.style.display = 'none';
+    showToast('Project thumbnail image removed', 'info');
+}
+
+function handleCtaIconUpload(event, btnId) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        document.getElementById(`ctaBtnIconImage_${btnId}`).value = dataUrl;
+        const previewImg = document.getElementById(`ctaIconPreview_${btnId}`);
+        const previewWrap = document.getElementById(`ctaIconPreviewWrap_${btnId}`);
+        if (previewImg) previewImg.src = dataUrl;
+        if (previewWrap) previewWrap.style.display = 'flex';
+        showToast('Icon image uploaded from PC!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeCtaIconImage(btnId) {
+    document.getElementById(`ctaBtnIconImage_${btnId}`).value = '';
+    const previewWrap = document.getElementById(`ctaIconPreviewWrap_${btnId}`);
+    if (previewWrap) previewWrap.style.display = 'none';
+    showToast('Uploaded icon image removed', 'info');
+}
+
+function addNewHeroCtaButton() {
+    const data = getSiteData();
+    if (!data.hero.ctaButtons) data.hero.ctaButtons = [];
+    
+    data.hero.ctaButtons.push({
+        id: 'btn-' + Date.now(),
+        text: 'New CTA Button',
+        link: '#contact',
+        icon: 'fa-solid fa-arrow-right',
+        isModal: false
+    });
+
+    if (saveSiteData(data)) {
+        renderAdminCtaButtons(data.hero.ctaButtons);
+        showToast('New CTA Button added! Edit text & upload icon, then click Save Hero Changes.', 'success');
+    }
+}
+
+function deleteHeroCtaButton(btnId) {
+    const data = getSiteData();
+    if (confirm('Delete this CTA Button?')) {
+        data.hero.ctaButtons = (data.hero.ctaButtons || []).filter(b => b.id !== btnId);
+        if (saveSiteData(data)) {
+            renderAdminCtaButtons(data.hero.ctaButtons);
+            showToast('CTA Button deleted', 'info');
+        }
+    }
+}
+
+/* --- 5. Section Save Handlers --- */
+
+// Save Hero
+function saveHeroSection() {
+    const data = getSiteData();
+
+    const ctaButtons = (data.hero.ctaButtons || []).map(btn => ({
+        id: btn.id,
+        text: document.getElementById(`ctaBtnText_${btn.id}`)?.value || btn.text,
+        link: document.getElementById(`ctaBtnLink_${btn.id}`)?.value || btn.link,
+        icon: document.getElementById(`ctaBtnIcon_${btn.id}`)?.value || btn.icon,
+        iconImage: document.getElementById(`ctaBtnIconImage_${btn.id}`)?.value || '',
+        isModal: document.getElementById(`ctaBtnModal_${btn.id}`)?.checked || false
+    }));
+
+    data.hero = {
+        ...data.hero,
+        badge: document.getElementById('heroBadge').value,
+        titleTop: document.getElementById('heroTitleTop').value,
+        titleBottom: document.getElementById('heroTitleBottom').value,
+        subtitleTag: document.getElementById('heroSubtitleTag').value,
+        subtitle: document.getElementById('heroSubtitle').value,
+        showreelVideo: document.getElementById('heroShowreelVideo').value,
+        showreelPoster: document.getElementById('heroShowreelPoster').value,
+        ctaButtons: ctaButtons,
+        statsEdited: document.getElementById('heroStatsEdited').value,
+        statsClients: document.getElementById('heroStatsClients').value,
+        statsDelivery: document.getElementById('heroStatsDelivery').value
+    };
+
+    if (saveSiteData(data)) {
+        showToast('Hero section updated successfully!', 'success');
+    }
+}
+
+// Save About
+function saveAboutSection() {
+    const data = getSiteData();
+    const features = [];
+
+    for (let i = 0; i < 4; i++) {
+        features.push({
+            title: document.getElementById(`featTitle${i}`)?.value || '',
+            icon: document.getElementById(`featIcon${i}`)?.value || '',
+            desc: document.getElementById(`featDesc${i}`)?.value || ''
+        });
+    }
+
+    data.about = {
+        ...data.about,
+        tagBadge: document.getElementById('aboutTagBadge').value,
+        expYears: document.getElementById('aboutExpYears').value,
+        titleTop: document.getElementById('aboutTitleTop').value,
+        titleGradient: document.getElementById('aboutTitleGradient').value,
+        bio: document.getElementById('aboutBio').value,
+        btnBehanceText: document.getElementById('aboutBtnBehanceText')?.value || 'Visit Behance Profile',
+        btnBehanceUrl: document.getElementById('aboutBtnBehanceUrl')?.value || 'https://www.behance.net/mahinalibiswas',
+        btnContactText: document.getElementById('aboutBtnContactText')?.value || 'Contact Direct',
+        btnContactLink: document.getElementById('aboutBtnContactLink')?.value || '#contact',
+        features: features
+    };
+
+    if (saveSiteData(data)) {
+        showToast('About Me section updated successfully!', 'success');
+    }
+}
+
+// Save Contact
+function saveContactSection() {
+    const data = getSiteData();
+    data.contact = {
+        ...data.contact,
+        email: document.getElementById('contactEmail').value,
+        whatsapp: document.getElementById('contactWhatsApp').value,
+        location: document.getElementById('contactLocation').value,
+        behanceUrl: document.getElementById('contactBehance').value,
+        youtubeUrl: document.getElementById('contactYoutube').value,
+        facebookUrl: document.getElementById('contactFacebook').value
+    };
+
+    if (saveSiteData(data)) {
+        showToast('Contact information updated successfully!', 'success');
+    }
+}
+
+/* --- 5. Projects CRUD Operations --- */
+function renderAdminProjectsList(projects) {
+    const listContainer = document.getElementById('adminProjectsList');
+    const countBadge = document.getElementById('tabProjectsCount');
+    if (countBadge) countBadge.textContent = projects.length;
+
+    if (!listContainer) return;
+
+    listContainer.innerHTML = projects.map(proj => `
+        <div class="admin-project-item">
+            <img src="${proj.image}" alt="${proj.title}" class="admin-project-thumb">
+            <div class="admin-project-info">
+                <h4>${proj.title}</h4>
+                <span>${proj.categoryBadge || 'Video Project'}</span>
+            </div>
+            <div class="admin-project-actions">
+                <button class="action-btn edit-btn" onclick="openEditProjectModal('${proj.id}')" title="Edit Project">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="action-btn delete-btn" onclick="deleteProject('${proj.id}')" title="Delete Project">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openAddProjectModal() {
+    document.getElementById('projectModalTitle').textContent = 'Add New Video Project';
+    document.getElementById('projectEditForm').reset();
+    document.getElementById('editProjectId').value = '';
+    document.getElementById('projectEditModal').classList.add('active');
+}
+
+function openEditProjectModal(projectId) {
+    const data = getSiteData();
+    const proj = (data.projects || []).find(p => p.id === projectId);
+
+    if (proj) {
+        document.getElementById('projectModalTitle').textContent = 'Edit Video Project';
+        document.getElementById('editProjectId').value = proj.id;
+        document.getElementById('editProjTitle').value = proj.title || '';
+        document.getElementById('editProjCategoryBadge').value = proj.categoryBadge || '';
+        document.getElementById('editProjCategory').value = proj.category || '';
+        document.getElementById('editProjImage').value = proj.image || '';
+        document.getElementById('editProjVideo').value = proj.video || '';
+        document.getElementById('editProjYoutubeId').value = proj.youtubeId || '';
+        document.getElementById('editProjDuration').value = proj.duration || '';
+        document.getElementById('editProjClient').value = proj.client || '';
+        document.getElementById('editProjDate').value = proj.date || '';
+        document.getElementById('editProjTools').value = (proj.tools || []).join(', ');
+        document.getElementById('editProjDesc').value = proj.desc || '';
+
+        if (proj.image) {
+            const previewImg = document.getElementById('editProjImagePreview');
+            const previewWrap = document.getElementById('editProjImagePreviewWrap');
+            if (previewImg) previewImg.src = proj.image;
+            if (previewWrap) previewWrap.style.display = 'flex';
+        }
+
+        document.getElementById('projectEditModal').classList.add('active');
+    }
+}
+
+function closeProjectEditModal() {
+    document.getElementById('projectEditModal').classList.remove('active');
+}
+
+document.getElementById('projectEditForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = getSiteData();
+    const projectId = document.getElementById('editProjectId').value;
+    const toolsArr = document.getElementById('editProjTools').value.split(',').map(t => t.trim()).filter(Boolean);
+
+    const projectObj = {
+        id: projectId || 'project-' + Date.now(),
+        title: document.getElementById('editProjTitle').value,
+        categoryBadge: document.getElementById('editProjCategoryBadge').value,
+        category: document.getElementById('editProjCategory').value,
+        image: document.getElementById('editProjImage').value,
+        video: document.getElementById('editProjVideo').value,
+        youtubeId: document.getElementById('editProjYoutubeId').value,
+        youtubeUrl: document.getElementById('editProjYoutubeId').value ? `https://www.youtube.com/watch?v=${document.getElementById('editProjYoutubeId').value}` : '',
+        duration: document.getElementById('editProjDuration').value || '03:00',
+        client: document.getElementById('editProjClient').value || 'Client',
+        date: document.getElementById('editProjDate').value || '2026',
+        tools: toolsArr.length > 0 ? toolsArr : ['Adobe Premiere Pro', 'After Effects'],
+        desc: document.getElementById('editProjDesc').value
+    };
+
+    if (projectId) {
+        // Edit Existing
+        const idx = data.projects.findIndex(p => p.id === projectId);
+        if (idx !== -1) data.projects[idx] = projectObj;
+    } else {
+        // Add New
+        data.projects.unshift(projectObj);
+    }
+
+    if (saveSiteData(data)) {
+        closeProjectEditModal();
+        renderAdminProjectsList(data.projects);
+        showToast(projectId ? 'Project updated successfully!' : 'New project added successfully!', 'success');
+    }
+});
+
+function deleteProject(projectId) {
+    if (confirm('Are you sure you want to delete this video project?')) {
+        const data = getSiteData();
+        data.projects = (data.projects || []).filter(p => p.id !== projectId);
+
+        if (saveSiteData(data)) {
+            renderAdminProjectsList(data.projects);
+            showToast('Project deleted', 'info');
+        }
+    }
+}
+
+/* --- 6. Services & Software Form Card Lists --- */
+function renderAdminServicesList(services) {
+    const listContainer = document.getElementById('adminServicesList');
+    if (!listContainer) return;
+
+    listContainer.innerHTML = services.map((serv, index) => `
+        <div class="admin-card-row">
+            <h4>Service Card #${index + 1}: ${serv.title}</h4>
+            <div class="admin-form-grid">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="servTitle${index}" value="${serv.title || ''}">
+                </div>
+                <div class="form-group">
+                    <label>FontAwesome Icon Class</label>
+                    <input type="text" id="servIcon${index}" value="${serv.icon || ''}">
+                </div>
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <input type="text" id="servDesc${index}" value="${serv.desc || ''}">
+                </div>
+                <div class="form-group full-width">
+                    <label>Checklist Points (Comma Separated)</label>
+                    <input type="text" id="servCheck${index}" value="${(serv.checkpoints || []).join(', ')}">
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function saveServicesSection() {
+    const data = getSiteData();
+    if (data.services && Array.isArray(data.services)) {
+        data.services.forEach((serv, i) => {
+            if (document.getElementById(`servTitle${i}`)) serv.title = document.getElementById(`servTitle${i}`).value;
+            if (document.getElementById(`servIcon${i}`)) serv.icon = document.getElementById(`servIcon${i}`).value;
+            if (document.getElementById(`servDesc${i}`)) serv.desc = document.getElementById(`servDesc${i}`).value;
+            if (document.getElementById(`servCheck${i}`)) {
+                serv.checkpoints = document.getElementById(`servCheck${i}`).value.split(',').map(c => c.trim()).filter(Boolean);
+            }
+        });
+
+        if (saveSiteData(data)) {
+            showToast('Services updated successfully!', 'success');
+        }
+    }
+}
+
+function renderAdminSoftwareList(software) {
+    const listContainer = document.getElementById('adminSoftwareList');
+    if (!listContainer) return;
+
+    listContainer.innerHTML = software.map((soft, index) => `
+        <div class="admin-card-row">
+            <h4>Software #${index + 1}: ${soft.title}</h4>
+            <div class="admin-form-grid">
+                <div class="form-group">
+                    <label>Software Name</label>
+                    <input type="text" id="softTitle${index}" value="${soft.title || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Subtitle / Specialty</label>
+                    <input type="text" id="softSub${index}" value="${soft.subtitle || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Icon Image File / URL</label>
+                    <input type="text" id="softIcon${index}" value="${soft.icon || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Skill Level % (1-100)</label>
+                    <input type="number" id="softLevel${index}" value="${soft.level || 90}" min="1" max="100">
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function saveSoftwareSection() {
+    const data = getSiteData();
+    if (data.software && Array.isArray(data.software)) {
+        data.software.forEach((soft, i) => {
+            if (document.getElementById(`softTitle${i}`)) soft.title = document.getElementById(`softTitle${i}`).value;
+            if (document.getElementById(`softSub${i}`)) soft.subtitle = document.getElementById(`softSub${i}`).value;
+            if (document.getElementById(`softIcon${i}`)) soft.icon = document.getElementById(`softIcon${i}`).value;
+            if (document.getElementById(`softLevel${i}`)) soft.level = parseInt(document.getElementById(`softLevel${i}`).value) || 90;
+        });
+
+        if (saveSiteData(data)) {
+            showToast('Software toolkit updated successfully!', 'success');
+        }
+    }
+}
+
+/* --- 7. Backup & Security Handlers --- */
+
+// Change Password
+document.getElementById('changePasswordForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newPass = document.getElementById('newAdminPass').value;
+    if (setAdminPassword(newPass)) {
+        document.getElementById('newAdminPass').value = '';
+        showToast('Admin password updated successfully!', 'success');
+    } else {
+        showToast('Password must be at least 4 characters!', 'error');
+    }
+});
+
+// Export Backup JSON
+function exportDataBackup() {
+    const data = getSiteData();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `mahin_portfolio_backup_${Date.now()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('Backup JSON file downloaded!', 'success');
+}
+
+// Import Backup JSON
+function importDataBackup(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const imported = JSON.parse(e.target.result);
+            if (imported && typeof imported === 'object') {
+                saveSiteData(imported);
+                loadAllAdminData();
+                showToast('Website data restored successfully from backup!', 'success');
+            } else {
+                showToast('Invalid backup file format!', 'error');
+            }
+        } catch (err) {
+            showToast('Error parsing backup JSON file!', 'error');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Reset Defaults
+function resetToDefaultsConfirm() {
+    if (confirm('Are you sure you want to reset all site content back to original defaults?')) {
+        resetSiteDataToDefault();
+        loadAllAdminData();
+        showToast('Site data reset to factory defaults!', 'info');
+    }
+}
+
+/* --- Toast Notifications --- */
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i>
+        <span>${message}</span>
+    `;
+
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+}

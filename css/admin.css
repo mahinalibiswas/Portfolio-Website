@@ -1,0 +1,487 @@
+/* ==========================================================================
+   ADMIN CMS DASHBOARD STYLES (MATCHES PORTFOLIO DARK GLASSMORPHIC AESTHETIC)
+   ========================================================================== */
+
+.admin-body {
+    background: var(--bg-dark);
+    color: var(--text-light);
+    font-family: var(--font-body);
+    min-height: 100vh;
+}
+
+/* --- Login Authentication Screen Overlay --- */
+.admin-auth-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(2, 8, 23, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.admin-auth-card {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--border-glow);
+    border-radius: var(--radius-lg);
+    padding: 3rem 2.5rem;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-cyan);
+}
+
+.auth-icon-box {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(163, 230, 53, 0.15);
+    border: 2px solid var(--accent-neon);
+    color: var(--accent-neon);
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem auto;
+    box-shadow: 0 0 30px rgba(163, 230, 53, 0.4);
+}
+
+.admin-auth-card h2 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.admin-auth-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.password-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrap input {
+    padding-right: 3rem;
+}
+
+.toggle-pass-btn {
+    position: absolute;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.toggle-pass-btn:hover {
+    color: var(--accent-neon);
+}
+
+.auth-error-msg {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    min-height: 1.2rem;
+}
+
+/* --- Admin Header Bar --- */
+.admin-header {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.admin-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-brand-name {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.admin-brand-tag {
+    font-size: 0.68rem;
+    color: var(--accent-neon);
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+.admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+}
+
+/* --- Admin Dashboard Layout --- */
+.admin-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 75px);
+}
+
+/* --- Sidebar Tabs --- */
+.admin-sidebar {
+    background: rgba(15, 23, 42, 0.5);
+    border-right: 1px solid var(--border-color);
+    padding: 2rem 1.2rem;
+}
+
+.admin-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.admin-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.2rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    text-align: left;
+}
+
+.admin-tab-btn i {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    transition: var(--transition-fast);
+    width: 20px;
+}
+
+.admin-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: #ffffff;
+}
+
+.admin-tab-btn.active {
+    background: rgba(163, 230, 53, 0.12);
+    border-color: rgba(163, 230, 53, 0.4);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.admin-tab-btn.active i {
+    color: var(--accent-neon);
+}
+
+/* --- Content Area --- */
+.admin-main {
+    padding: 2.5rem;
+    background: var(--bg-dark);
+}
+
+.admin-tab-content {
+    display: none;
+}
+
+.admin-tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.panel-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.panel-header p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin: 0;
+}
+
+/* --- Form Grids --- */
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.admin-form-grid .full-width {
+    grid-column: span 2;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--accent-neon);
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.02em;
+    font-family: var(--font-body);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.85rem 1.2rem;
+    background: rgba(2, 8, 23, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    transition: var(--transition-fast);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-neon);
+    box-shadow: 0 0 15px rgba(163, 230, 53, 0.2);
+}
+
+.form-section-title {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+.form-section-title h4 {
+    font-size: 1.1rem;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+/* --- Project List Admin Cards --- */
+.admin-projects-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.admin-project-item {
+    background: rgba(2, 8, 23, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.2rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    transition: var(--transition-fast);
+}
+
+.admin-project-item:hover {
+    border-color: var(--accent-neon);
+}
+
+.admin-project-thumb {
+    width: 110px;
+    height: 75px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.admin-project-info {
+    flex-grow: 1;
+}
+
+.admin-project-info h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.admin-project-info span {
+    font-size: 0.78rem;
+    color: var(--accent-neon);
+    background: rgba(163, 230, 53, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+}
+
+.admin-project-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.action-btn.edit-btn:hover {
+    background: var(--accent-neon);
+    color: #020817;
+    border-color: var(--accent-neon);
+}
+
+.action-btn.delete-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+}
+
+/* --- Services & Software Admin Cards --- */
+.admin-services-list,
+.admin-software-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.admin-card-row {
+    background: rgba(2, 8, 23, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+}
+
+.admin-card-row h4 {
+    color: var(--accent-neon);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* --- Settings & Security Grid --- */
+.admin-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.settings-box {
+    background: rgba(2, 8, 23, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.8rem;
+}
+
+.settings-box h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.settings-box p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+.danger-box {
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.danger-box h4 {
+    color: #ef4444;
+}
+
+.danger-btn {
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+.danger-btn:hover {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+/* --- Modal Card --- */
+.admin-project-modal-card {
+    max-width: 700px;
+    width: 90vw;
+    padding: 2.5rem;
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid var(--border-glow);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
+}
+
+@media (max-width: 900px) {
+    .admin-container {
+        grid-template-columns: 1fr;
+    }
+    .admin-form-grid,
+    .admin-projects-list,
+    .admin-settings-grid {
+        grid-template-columns: 1fr;
+    }
+    .admin-form-grid .full-width {
+        grid-column: span 1;
+    }
+}
