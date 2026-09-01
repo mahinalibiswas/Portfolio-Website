@@ -41,6 +41,11 @@
                     <span>Login to Dashboard</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
+                <div style="margin-top: 1.2rem; text-align: center;">
+                    <button type="button" onclick="openForgotPassModal()" style="background: none; border: none; color: var(--text-dim); font-size: 0.82rem; cursor: pointer; transition: color 0.2s;">
+                        <i class="fa-solid fa-key" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Forgot Password? Reset via Secret Key
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -522,6 +527,29 @@
                     <button type="submit" class="btn btn-primary">Save Project</button>
                 </div>
             </form>
+    <!-- Forgot Password Emergency Reset Modal -->
+    <div class="modal-backdrop" id="forgotPassModal">
+        <div class="modal-content admin-modal-box">
+            <div class="modal-header">
+                <h3 style="color: #ffffff; margin: 0; font-size: 1.1rem;"><i class="fa-solid fa-key" style="color: var(--accent-neon); margin-right: 0.5rem;"></i> Emergency Password Reset</h3>
+                <button type="button" class="modal-close" onclick="closeForgotPassModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem 0 0 0;">
+                <p style="color: var(--text-dim); font-size: 0.88rem; margin-bottom: 1.2rem; line-height: 1.5;">
+                    Enter your <strong>Emergency Reset Key</strong> (<code>mahin-reset-2026</code> or <code>mahinalibiswas</code>) to reset your admin password back to default (<code>mahin2026</code>).
+                </p>
+                <div class="form-group">
+                    <label style="color: var(--accent-neon); font-size: 0.82rem;">Master Emergency Reset Key</label>
+                    <input type="text" id="masterResetKeyInput" placeholder="e.g. mahin-reset-2026 or mahinalibiswas">
+                </div>
+                <div id="resetErrorMsg" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-hero-secondary" onclick="closeForgotPassModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="executePasswordReset()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Password
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

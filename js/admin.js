@@ -61,6 +61,38 @@ function initAuthGate() {
     });
 }
 
+/* --- Forgot Password Emergency Reset Handlers --- */
+function openForgotPassModal() {
+    const modal = document.getElementById('forgotPassModal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeForgotPassModal() {
+    const modal = document.getElementById('forgotPassModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function executePasswordReset() {
+    const keyInput = document.getElementById('masterResetKeyInput')?.value.trim();
+    const errorEl = document.getElementById('resetErrorMsg');
+    
+    if (keyInput === 'mahin-reset-2026' || keyInput === 'mahinalibiswas' || keyInput === 'mahin2026') {
+        if (typeof setAdminPassword === 'function') {
+            setAdminPassword('mahin2026');
+        }
+        if (errorEl) errorEl.style.display = 'none';
+        closeForgotPassModal();
+        showToast('Password reset to default (mahin2026) successfully!', 'success');
+        const passInput = document.getElementById('adminPasswordInput');
+        if (passInput) passInput.value = 'mahin2026';
+    } else {
+        if (errorEl) {
+            errorEl.textContent = 'Invalid Recovery Key! Use: mahin-reset-2026 or mahinalibiswas';
+            errorEl.style.display = 'block';
+        }
+    }
+}
+
 /* --- 2. Sidebar Tab Navigation --- */
 function initTabNavigation() {
     const tabBtns = document.querySelectorAll('.admin-tab-btn');
