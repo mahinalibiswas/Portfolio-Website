@@ -55,6 +55,13 @@ function initAuthGate() {
         }
     });
 
+    const forgotPassBtn = document.getElementById('forgotPassBtn');
+    forgotPassBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openForgotPassModal();
+    });
+
     logoutBtn?.addEventListener('click', () => {
         sessionStorage.removeItem('mahin_admin_auth');
         window.location.reload();
@@ -178,6 +185,14 @@ function saveNewAdminPassword() {
         window.location.reload();
     }, 800);
 }
+
+// Global window assignments for inline onclick handlers
+window.openForgotPassModal = openForgotPassModal;
+window.closeForgotPassModal = closeForgotPassModal;
+window.sendEmailResetOtp = sendEmailResetOtp;
+window.togglePassVisibility = togglePassVisibility;
+window.verifyResetSecurityKey = verifyResetSecurityKey;
+window.saveNewAdminPassword = saveNewAdminPassword;
 
 /* --- 2. Sidebar Tab Navigation --- */
 function initTabNavigation() {
