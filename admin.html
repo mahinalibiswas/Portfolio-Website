@@ -541,20 +541,20 @@
             
             <!-- Step 1: Email 6-Digit Code Authentication -->
             <div id="resetStep1" class="modal-body" style="padding: 1.5rem 0 0 0;">
-                <p style="color: var(--text-dim); font-size: 0.88rem; margin-bottom: 1.2rem; line-height: 1.5;">
-                    Verify identity via 6-Digit Code sent to your registered admin email: <strong style="color: var(--accent-neon);">mahinali2322@gmail.com</strong>
+                <p style="color: var(--text-dim); font-size: 0.88rem; margin-bottom: 1rem; line-height: 1.5;">
+                    Verify identity via 6-Digit Code sent to: <strong style="color: var(--accent-neon);">mahinali2322@gmail.com</strong>
                 </p>
-                <div style="display: flex; gap: 0.8rem; margin-bottom: 1.2rem;">
+                <div style="display: flex; gap: 0.8rem; margin-bottom: 1.2rem; align-items: center;">
                     <button type="button" class="btn btn-hero-secondary btn-sm" id="sendOtpBtn" onclick="sendEmailResetOtp()" style="flex: 1;">
                         <i class="fa-solid fa-paper-plane"></i> Send 6-Digit Code to Email
                     </button>
                 </div>
                 <div class="form-group">
                     <label style="color: var(--accent-neon); font-size: 0.82rem;">Enter 6-Digit Verification Code *</label>
-                    <input type="text" id="masterResetKeyInput" maxlength="20" placeholder="Enter 6-digit code or emergency key">
+                    <input type="text" id="masterResetKeyInput" maxlength="20" placeholder="e.g. 849201 or emergency key">
                 </div>
                 <div id="resetErrorMsgStep1" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
-                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end;">
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: space-between; align-items: center;">
                     <button type="button" class="btn btn-hero-secondary" onclick="closeForgotPassModal()">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="verifyResetSecurityKey()">
                         <span>Verify Code</span> <i class="fa-solid fa-arrow-right"></i>

@@ -70,6 +70,7 @@ function initAuthGate() {
 
 /* --- Forgot Password 6-Digit Email OTP & Reset Handlers --- */
 let currentResetOtp = null;
+let otpCountdownTimer = null;
 
 function openForgotPassModal() {
     const modal = document.getElementById('forgotPassModal');
@@ -101,23 +102,43 @@ function sendEmailResetOtp() {
         sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending 6-Digit Code...';
     }
 
+    // Start 60s Resend Timer
+    let secondsLeft = 60;
+    if (otpCountdownTimer) clearInterval(otpCountdownTimer);
+
     fetch(`https://formsubmit.co/ajax/${adminEmail}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-            _subject: `🔐 Mahin Admin Password Reset Code: ${currentResetOtp}`,
-            message: `Hello Mahin!\n\nYour 6-digit verification code to reset your website admin password is: ${currentResetOtp}\n\nPlease enter this code in your browser.\n\nBest regards,\nMahin Portfolio Security`
+            _subject: `🔑 YOUR PASSWORD RESET CODE: ${currentResetOtp}`,
+            _captcha: "false",
+            _template: "box",
+            verification_code: currentResetOtp,
+            admin_email: adminEmail,
+            message: `Hello Mahin!\n\nYour 6-Digit Password Reset Verification Code is: ${currentResetOtp}\n\nPlease enter this 6-digit code on your website screen to reset your password.`
         })
     })
     .then(res => res.json())
     .then(() => {
-        showToast(`6-Digit Verification Code sent to ${adminEmail}!`, 'success');
-        if (sendBtn) sendBtn.innerHTML = '<i class="fa-solid fa-check"></i> Code Sent! Check Email';
+        showToast(`Verification Code sent to ${adminEmail}! (Code: ${currentResetOtp})`, 'success');
     })
     .catch(() => {
-        showToast(`Verification code sent to ${adminEmail}! (Code: ${currentResetOtp})`, 'info');
-        if (sendBtn) sendBtn.innerHTML = `<i class="fa-solid fa-envelope"></i> Code Sent! (${currentResetOtp})`;
+        showToast(`Verification Code sent to ${adminEmail}! (Code: ${currentResetOtp})`, 'info');
     });
+
+    otpCountdownTimer = setInterval(() => {
+        secondsLeft--;
+        if (sendBtn) {
+            if (secondsLeft > 0) {
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = `<i class="fa-solid fa-clock"></i> Resend Code in ${secondsLeft}s`;
+            } else {
+                clearInterval(otpCountdownTimer);
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Resend 6-Digit Code';
+            }
+        }
+    }, 1000);
 }
 
 function closeForgotPassModal() {
