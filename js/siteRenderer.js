@@ -5,7 +5,15 @@
 
 function extractYoutubeId(url) {
     if (!url) return null;
-    const str = url.trim();
+    let str = url.trim();
+
+    if (str.includes('<iframe')) {
+        const srcMatch = str.match(/src=["']([^"']+)["']/);
+        if (srcMatch && srcMatch[1]) {
+            str = srcMatch[1];
+        }
+    }
+
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = str.match(regExp);
     if (match && match[2] && match[2].length === 11) {

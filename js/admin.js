@@ -767,21 +767,22 @@ function saveHeroSection() {
 
     data.hero = {
         ...data.hero,
-        badge: document.getElementById('heroBadge').value,
-        titleTop: document.getElementById('heroTitleTop').value,
-        titleBottom: document.getElementById('heroTitleBottom').value,
-        subtitleTag: document.getElementById('heroSubtitleTag').value,
-        subtitle: document.getElementById('heroSubtitle').value,
-        showreelVideo: document.getElementById('heroShowreelVideo').value,
-        showreelPoster: document.getElementById('heroShowreelPoster').value,
+        badge: document.getElementById('heroBadge')?.value || '',
+        titleTop: document.getElementById('heroTitleTop')?.value || '',
+        titleBottom: document.getElementById('heroTitleBottom')?.value || '',
+        subtitleTag: document.getElementById('heroSubtitleTag')?.value || '',
+        subtitle: document.getElementById('heroSubtitle')?.value || '',
+        showreelVideo: document.getElementById('heroShowreelVideo')?.value || '',
+        showreelPoster: document.getElementById('heroShowreelPoster')?.value || '',
         ctaButtons: ctaButtons,
-        statsEdited: document.getElementById('heroStatsEdited').value,
-        statsClients: document.getElementById('heroStatsClients').value,
-        statsDelivery: document.getElementById('heroStatsDelivery').value
+        statsEdited: document.getElementById('heroStatsEdited')?.value || '100+',
+        statsClients: document.getElementById('heroStatsClients')?.value || '50+',
+        statsDelivery: document.getElementById('heroStatsDelivery')?.value || '100%'
     };
 
     if (saveSiteData(data)) {
-        showToast('Hero section updated successfully!', 'success');
+        if (typeof renderSiteData === 'function') renderSiteData();
+        showToast('Hero Section & Video updated live across all devices!', 'success');
     }
 }
 
