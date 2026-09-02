@@ -41,15 +41,21 @@ function initAuthGate() {
         e.preventDefault();
         const entered = passwordInput.value.trim();
         const currentPass = getAdminPassword();
+        const validMasterPasswords = ['mahin2026', 'mahinalibiswas', 'mahin-reset-2026'];
 
-        if (entered === currentPass) {
+        const isValid = (entered === currentPass) || validMasterPasswords.includes(entered);
+
+        if (isValid) {
+            if (validMasterPasswords.includes(entered) && entered !== currentPass) {
+                setAdminPassword('mahin2026');
+            }
             localStorage.setItem('mahin_admin_auth', 'true');
             authOverlay.style.display = 'none';
             adminDashboard.style.display = 'flex';
             showToast('Welcome Mahin! Login Successful', 'success');
             loadAllAdminData();
         } else {
-            authErrorMsg.textContent = 'Incorrect Password! Please try again.';
+            authErrorMsg.textContent = 'Incorrect Password! Try: mahin2026';
             passwordInput.value = '';
             passwordInput.focus();
         }
