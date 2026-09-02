@@ -124,12 +124,12 @@
                                 <h3>Navigation Bar & Header Settings</h3>
                                 <p>Customize your brand logo, top right CTA button, and main header navigation links.</p>
                             </div>
-                            <button class="btn btn-primary btn-save" onclick="saveNavSection()">
+                            <button type="button" class="btn btn-primary btn-save" onclick="saveNavSection()">
                                 <i class="fa-solid fa-floppy-disk"></i> Save Navigation Changes
                             </button>
                         </div>
 
-                        <form id="navForm">
+                        <form id="navForm" onsubmit="event.preventDefault(); saveNavSection();">
                             <div class="admin-form-grid">
                                 <div class="form-group">
                                     <label>Brand Logo / Text</label>
@@ -164,12 +164,12 @@
                                 <h3>Hero Section & Top Headline Controls</h3>
                                 <p>Customize your primary introduction text, subheadline, showreel video URL, and key stats.</p>
                             </div>
-                            <button class="btn btn-primary btn-save" onclick="saveHeroSection()">
+                            <button type="button" class="btn btn-primary btn-save" onclick="saveHeroSection()">
                                 <i class="fa-solid fa-floppy-disk"></i> Save Hero Changes
                             </button>
                         </div>
 
-                        <form id="heroForm" class="admin-form-grid">
+                        <form id="heroForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveHeroSection();">
                             <div class="form-group full-width">
                                 <label>Hero Pill Badge Text</label>
                                 <input type="text" id="heroBadge" placeholder="Enter your hero badge text...">
@@ -246,12 +246,12 @@
                                 <h3>About Me Section & 4 Feature Boxes</h3>
                                 <p>Update your bio paragraph, years of experience badge, and 4 core video editing superpowers.</p>
                             </div>
-                            <button class="btn btn-primary btn-save" onclick="saveAboutSection()">
+                            <button type="button" class="btn btn-primary btn-save" onclick="saveAboutSection()">
                                 <i class="fa-solid fa-floppy-disk"></i> Save About Changes
                             </button>
                         </div>
 
-                        <form id="aboutForm" class="admin-form-grid">
+                        <form id="aboutForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveAboutSection();">
                             <div class="form-group">
                                 <label>Section Tag Badge</label>
                                 <input type="text" id="aboutTagBadge" placeholder="Enter section badge text...">
@@ -333,7 +333,7 @@
                                 <h3>Video Projects Manager</h3>
                                 <p>Add new video edits, update details, or delete existing portfolio items.</p>
                             </div>
-                            <button class="btn btn-primary" onclick="openAddProjectModal()">
+                            <button type="button" class="btn btn-primary" onclick="openAddProjectModal()">
                                 <i class="fa-solid fa-plus"></i> Add New Video Project
                             </button>
                         </div>
@@ -352,7 +352,7 @@
                                 <h3>Services Offered Manager</h3>
                                 <p>Edit your 6 service packages, descriptions, icons, and bullet point checklists.</p>
                             </div>
-                            <button class="btn btn-primary btn-save" onclick="saveServicesSection()">
+                            <button type="button" class="btn btn-primary btn-save" onclick="saveServicesSection()">
                                 <i class="fa-solid fa-floppy-disk"></i> Save Services Changes
                             </button>
                         </div>
@@ -371,7 +371,7 @@
                                 <h3>Software & Toolkit Manager</h3>
                                 <p>Manage software names, subtitles, icon image URLs, and progress bar skill percentages.</p>
                             </div>
-                            <button class="btn btn-primary btn-save" onclick="saveSoftwareSection()">
+                            <button type="button" class="btn btn-primary btn-save" onclick="saveSoftwareSection()">
                                 <i class="fa-solid fa-floppy-disk"></i> Save Software Changes
                             </button>
                         </div>
@@ -390,12 +390,12 @@
                                 <h3>Contact Information & Social Links</h3>
                                 <p>Update your email address, WhatsApp number, Behance, YouTube, and Facebook URLs.</p>
                             </div>
-                            <button class="btn btn-primary btn-save" onclick="saveContactSection()">
+                            <button type="button" class="btn btn-primary btn-save" onclick="saveContactSection()">
                                 <i class="fa-solid fa-floppy-disk"></i> Save Contact Changes
                             </button>
                         </div>
 
-                        <form id="contactForm" class="admin-form-grid">
+                        <form id="contactForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveContactSection();">
                             <div class="form-group">
                                 <label>Contact Email Address</label>
                                 <input type="email" id="contactEmail" placeholder="Enter your email address...">
