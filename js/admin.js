@@ -463,8 +463,8 @@ function updateNavLinkProp(index, prop, val) {
 function addNewNavLinkItem() {
     tempNavLinksList.push({
         id: Date.now(),
-        label: "New Link",
-        url: "#"
+        label: "",
+        url: ""
     });
     renderAdminNavLinks(tempNavLinksList);
 }
@@ -576,15 +576,16 @@ function addNewHeroCtaButton() {
     
     data.hero.ctaButtons.push({
         id: 'btn-' + Date.now(),
-        text: 'New CTA Button',
-        link: '#contact',
+        text: '',
+        link: '',
         icon: 'fa-solid fa-arrow-right',
+        iconImage: '',
         isModal: false
     });
 
     if (saveSiteData(data)) {
         renderAdminCtaButtons(data.hero.ctaButtons);
-        showToast('New CTA Button added! Edit text & upload icon, then click Save Hero Changes.', 'success');
+        showToast('New CTA Button added! Fill in details & click Save Hero Changes.', 'success');
     }
 }
 
@@ -673,15 +674,15 @@ function addNewAboutCtaButton() {
     
     data.about.ctaButtons.push({
         id: 'about-btn-' + Date.now(),
-        text: 'New Social Link',
-        link: 'https://',
+        text: '',
+        link: '',
         icon: 'fa-solid fa-link',
         iconImage: ''
     });
 
     if (saveSiteData(data)) {
         renderAdminAboutCtaButtons(data.about.ctaButtons);
-        showToast('New About CTA Button added! Edit details & click Save About Changes.', 'success');
+        showToast('New About CTA Button added! Fill in details & click Save About Changes.', 'success');
     }
 }
 
