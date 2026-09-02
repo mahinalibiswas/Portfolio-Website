@@ -459,7 +459,8 @@ function renderAdminNavLinks(navLinks) {
         <div style="display: flex; flex-direction: column; gap: 0.9rem;">
             ${tempNavLinksList.map((item, index) => `
                 <div class="nav-link-row-card" style="display: flex; gap: 1rem; align-items: flex-end; background: rgba(15, 23, 42, 0.65); padding: 1rem 1.2rem; border-radius: 14px; border: 1px solid rgba(163, 230, 53, 0.18); box-shadow: 0 4px 20px rgba(0,0,0,0.25); transition: all 0.25s ease;">
-                    <div style="display: flex; align-items: center; flex-shrink: 0; min-width: 90px; height: 44px;">
+                    <div style="display: flex; flex-direction: column; flex-shrink: 0; min-width: 95px;">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Link Order</label>
                         <span style="background: rgba(163, 230, 53, 0.1); color: var(--accent-neon); border: 1px solid rgba(163, 230, 53, 0.3); padding: 0 0.8rem; height: 44px; border-radius: 10px; font-weight: 700; font-size: 0.82rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; box-sizing: border-box;">
                             <i class="fa-solid fa-link" style="font-size: 0.75rem;"></i> Link #${index + 1}
                         </span>
@@ -475,7 +476,8 @@ function renderAdminNavLinks(navLinks) {
                         <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 10px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
                     </div>
 
-                    <div style="display: flex; align-items: center; flex-shrink: 0; height: 44px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0;">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem; text-align: center;">Action</label>
                         <button type="button" class="action-btn delete-btn" onclick="deleteNavLinkItem(${index})" title="Delete Link" style="border-radius: 10px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
