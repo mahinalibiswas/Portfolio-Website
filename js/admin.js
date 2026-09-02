@@ -456,23 +456,23 @@ function renderAdminNavLinks(navLinks) {
     container.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 0.9rem;">
             ${tempNavLinksList.map((item, index) => `
-                <div class="nav-link-row-card" style="display: flex; gap: 1rem; align-items: center; background: rgba(15, 23, 42, 0.65); padding: 0.9rem 1.2rem; border-radius: 12px; border: 1px solid rgba(163, 230, 53, 0.18); box-shadow: 0 4px 20px rgba(0,0,0,0.25); transition: all 0.25s ease;">
+                <div class="nav-link-row-card" style="display: flex; gap: 1rem; align-items: center; background: rgba(15, 23, 42, 0.65); padding: 0.9rem 1.2rem; border-radius: 14px; border: 1px solid rgba(163, 230, 53, 0.18); box-shadow: 0 4px 20px rgba(0,0,0,0.25); transition: all 0.25s ease;">
                     <div style="display: flex; align-items: center; flex-shrink: 0; min-width: 90px;">
-                        <span style="background: rgba(163, 230, 53, 0.1); color: var(--accent-neon); border: 1px solid rgba(163, 230, 53, 0.3); padding: 0.35rem 0.75rem; border-radius: 20px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+                        <span style="background: rgba(163, 230, 53, 0.1); color: var(--accent-neon); border: 1px solid rgba(163, 230, 53, 0.3); padding: 0 0.8rem; height: 44px; border-radius: 10px; font-weight: 700; font-size: 0.82rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; box-sizing: border-box;">
                             <i class="fa-solid fa-link" style="font-size: 0.75rem;"></i> Link #${index + 1}
                         </span>
                     </div>
 
                     <div style="flex: 1; min-width: 0;">
-                        <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
+                        <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 10px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
                     </div>
 
                     <div style="flex: 1.4; min-width: 0;">
-                        <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
+                        <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 10px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
                     </div>
 
                     <div style="display: flex; align-items: center; flex-shrink: 0;">
-                        <button type="button" class="action-btn delete-btn" onclick="deleteNavLinkItem(${index})" title="Delete Link">
+                        <button type="button" class="action-btn delete-btn" onclick="deleteNavLinkItem(${index})" title="Delete Link" style="border-radius: 10px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -653,15 +653,15 @@ function renderAdminAboutCtaButtons(ctaButtons) {
             
             <div style="display: flex; gap: 0.6rem; align-items: center; margin-bottom: 1rem;">
                 <div style="flex: 1; min-width: 0;">
-                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                 </div>
 
                 <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.4rem;">
                     <input type="file" id="aboutBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleAboutCtaIconUpload(event, '${btn.id}')">
-                    <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 8px; font-size: 0.82rem; box-sizing: border-box; white-space: nowrap;">
+                    <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; box-sizing: border-box; white-space: nowrap;">
                         <i class="fa-solid fa-upload"></i> Choose Icon
                     </button>
-                    <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.08); padding: 0 0.5rem; height: 44px; border-radius: 8px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                    <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.08); padding: 0 0.5rem; height: 44px; border-radius: 10px; border: 1px solid var(--border-glow); box-sizing: border-box;">
                         <img id="aboutIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 20px; height: 20px; object-fit: contain;">
                         <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.82rem;" onclick="removeAboutCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
                     </div>
@@ -670,7 +670,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
             </div>
 
             <div>
-                <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
             </div>
         </div>
     `).join('');
