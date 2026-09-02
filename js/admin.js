@@ -790,6 +790,40 @@ function deleteAboutCtaButton(btnId) {
 
 /* --- 5. Section Save Handlers --- */
 
+// Save Navigation
+async function saveNavSection() {
+    const saveBtn = document.querySelector('#tab-nav .btn-save');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Live Cloud...';
+    }
+
+    const data = getSiteData();
+    const navLinks = (data.navigation?.navLinks || []).map(link => ({
+        id: link.id,
+        label: document.getElementById(`navLinkLabel_${link.id}`)?.value || link.label,
+        url: document.getElementById(`navLinkUrl_${link.id}`)?.value || link.url
+    }));
+
+    data.navigation = {
+        ...data.navigation,
+        brandLogo: document.getElementById('navBrandLogo')?.value || 'MAHIN.',
+        ctaText: document.getElementById('navCtaText')?.value || 'Hire Me',
+        ctaUrl: document.getElementById('navCtaUrl')?.value || '#contact',
+        navLinks: navLinks
+    };
+
+    await saveSiteData(data);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Navigation Changes';
+    }
+
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('Navigation settings updated live across all devices!', 'success');
+}
+
 // Save Hero
 async function saveHeroSection() {
     const saveBtn = document.querySelector('#tab-hero .btn-save');
@@ -836,7 +870,13 @@ async function saveHeroSection() {
 }
 
 // Save About
-function saveAboutSection() {
+async function saveAboutSection() {
+    const saveBtn = document.querySelector('#tab-about .btn-save');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Live Cloud...';
+    }
+
     const data = getSiteData();
     const features = [];
 
@@ -848,7 +888,7 @@ function saveAboutSection() {
         });
     }
 
-    const aboutCtaButtons = (data.about.ctaButtons || []).map(btn => ({
+    const aboutCtaButtons = (data.about?.ctaButtons || []).map(btn => ({
         id: btn.id,
         text: document.getElementById(`aboutBtnText_${btn.id}`)?.value || btn.text,
         link: document.getElementById(`aboutBtnLink_${btn.id}`)?.value || btn.link,
@@ -857,36 +897,54 @@ function saveAboutSection() {
 
     data.about = {
         ...data.about,
-        tagBadge: document.getElementById('aboutTagBadge').value,
-        expYears: document.getElementById('aboutExpYears').value,
-        titleTop: document.getElementById('aboutTitleTop').value,
-        titleGradient: document.getElementById('aboutTitleGradient').value,
-        bio: document.getElementById('aboutBio').value,
+        tagBadge: document.getElementById('aboutTagBadge')?.value || '',
+        expYears: document.getElementById('aboutExpYears')?.value || '',
+        titleTop: document.getElementById('aboutTitleTop')?.value || '',
+        titleGradient: document.getElementById('aboutTitleGradient')?.value || '',
+        bio: document.getElementById('aboutBio')?.value || '',
         ctaButtons: aboutCtaButtons,
         features: features
     };
 
-    if (saveSiteData(data)) {
-        showToast('About Me section updated successfully!', 'success');
+    await saveSiteData(data);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save About Changes';
     }
+
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('About Me section updated live across all devices!', 'success');
 }
 
 // Save Contact
-function saveContactSection() {
+async function saveContactSection() {
+    const saveBtn = document.querySelector('#tab-contact .btn-save');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Live Cloud...';
+    }
+
     const data = getSiteData();
     data.contact = {
         ...data.contact,
-        email: document.getElementById('contactEmail').value,
-        whatsapp: document.getElementById('contactWhatsApp').value,
-        location: document.getElementById('contactLocation').value,
-        behanceUrl: document.getElementById('contactBehance').value,
-        youtubeUrl: document.getElementById('contactYoutube').value,
-        facebookUrl: document.getElementById('contactFacebook').value
+        email: document.getElementById('contactEmail')?.value || '',
+        whatsapp: document.getElementById('contactWhatsApp')?.value || '',
+        location: document.getElementById('contactLocation')?.value || '',
+        behanceUrl: document.getElementById('contactBehance')?.value || '',
+        youtubeUrl: document.getElementById('contactYoutube')?.value || '',
+        facebookUrl: document.getElementById('contactFacebook')?.value || ''
     };
 
-    if (saveSiteData(data)) {
-        showToast('Contact information updated successfully!', 'success');
+    await saveSiteData(data);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Contact Changes';
     }
+
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('Contact information updated live across all devices!', 'success');
 }
 
 /* --- 5. Projects CRUD Operations --- */
@@ -957,8 +1015,14 @@ function closeProjectEditModal() {
     document.getElementById('projectEditModal').classList.remove('active');
 }
 
-document.getElementById('projectEditForm')?.addEventListener('submit', (e) => {
+document.getElementById('projectEditForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const saveBtn = document.querySelector('#projectEditModal button[type="submit"]');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    }
+
     const data = getSiteData();
     const projectId = document.getElementById('editProjectId').value;
     const toolsArr = document.getElementById('editProjTools').value.split(',').map(t => t.trim()).filter(Boolean);
@@ -988,11 +1052,17 @@ document.getElementById('projectEditForm')?.addEventListener('submit', (e) => {
         data.projects.unshift(projectObj);
     }
 
-    if (saveSiteData(data)) {
-        closeProjectEditModal();
-        renderAdminProjectsList(data.projects);
-        showToast(projectId ? 'Project updated successfully!' : 'New project added successfully!', 'success');
+    await saveSiteData(data);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = 'Save Project';
     }
+
+    closeProjectEditModal();
+    renderAdminProjectsList(data.projects);
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast(projectId ? 'Project updated live across all devices!' : 'New project added live across all devices!', 'success');
 });
 
 function deleteProject(projectId) {
@@ -1000,12 +1070,12 @@ function deleteProject(projectId) {
     const proj = (data.projects || []).find(p => p.id === projectId);
     const title = proj && proj.title ? `"${proj.title}"` : 'this project';
 
-    openDeleteConfirmModal(`Are you sure you want to delete ${title}?`, () => {
+    openDeleteConfirmModal(`Are you sure you want to delete ${title}?`, async () => {
         data.projects = (data.projects || []).filter(p => p.id !== projectId);
-        if (saveSiteData(data)) {
-            renderAdminProjectsList(data.projects);
-            showToast('Project deleted', 'info');
-        }
+        await saveSiteData(data);
+        renderAdminProjectsList(data.projects);
+        if (typeof renderSiteData === 'function') renderSiteData();
+        showToast('Project deleted live across all devices!', 'info');
     });
 }
 
@@ -1039,7 +1109,13 @@ function renderAdminServicesList(services) {
     `).join('');
 }
 
-function saveServicesSection() {
+async function saveServicesSection() {
+    const saveBtn = document.querySelector('#tab-services .btn-save');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Live Cloud...';
+    }
+
     const data = getSiteData();
     if (data.services && Array.isArray(data.services)) {
         data.services.forEach((serv, i) => {
@@ -1051,10 +1127,16 @@ function saveServicesSection() {
             }
         });
 
-        if (saveSiteData(data)) {
-            showToast('Services updated successfully!', 'success');
-        }
+        await saveSiteData(data);
     }
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Services Changes';
+    }
+
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('Services updated live across all devices!', 'success');
 }
 
 function renderAdminSoftwareList(software) {
@@ -1086,7 +1168,13 @@ function renderAdminSoftwareList(software) {
     `).join('');
 }
 
-function saveSoftwareSection() {
+async function saveSoftwareSection() {
+    const saveBtn = document.querySelector('#tab-software .btn-save');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Live Cloud...';
+    }
+
     const data = getSiteData();
     if (data.software && Array.isArray(data.software)) {
         data.software.forEach((soft, i) => {
@@ -1096,10 +1184,16 @@ function saveSoftwareSection() {
             if (document.getElementById(`softLevel${i}`)) soft.level = parseInt(document.getElementById(`softLevel${i}`).value) || 90;
         });
 
-        if (saveSiteData(data)) {
-            showToast('Software toolkit updated successfully!', 'success');
-        }
+        await saveSiteData(data);
     }
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Software Changes';
+    }
+
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('Software toolkit updated live across all devices!', 'success');
 }
 
 /* --- 7. Backup & Security Handlers --- */
