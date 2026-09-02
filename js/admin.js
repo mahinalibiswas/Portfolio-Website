@@ -391,7 +391,7 @@ function renderAdminCtaButtons(ctaButtons) {
             
             <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
                 <div style="flex: 1;">
-                    <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Button Text (e.g. Watch Showreel)" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+                    <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
                 </div>
 
                 <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.8rem;">
@@ -408,7 +408,7 @@ function renderAdminCtaButtons(ctaButtons) {
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Target URL (e.g. #contact or https://...)" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+                <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
             </div>
 
             <div>
@@ -440,14 +440,12 @@ function renderAdminNavLinks(navLinks) {
     container.innerHTML = tempNavLinksList.map((item, index) => `
         <div class="cta-item-card" style="display: flex; gap: 1rem; align-items: center; background: rgba(15, 23, 42, 0.7); padding: 1.2rem; border-radius: 12px; margin-bottom: 0.8rem; border: 1px solid var(--border-glow); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
             <div style="flex: 1;">
-                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Nav Label #${index + 1}</label>
-                <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="e.g. Showreel" style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="Enter your button name" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
             </div>
             <div style="flex: 1.5;">
-                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Target URL / Section Anchor</label>
-                <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="e.g. #showreel or https://..." style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="Enter your target URL" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
             </div>
-            <div style="display: flex; align-items: flex-end; height: 100%; align-self: flex-end;">
+            <div style="display: flex; align-items: center; height: 44px;">
                 <button type="button" class="action-btn delete-btn" onclick="deleteNavLinkItem(${index})" title="Delete Link">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
@@ -622,7 +620,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
             
             <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
                 <div style="flex: 1;">
-                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Button Text (e.g. Visit Behance Profile)" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
                 </div>
 
                 <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.8rem;">
@@ -639,7 +637,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
             </div>
 
             <div>
-                <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Target URL (e.g. https://... or #contact)" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+                <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
             </div>
         </div>
     `).join('');
