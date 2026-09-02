@@ -383,6 +383,9 @@ function renderAdminCtaButtons(ctaButtons) {
                     </label>
                 </div>
             </div>
+        </div>
+    `).join('');
+}
 /* --- Navigation Bar Section CRUD Manager --- */
 let tempNavLinksList = [];
 
