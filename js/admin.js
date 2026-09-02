@@ -413,9 +413,11 @@ function renderAdminNavLinks(navLinks) {
                 <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Target URL / Section Anchor</label>
                 <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="e.g. #showreel or https://..." style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; outline: none;">
             </div>
-            <button type="button" class="btn btn-hero-secondary btn-sm danger-btn" onclick="deleteNavLinkItem(${index})" style="margin-top: 1.4rem; height: 38px;">
-                <i class="fa-solid fa-trash"></i>
-            </button>
+            <div style="display: flex; align-items: flex-end; height: 100%; align-self: flex-end;">
+                <button type="button" class="action-btn delete-btn" onclick="deleteNavLinkItem(${index})" title="Delete Link">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
         </div>
     `).join('');
 }
