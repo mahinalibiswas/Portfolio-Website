@@ -395,11 +395,10 @@ function renderAdminCtaButtons(ctaButtons) {
                 </div>
 
                 <div class="form-group">
-                    <label>Upload Custom Icon from PC (PNG / SVG)</label>
-                    <div style="display: flex; align-items: center; gap: 0.8rem;">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-top: 1.6rem;">
                         <input type="file" id="ctaBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleCtaIconUpload(event, '${btn.id}')">
                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('ctaBtnFileInput_${btn.id}').click()">
-                            <i class="fa-solid fa-upload"></i> Choose File from PC
+                            <i class="fa-solid fa-upload"></i> Choose Icon
                         </button>
                         <div id="ctaIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
                             <img id="ctaIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
@@ -409,10 +408,9 @@ function renderAdminCtaButtons(ctaButtons) {
                     <input type="hidden" id="ctaBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
                 </div>
 
-
                 <div class="form-group full-width">
-                    <label>Target Link / Section ID / Video URL</label>
-                    <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="e.g. #contact or #about or video URL">
+                    <label>Target URL</label>
+                    <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link">
                 </div>
 
                 <div class="form-group full-width">
@@ -631,11 +629,10 @@ function renderAdminAboutCtaButtons(ctaButtons) {
                 </div>
 
                 <div class="form-group">
-                    <label>Upload Custom Icon from PC (PNG / SVG)</label>
-                    <div style="display: flex; align-items: center; gap: 0.8rem;">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-top: 1.6rem;">
                         <input type="file" id="aboutBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleAboutCtaIconUpload(event, '${btn.id}')">
                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()">
-                            <i class="fa-solid fa-upload"></i> Choose Icon File
+                            <i class="fa-solid fa-upload"></i> Choose Icon
                         </button>
                         <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
                             <img id="aboutIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
@@ -646,8 +643,8 @@ function renderAdminAboutCtaButtons(ctaButtons) {
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Target URL / Link / Anchor</label>
-                    <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link (e.g. https://... or #contact)">
+                    <label>Target URL</label>
+                    <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link">
                 </div>
             </div>
         </div>
