@@ -391,7 +391,7 @@ function renderAdminCtaButtons(ctaButtons) {
             
             <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1rem;">
                 <div style="flex: 1;">
-                    <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem; padding-left: 1rem;">Button Text</label>
+                    <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem; padding-left: 1.25rem;">Button Text</label>
                     <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="e.g. Watch Showreel" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
                 </div>
 
@@ -409,7 +409,7 @@ function renderAdminCtaButtons(ctaButtons) {
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem; padding-left: 1rem;">Target URL</label>
+                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem; padding-left: 1.25rem;">Target URL</label>
                 <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
             </div>
 
@@ -624,7 +624,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
             
             <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1rem;">
                 <div style="flex: 1;">
-                    <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem; padding-left: 1rem;">Button Text</label>
+                    <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem; padding-left: 1.25rem;">Button Text</label>
                     <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="e.g. Visit Behance Profile" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
                 </div>
 
@@ -642,7 +642,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
             </div>
 
             <div>
-                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem; padding-left: 1rem;">Target URL</label>
+                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem; padding-left: 1.25rem;">Target URL</label>
                 <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
             </div>
         </div>
