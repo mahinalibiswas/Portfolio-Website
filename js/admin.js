@@ -250,6 +250,48 @@ window.togglePassVisibility = togglePassVisibility;
 window.verifyResetSecurityKey = verifyResetSecurityKey;
 window.saveNewAdminPassword = saveNewAdminPassword;
 
+/* --- Delete Confirmation Modal System --- */
+let activeDeleteCallback = null;
+
+function openDeleteConfirmModal(message, onConfirm) {
+    const modal = document.getElementById('deleteConfirmModal');
+    const msgEl = document.getElementById('deleteConfirmText');
+    const confirmBtn = document.getElementById('confirmDeleteActionBtn');
+
+    if (msgEl) msgEl.textContent = message || 'Are you sure you want to delete this item?';
+    activeDeleteCallback = onConfirm;
+
+    if (confirmBtn) {
+        confirmBtn.onclick = function() {
+            if (typeof activeDeleteCallback === 'function') {
+                activeDeleteCallback();
+            }
+            closeDeleteConfirmModal();
+        };
+    }
+
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+        modal.classList.add('active');
+    }
+}
+
+function closeDeleteConfirmModal() {
+    const modal = document.getElementById('deleteConfirmModal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
+    }
+    activeDeleteCallback = null;
+}
+
+window.openDeleteConfirmModal = openDeleteConfirmModal;
+window.closeDeleteConfirmModal = closeDeleteConfirmModal;
+
 /* --- 2. Sidebar Tab Navigation --- */
 function initTabNavigation() {
     const tabBtns = document.querySelectorAll('.admin-tab-btn');
@@ -438,8 +480,13 @@ function addNewNavLinkItem() {
 }
 
 function deleteNavLinkItem(index) {
-    tempNavLinksList.splice(index, 1);
-    renderAdminNavLinks(tempNavLinksList);
+    const item = tempNavLinksList[index];
+    const name = item && item.label ? `"${item.label}"` : 'this link';
+    openDeleteConfirmModal(`Are you sure you want to delete ${name}?`, () => {
+        tempNavLinksList.splice(index, 1);
+        renderAdminNavLinks(tempNavLinksList);
+        showToast('Link removed! Click "Save Navigation Settings" to update live site.', 'info');
+    });
 }
 
 function saveNavSection() {
@@ -552,14 +599,14 @@ function addNewHeroCtaButton() {
 }
 
 function deleteHeroCtaButton(btnId) {
-    const data = getSiteData();
-    if (confirm('Delete this CTA Button?')) {
+    openDeleteConfirmModal('Are you sure you want to delete this CTA Button?', () => {
+        const data = getSiteData();
         data.hero.ctaButtons = (data.hero.ctaButtons || []).filter(b => b.id !== btnId);
         if (saveSiteData(data)) {
             renderAdminCtaButtons(data.hero.ctaButtons);
             showToast('CTA Button deleted', 'info');
         }
-    }
+    });
 }
 
 /* --- 5. Section Save Handlers --- */
@@ -754,15 +801,17 @@ document.getElementById('projectEditForm')?.addEventListener('submit', (e) => {
 });
 
 function deleteProject(projectId) {
-    if (confirm('Are you sure you want to delete this video project?')) {
-        const data = getSiteData();
-        data.projects = (data.projects || []).filter(p => p.id !== projectId);
+    const data = getSiteData();
+    const proj = (data.projects || []).find(p => p.id === projectId);
+    const title = proj && proj.title ? `"${proj.title}"` : 'this project';
 
+    openDeleteConfirmModal(`Are you sure you want to delete ${title}?`, () => {
+        data.projects = (data.projects || []).filter(p => p.id !== projectId);
         if (saveSiteData(data)) {
             renderAdminProjectsList(data.projects);
             showToast('Project deleted', 'info');
         }
-    }
+    });
 }
 
 /* --- 6. Services & Software Form Card Lists --- */
