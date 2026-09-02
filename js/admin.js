@@ -759,7 +759,13 @@ function deleteAboutCtaButton(btnId) {
 /* --- 5. Section Save Handlers --- */
 
 // Save Hero
-function saveHeroSection() {
+async function saveHeroSection() {
+    const saveBtn = document.querySelector('#tab-hero .btn-save');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Live Cloud...';
+    }
+
     const data = getSiteData();
 
     const ctaButtons = (data.hero.ctaButtons || []).map(btn => ({
@@ -786,10 +792,15 @@ function saveHeroSection() {
         statsDelivery: document.getElementById('heroStatsDelivery')?.value || '100%'
     };
 
-    if (saveSiteData(data)) {
-        if (typeof renderSiteData === 'function') renderSiteData();
-        showToast('Hero Section & Video updated live across all devices!', 'success');
+    await saveSiteData(data);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Hero Changes';
     }
+
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('Hero Section & Video updated live across all devices!', 'success');
 }
 
 // Save About

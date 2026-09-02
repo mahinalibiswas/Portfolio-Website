@@ -345,7 +345,7 @@ const CLOUD_DB_URL = 'https://mahin-portfolio-default-rtdb.firebaseio.com/siteDa
 /**
  * Saves updated site data to localStorage & Live Firebase Database
  */
-function saveSiteData(data) {
+async function saveSiteData(data) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
@@ -354,17 +354,16 @@ function saveSiteData(data) {
 
     // Live Firebase Database Realtime Sync across all devices worldwide
     try {
-        fetch(CLOUD_DB_URL, {
+        const res = await fetch(CLOUD_DB_URL, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
-        }).then(res => {
-            if (res.ok) {
-                console.log("Firebase Database synced live across all devices!");
-            }
-        }).catch(err => {
-            console.warn("Firebase save warning:", err);
         });
+        if (res.ok) {
+            console.log("Firebase Database synced live across all devices!");
+        } else {
+            console.warn("Firebase returned status:", res.status);
+        }
     } catch (err) {
         console.warn("Firebase sync error:", err);
     }
