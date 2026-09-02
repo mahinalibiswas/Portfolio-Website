@@ -373,11 +373,12 @@ function saveSiteData(data) {
 }
 
 /**
- * Fetches latest site data from Firebase Database and updates local storage
+ * Fetches latest site data from Firebase Database and updates local storage (bypassing browser cache)
  */
 function fetchCloudSiteData(callback) {
     try {
-        fetch(CLOUD_DB_URL)
+        const cacheBusterUrl = `${CLOUD_DB_URL}?t=${Date.now()}`;
+        fetch(cacheBusterUrl, { cache: 'no-store' })
             .then(res => res.json())
             .then(cloudData => {
                 if (cloudData && typeof cloudData === 'object' && Object.keys(cloudData).length > 0 && !cloudData.error) {
