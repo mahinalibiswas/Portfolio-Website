@@ -344,10 +344,7 @@ function loadAllAdminData() {
         document.getElementById('aboutTitleTop').value = data.about.titleTop || '';
         document.getElementById('aboutTitleGradient').value = data.about.titleGradient || '';
         document.getElementById('aboutBio').value = data.about.bio || '';
-        if (document.getElementById('aboutBtnBehanceText')) document.getElementById('aboutBtnBehanceText').value = data.about.btnBehanceText || 'Visit Behance Profile';
-        if (document.getElementById('aboutBtnBehanceUrl')) document.getElementById('aboutBtnBehanceUrl').value = data.about.btnBehanceUrl || 'https://www.behance.net/mahinalibiswas';
-        if (document.getElementById('aboutBtnContactText')) document.getElementById('aboutBtnContactText').value = data.about.btnContactText || 'Contact Direct';
-        if (document.getElementById('aboutBtnContactLink')) document.getElementById('aboutBtnContactLink').value = data.about.btnContactLink || '#contact';
+        renderAdminAboutCtaButtons(data.about.ctaButtons || []);
 
         if (data.about.features && Array.isArray(data.about.features)) {
             data.about.features.forEach((feat, i) => {
@@ -609,6 +606,108 @@ function deleteHeroCtaButton(btnId) {
     });
 }
 
+/* --- Dynamic About Me CTA Buttons Manager --- */
+function renderAdminAboutCtaButtons(ctaButtons) {
+    const listContainer = document.getElementById('adminAboutCtaButtonsList');
+    if (!listContainer) return;
+
+    const list = (ctaButtons && Array.isArray(ctaButtons) && ctaButtons.length > 0) ? ctaButtons : [
+        { id: "about-btn-1", text: "Visit Behance Profile", link: "https://www.behance.net/mahinalibiswas", icon: "fa-brands fa-behance", iconImage: "" },
+        { id: "about-btn-2", text: "Contact Direct", link: "#contact", icon: "fa-solid fa-paper-plane", iconImage: "" }
+    ];
+
+    listContainer.innerHTML = list.map((btn, index) => `
+        <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
+                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}: ${btn.text}</h4>
+                <button type="button" class="action-btn delete-btn" onclick="deleteAboutCtaButton('${btn.id}')" title="Delete Button">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+            <div class="admin-form-grid">
+                <div class="form-group">
+                    <label>Button Text</label>
+                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="e.g. Visit Behance Profile or Follow Facebook">
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Custom Icon from PC (PNG / SVG)</label>
+                    <div style="display: flex; align-items: center; gap: 0.8rem;">
+                        <input type="file" id="aboutBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleAboutCtaIconUpload(event, '${btn.id}')">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()">
+                            <i class="fa-solid fa-upload"></i> Choose Icon File
+                        </button>
+                        <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            <img id="aboutIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;" onclick="removeAboutCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="aboutBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Target URL / Link / Anchor</label>
+                    <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link (e.g. https://... or #contact)">
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function handleAboutCtaIconUpload(event, btnId) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        document.getElementById(`aboutBtnIconImage_${btnId}`).value = dataUrl;
+        const previewImg = document.getElementById(`aboutIconPreview_${btnId}`);
+        const previewWrap = document.getElementById(`aboutIconPreviewWrap_${btnId}`);
+        if (previewImg) previewImg.src = dataUrl;
+        if (previewWrap) previewWrap.style.display = 'flex';
+        showToast('About button icon uploaded from PC!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeAboutCtaIconImage(btnId) {
+    document.getElementById(`aboutBtnIconImage_${btnId}`).value = '';
+    const previewWrap = document.getElementById(`aboutIconPreviewWrap_${btnId}`);
+    if (previewWrap) previewWrap.style.display = 'none';
+    showToast('Uploaded icon image removed', 'info');
+}
+
+function addNewAboutCtaButton() {
+    const data = getSiteData();
+    if (!data.about.ctaButtons) data.about.ctaButtons = [];
+    
+    data.about.ctaButtons.push({
+        id: 'about-btn-' + Date.now(),
+        text: 'New Social Link',
+        link: 'https://',
+        icon: 'fa-solid fa-link',
+        iconImage: ''
+    });
+
+    if (saveSiteData(data)) {
+        renderAdminAboutCtaButtons(data.about.ctaButtons);
+        showToast('New About CTA Button added! Edit details & click Save About Changes.', 'success');
+    }
+}
+
+function deleteAboutCtaButton(btnId) {
+    openDeleteConfirmModal('Are you sure you want to delete this About CTA Button?', () => {
+        const data = getSiteData();
+        data.about.ctaButtons = (data.about.ctaButtons || []).filter(b => b.id !== btnId);
+        if (saveSiteData(data)) {
+            renderAdminAboutCtaButtons(data.about.ctaButtons);
+            if (typeof renderSiteData === 'function') renderSiteData();
+            showToast('CTA Button deleted', 'info');
+        }
+    });
+}
+
 /* --- 5. Section Save Handlers --- */
 
 // Save Hero
@@ -657,6 +756,13 @@ function saveAboutSection() {
         });
     }
 
+    const aboutCtaButtons = (data.about.ctaButtons || []).map(btn => ({
+        id: btn.id,
+        text: document.getElementById(`aboutBtnText_${btn.id}`)?.value || btn.text,
+        link: document.getElementById(`aboutBtnLink_${btn.id}`)?.value || btn.link,
+        iconImage: document.getElementById(`aboutBtnIconImage_${btn.id}`)?.value || ''
+    }));
+
     data.about = {
         ...data.about,
         tagBadge: document.getElementById('aboutTagBadge').value,
@@ -664,10 +770,7 @@ function saveAboutSection() {
         titleTop: document.getElementById('aboutTitleTop').value,
         titleGradient: document.getElementById('aboutTitleGradient').value,
         bio: document.getElementById('aboutBio').value,
-        btnBehanceText: document.getElementById('aboutBtnBehanceText')?.value || 'Visit Behance Profile',
-        btnBehanceUrl: document.getElementById('aboutBtnBehanceUrl')?.value || 'https://www.behance.net/mahinalibiswas',
-        btnContactText: document.getElementById('aboutBtnContactText')?.value || 'Contact Direct',
-        btnContactLink: document.getElementById('aboutBtnContactLink')?.value || '#contact',
+        ctaButtons: aboutCtaButtons,
         features: features
     };
 

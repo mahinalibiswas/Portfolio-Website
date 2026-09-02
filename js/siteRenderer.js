@@ -184,17 +184,23 @@ function renderSiteData() {
         if (expSub) expSub.textContent = data.about.expSub || "Motion & Video Specialist";
 
         // About CTA Buttons
-        const aboutBehanceBtn = document.querySelector('.about-cta-group a[href*="behance"]');
-        if (aboutBehanceBtn) {
-            const behanceSpan = aboutBehanceBtn.querySelector('span:first-child');
-            if (behanceSpan && data.about.btnBehanceText) behanceSpan.textContent = data.about.btnBehanceText;
-            if (data.about.btnBehanceUrl) aboutBehanceBtn.href = data.about.btnBehanceUrl;
-        }
+        const aboutCtaGroup = document.querySelector('.about-cta-group');
+        if (aboutCtaGroup && data.about.ctaButtons && Array.isArray(data.about.ctaButtons) && data.about.ctaButtons.length > 0) {
+            aboutCtaGroup.innerHTML = data.about.ctaButtons.map((btn, idx) => {
+                const isPrimary = idx === 0;
+                const btnClass = isPrimary ? 'btn btn-primary' : 'btn btn-hero-secondary';
+                const targetAttr = (btn.link && btn.link.startsWith('http')) ? 'target="_blank" rel="noopener noreferrer"' : '';
+                const iconHtml = btn.iconImage 
+                    ? `<img src="${btn.iconImage}" style="width: 18px; height: 18px; object-fit: contain;">`
+                    : `<i class="${btn.icon || 'fa-solid fa-arrow-right'}"></i>`;
 
-        const aboutContactBtn = document.querySelector('.about-cta-group a[href*="#contact"]');
-        if (aboutContactBtn) {
-            if (data.about.btnContactText) aboutContactBtn.textContent = data.about.btnContactText;
-            if (data.about.btnContactLink) aboutContactBtn.href = data.about.btnContactLink;
+                return `
+                    <a href="${btn.link || '#'}" ${targetAttr} class="${btnClass}">
+                        <span>${btn.text}</span>
+                        <span class="btn-icon-circle">${iconHtml}</span>
+                    </a>
+                `;
+            }).join('');
         }
 
         // 4 Feature Boxes

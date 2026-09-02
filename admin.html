@@ -273,25 +273,13 @@
                                 <textarea id="aboutBio" rows="4" placeholder="Enter full About Me description..."></textarea>
                             </div>
 
-                            <div class="form-section-title full-width">
-                                <h4>About Me Action CTA Buttons</h4>
+                            <div class="form-section-title full-width" style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About Me Action CTA Buttons</h4>
+                                <button type="button" class="btn btn-hero-secondary btn-sm" onclick="addNewAboutCtaButton()">
+                                    <i class="fa-solid fa-plus"></i> Add About CTA Button
+                                </button>
                             </div>
-                            <div class="form-group">
-                                <label>Behance Profile Button Text</label>
-                                <input type="text" id="aboutBtnBehanceText" placeholder="Visit Behance Profile">
-                            </div>
-                            <div class="form-group">
-                                <label>Behance Profile Target URL</label>
-                                <input type="url" id="aboutBtnBehanceUrl" placeholder="Paste your URL link">
-                            </div>
-                            <div class="form-group">
-                                <label>Contact Direct Button Text</label>
-                                <input type="text" id="aboutBtnContactText" placeholder="Contact Direct">
-                            </div>
-                            <div class="form-group">
-                                <label>Contact Direct Target Link</label>
-                                <input type="text" id="aboutBtnContactLink" placeholder="#contact">
-                            </div>
+                            <div id="adminAboutCtaButtonsList" class="dynamic-cta-list full-width" style="margin-top: 0.5rem; grid-column: span 2;"></div>
 
                             <div class="form-section-title full-width">
                                 <h4>4 Core Superpowers / Feature Cards</h4>

@@ -56,10 +56,22 @@ const DEFAULT_SITE_DATA = {
         expYears: "3+",
         expSub: "Motion & Video Specialist",
         behanceUrl: "https://www.behance.net/mahinalibiswas",
-        btnBehanceText: "Visit Behance Profile",
-        btnBehanceUrl: "https://www.behance.net/mahinalibiswas",
-        btnContactText: "Contact Direct",
-        btnContactLink: "#contact",
+        ctaButtons: [
+            {
+                id: "about-btn-1",
+                text: "Visit Behance Profile",
+                link: "https://www.behance.net/mahinalibiswas",
+                icon: "fa-brands fa-behance",
+                iconImage: ""
+            },
+            {
+                id: "about-btn-2",
+                text: "Contact Direct",
+                link: "#contact",
+                icon: "fa-solid fa-paper-plane",
+                iconImage: ""
+            }
+        ],
         features: [
             {
                 icon: "fa-solid fa-bolt",
