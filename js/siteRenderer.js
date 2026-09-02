@@ -29,17 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Render immediate local cache
     renderSiteData();
 
-    // 2. Fetch live Cloud Database data & re-render for all visitors worldwide (~200ms)
+    // 2. Fetch live Cloud Database data & re-render for all visitors worldwide (~100ms)
     if (typeof fetchCloudSiteData === 'function') {
-        fetchCloudSiteData(() => {
-            renderSiteData();
+        fetchCloudSiteData((cloudData) => {
+            renderSiteData(cloudData);
         });
+
+        // 3. Periodic Auto-Sync (Realtime Live Update Every 4 Seconds)
+        setInterval(() => {
+            fetchCloudSiteData((cloudData) => {
+                renderSiteData(cloudData);
+            });
+        }, 4000);
     }
 });
 
-function renderSiteData() {
-    if (typeof getSiteData !== 'function') return;
-    const data = getSiteData();
+function renderSiteData(customData) {
+    if (typeof getSiteData !== 'function' && !customData) return;
+    const data = customData || getSiteData();
 
     // 0. Render Navigation Bar
     if (data.navigation) {
