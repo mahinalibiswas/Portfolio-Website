@@ -89,7 +89,9 @@ function renderSiteData(customData) {
                     heroMainCard.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#000; color:var(--text-dim); border-radius:20px; font-size:0.9rem;"><span>No Video Link or Embed Code Set</span></div>`;
                 }
             } else if (rawInput.includes('<iframe')) {
-                let cleanIframe = rawInput.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+                const iframeStart = rawInput.indexOf('<iframe');
+                let cleanIframe = rawInput.substring(iframeStart);
+                cleanIframe = cleanIframe.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
                 if (!cleanIframe.includes('style=')) {
                     cleanIframe = cleanIframe.replace('<iframe', '<iframe style="width:100%; height:100%; border:none; border-radius:20px;"');
                 }
