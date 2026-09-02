@@ -340,10 +340,10 @@ function getSiteData() {
     return JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
 }
 
-const CLOUD_DB_URL = '/api/syncData';
+const CLOUD_DB_URL = 'https://mahin-portfolio-default-rtdb.firebaseio.com/siteData.json';
 
 /**
- * Saves updated site data to localStorage & Live Vercel API
+ * Saves updated site data to localStorage & Live Firebase Database
  */
 function saveSiteData(data) {
     try {
@@ -352,28 +352,28 @@ function saveSiteData(data) {
         console.error("Error saving site data to localStorage", e);
     }
 
-    // Live Vercel API Realtime Sync across all devices worldwide
+    // Live Firebase Database Realtime Sync across all devices worldwide
     try {
         fetch(CLOUD_DB_URL, {
-            method: 'POST',
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         }).then(res => {
             if (res.ok) {
-                console.log("Vercel Live API synced successfully across all devices!");
+                console.log("Firebase Database synced live across all devices!");
             }
         }).catch(err => {
-            console.warn("Vercel API save warning:", err);
+            console.warn("Firebase save warning:", err);
         });
     } catch (err) {
-        console.warn("Vercel API sync error:", err);
+        console.warn("Firebase sync error:", err);
     }
 
     return true;
 }
 
 /**
- * Fetches latest site data from Vercel API and updates local storage
+ * Fetches latest site data from Firebase Database and updates local storage
  */
 function fetchCloudSiteData(callback) {
     try {
@@ -390,7 +390,7 @@ function fetchCloudSiteData(callback) {
                 }
             })
             .catch(err => {
-                console.warn("Using local cache, Vercel API offline:", err);
+                console.warn("Using local cache, Firebase offline:", err);
             });
     } catch (err) {
         console.warn("Cloud fetch error:", err);
