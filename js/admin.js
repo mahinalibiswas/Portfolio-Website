@@ -381,44 +381,43 @@ function renderAdminCtaButtons(ctaButtons) {
     if (!listContainer) return;
 
     listContainer.innerHTML = ctaButtons.map((btn, index) => `
-        <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
-                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem;">CTA Button #${index + 1}: ${btn.text}</h4>
+        <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">CTA Button #${index + 1}: ${btn.text}</h4>
                 <button type="button" class="action-btn delete-btn" onclick="deleteHeroCtaButton('${btn.id}')" title="Delete Button">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
-            <div class="admin-form-grid">
-                <div class="form-group">
-                    <label>Button Text</label>
-                    <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}">
+            
+            <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1rem;">
+                <div style="flex: 1;">
+                    <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Button Text</label>
+                    <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="e.g. Watch Showreel" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
                 </div>
 
-                <div class="form-group">
-                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-top: 1.6rem;">
-                        <input type="file" id="ctaBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleCtaIconUpload(event, '${btn.id}')">
-                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('ctaBtnFileInput_${btn.id}').click()">
-                            <i class="fa-solid fa-upload"></i> Choose Icon
-                        </button>
-                        <div id="ctaIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
-                            <img id="ctaIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
-                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;" onclick="removeCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
+                <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.8rem;">
+                    <input type="file" id="ctaBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleCtaIconUpload(event, '${btn.id}')">
+                    <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('ctaBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 1.2rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px; font-size: 0.88rem; box-sizing: border-box; white-space: nowrap;">
+                        <i class="fa-solid fa-upload"></i> Choose Icon
+                    </button>
+                    <div id="ctaIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0 0.8rem; height: 44px; border-radius: 8px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                        <img id="ctaIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
+                        <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;" onclick="removeCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <input type="hidden" id="ctaBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
                 </div>
+                <input type="hidden" id="ctaBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
+            </div>
 
-                <div class="form-group full-width">
-                    <label>Target URL</label>
-                    <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link">
-                </div>
+            <div style="margin-bottom: 1rem;">
+                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Target URL</label>
+                <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+            </div>
 
-                <div class="form-group full-width">
-                    <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; color: #ffffff;">
-                        <input type="checkbox" id="ctaBtnModal_${btn.id}" ${btn.isModal ? 'checked' : ''} style="width: auto;">
-                        <span>Opens Showreel Video Lightbox Modal (Play Video Action)</span>
-                    </label>
-                </div>
+            <div>
+                <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; color: #ffffff; font-size: 0.88rem;">
+                    <input type="checkbox" id="ctaBtnModal_${btn.id}" ${btn.isModal ? 'checked' : ''} style="width: auto;">
+                    <span>Opens Showreel Video Lightbox Modal (Play Video Action)</span>
+                </label>
             </div>
         </div>
     `).join('');
@@ -616,36 +615,35 @@ function renderAdminAboutCtaButtons(ctaButtons) {
 
     listContainer.innerHTML = list.map((btn, index) => `
         <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
-                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}: ${btn.text}</h4>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}: ${btn.text}</h4>
                 <button type="button" class="action-btn delete-btn" onclick="deleteAboutCtaButton('${btn.id}')" title="Delete Button">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
-            <div class="admin-form-grid">
-                <div class="form-group">
-                    <label>Button Text</label>
-                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="e.g. Visit Behance Profile or Follow Facebook">
+            
+            <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1rem;">
+                <div style="flex: 1;">
+                    <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Button Text</label>
+                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="e.g. Visit Behance Profile" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
                 </div>
 
-                <div class="form-group">
-                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-top: 1.6rem;">
-                        <input type="file" id="aboutBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleAboutCtaIconUpload(event, '${btn.id}')">
-                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()">
-                            <i class="fa-solid fa-upload"></i> Choose Icon
-                        </button>
-                        <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
-                            <img id="aboutIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
-                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;" onclick="removeAboutCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
+                <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.8rem;">
+                    <input type="file" id="aboutBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleAboutCtaIconUpload(event, '${btn.id}')">
+                    <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 1.2rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px; font-size: 0.88rem; box-sizing: border-box; white-space: nowrap;">
+                        <i class="fa-solid fa-upload"></i> Choose Icon
+                    </button>
+                    <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0 0.8rem; height: 44px; border-radius: 8px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                        <img id="aboutIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
+                        <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;" onclick="removeAboutCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <input type="hidden" id="aboutBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
                 </div>
+                <input type="hidden" id="aboutBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
+            </div>
 
-                <div class="form-group full-width">
-                    <label>Target URL</label>
-                    <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link">
-                </div>
+            <div>
+                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Target URL</label>
+                <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Paste your URL link" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
             </div>
         </div>
     `).join('');
