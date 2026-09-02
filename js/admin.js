@@ -19,8 +19,8 @@ function initAuthGate() {
     const togglePassBtn = document.getElementById('togglePassBtn');
     const logoutBtn = document.getElementById('adminLogoutBtn');
 
-    // Check if session is already authenticated
-    const isAuthenticated = sessionStorage.getItem('mahin_admin_auth') === 'true';
+    // Check if session is already authenticated persistently in localStorage
+    const isAuthenticated = localStorage.getItem('mahin_admin_auth') === 'true';
 
     if (isAuthenticated) {
         authOverlay.style.display = 'none';
@@ -43,7 +43,7 @@ function initAuthGate() {
         const currentPass = getAdminPassword();
 
         if (entered === currentPass) {
-            sessionStorage.setItem('mahin_admin_auth', 'true');
+            localStorage.setItem('mahin_admin_auth', 'true');
             authOverlay.style.display = 'none';
             adminDashboard.style.display = 'flex';
             showToast('Welcome Mahin! Login Successful', 'success');
@@ -63,7 +63,7 @@ function initAuthGate() {
     });
 
     logoutBtn?.addEventListener('click', () => {
-        sessionStorage.removeItem('mahin_admin_auth');
+        localStorage.removeItem('mahin_admin_auth');
         window.location.reload();
     });
 }
@@ -200,7 +200,7 @@ function saveNewAdminPassword() {
     }
 
     closeForgotPassModal();
-    sessionStorage.setItem('mahin_admin_auth', 'true');
+    localStorage.setItem('mahin_admin_auth', 'true');
     showToast('New Password set successfully! Logging in...', 'success');
     setTimeout(() => {
         window.location.reload();
