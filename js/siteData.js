@@ -9,6 +9,21 @@ const PASSWORD_STORAGE_KEY = 'mahin_admin_password';
 const DEFAULT_ADMIN_PASSWORD = 'mahin2026';
 
 const DEFAULT_SITE_DATA = {
+    // 0. Navigation Bar
+    navigation: {
+        brandLogo: "MAHIN.",
+        ctaText: "Hire Me",
+        ctaUrl: "#contact",
+        navLinks: [
+            { id: 1, label: "Showreel", url: "#showreel" },
+            { id: 2, label: "About", url: "#about" },
+            { id: 3, label: "Projects", url: "#projects" },
+            { id: 4, label: "Services", url: "#services" },
+            { id: 5, label: "Process", url: "#process" },
+            { id: 6, label: "Contact", url: "#contact" }
+        ]
+    },
+
     // 1. Hero Section
     hero: {
         badge: "MOTION & VIDEO ARTIST",

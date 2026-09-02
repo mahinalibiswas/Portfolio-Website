@@ -25,6 +25,25 @@ function renderSiteData() {
     if (typeof getSiteData !== 'function') return;
     const data = getSiteData();
 
+    // 0. Render Navigation Bar
+    if (data.navigation) {
+        const brandLogo = document.querySelector('.nav-logo');
+        if (brandLogo) brandLogo.textContent = data.navigation.brandLogo || "MAHIN.";
+
+        const navCtaBtn = document.querySelector('.nav-cta-btn');
+        if (navCtaBtn) {
+            navCtaBtn.textContent = data.navigation.ctaText || "Hire Me";
+            if (data.navigation.ctaUrl) navCtaBtn.setAttribute('href', data.navigation.ctaUrl);
+        }
+
+        const navLinksContainer = document.querySelector('.nav-links');
+        if (navLinksContainer && Array.isArray(data.navigation.navLinks) && data.navigation.navLinks.length > 0) {
+            navLinksContainer.innerHTML = data.navigation.navLinks.map(link => 
+                `<li><a href="${link.url}">${link.label}</a></li>`
+            ).join('');
+        }
+    }
+
     // 1. Render Hero Section
     if (data.hero) {
         const heroBadge = document.querySelector('.hero-badge span:last-child');

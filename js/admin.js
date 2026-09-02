@@ -237,6 +237,14 @@ function initTabNavigation() {
 function loadAllAdminData() {
     const data = getSiteData();
 
+    // 0. Load Navigation Bar Data
+    if (data.navigation) {
+        if (document.getElementById('navBrandLogo')) document.getElementById('navBrandLogo').value = data.navigation.brandLogo || 'MAHIN.';
+        if (document.getElementById('navCtaText')) document.getElementById('navCtaText').value = data.navigation.ctaText || 'Hire Me';
+        if (document.getElementById('navCtaUrl')) document.getElementById('navCtaUrl').value = data.navigation.ctaUrl || '#contact';
+        renderAdminNavLinks(data.navigation.navLinks || []);
+    }
+
     // 1. Load Hero Section Data
     if (data.hero) {
         document.getElementById('heroBadge').value = data.hero.badge || '';
@@ -340,9 +348,77 @@ function renderAdminCtaButtons(ctaButtons) {
                     </label>
                 </div>
             </div>
+/* --- Navigation Bar Section CRUD Manager --- */
+let tempNavLinksList = [];
+
+function renderAdminNavLinks(navLinks) {
+    tempNavLinksList = (navLinks && navLinks.length) ? [...navLinks] : [
+        { id: 1, label: "Showreel", url: "#showreel" },
+        { id: 2, label: "About", url: "#about" },
+        { id: 3, label: "Projects", url: "#projects" },
+        { id: 4, label: "Services", url: "#services" },
+        { id: 5, label: "Process", url: "#process" },
+        { id: 6, label: "Contact", url: "#contact" }
+    ];
+
+    const container = document.getElementById('adminNavLinksList');
+    if (!container) return;
+
+    container.innerHTML = tempNavLinksList.map((item, index) => `
+        <div class="cta-item-card" style="display: flex; gap: 1rem; align-items: center; background: rgba(30, 41, 59, 0.6); padding: 1rem; border-radius: 8px; margin-bottom: 0.8rem; border: 1px solid var(--border-color);">
+            <div style="flex: 1;">
+                <label style="font-size: 0.78rem; color: var(--accent-neon);">Nav Label #${index + 1}</label>
+                <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="e.g. Showreel" style="width: 100%; margin-top: 0.2rem;">
+            </div>
+            <div style="flex: 1.5;">
+                <label style="font-size: 0.78rem; color: var(--accent-neon);">Target URL / Section Anchor</label>
+                <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="e.g. #showreel or https://..." style="width: 100%; margin-top: 0.2rem;">
+            </div>
+            <button type="button" class="btn btn-hero-secondary btn-sm danger-btn" onclick="deleteNavLinkItem(${index})" style="margin-top: 1rem;">
+                <i class="fa-solid fa-trash"></i>
+            </button>
         </div>
     `).join('');
 }
+
+function updateNavLinkProp(index, prop, val) {
+    if (tempNavLinksList[index]) {
+        tempNavLinksList[index][prop] = val;
+    }
+}
+
+function addNewNavLinkItem() {
+    tempNavLinksList.push({
+        id: Date.now(),
+        label: "New Link",
+        url: "#"
+    });
+    renderAdminNavLinks(tempNavLinksList);
+}
+
+function deleteNavLinkItem(index) {
+    tempNavLinksList.splice(index, 1);
+    renderAdminNavLinks(tempNavLinksList);
+}
+
+function saveNavSection() {
+    const data = getSiteData();
+    data.navigation = {
+        brandLogo: document.getElementById('navBrandLogo')?.value.trim() || 'MAHIN.',
+        ctaText: document.getElementById('navCtaText')?.value.trim() || 'Hire Me',
+        ctaUrl: document.getElementById('navCtaUrl')?.value.trim() || '#contact',
+        navLinks: tempNavLinksList
+    };
+
+    saveSiteData(data);
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('Navigation Bar settings saved & updated on live site!', 'success');
+}
+
+window.saveNavSection = saveNavSection;
+window.addNewNavLinkItem = addNewNavLinkItem;
+window.deleteNavLinkItem = deleteNavLinkItem;
+window.updateNavLinkProp = updateNavLinkProp;
 
 function handleHeroPosterUpload(event) {
     const file = event.target.files[0];

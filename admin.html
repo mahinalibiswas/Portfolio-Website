@@ -78,7 +78,11 @@
             <!-- Sidebar Navigation Tabs -->
             <aside class="admin-sidebar">
                 <nav class="admin-tabs">
-                    <button class="admin-tab-btn active" data-tab="tab-hero">
+                    <button class="admin-tab-btn active" data-tab="tab-nav">
+                        <i class="fa-solid fa-compass"></i>
+                        <span>Navigation Bar</span>
+                    </button>
+                    <button class="admin-tab-btn" data-tab="tab-hero">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                         <span>Hero & Showreel</span>
                     </button>
@@ -112,8 +116,48 @@
             <!-- Main Content Area (Tab Content Pages) -->
             <main class="admin-main">
 
+                <!-- TAB 0: NAVIGATION BAR -->
+                <section class="admin-tab-content active" id="tab-nav">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Navigation Bar & Header Settings</h3>
+                                <p>Customize your brand logo, top right CTA button, and main header navigation links.</p>
+                            </div>
+                            <button class="btn btn-primary btn-save" onclick="saveNavSection()">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Navigation Changes
+                            </button>
+                        </div>
+
+                        <form id="navForm">
+                            <div class="admin-form-grid">
+                                <div class="form-group">
+                                    <label>Brand Logo / Text</label>
+                                    <input type="text" id="navBrandLogo" placeholder="e.g. MAHIN.">
+                                </div>
+                                <div class="form-group">
+                                    <label>Header CTA Button Text</label>
+                                    <input type="text" id="navCtaText" placeholder="e.g. Hire Me">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Header CTA Button Link Target</label>
+                                    <input type="text" id="navCtaUrl" placeholder="e.g. #contact or https://...">
+                                </div>
+                            </div>
+
+                            <div class="form-section-title" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-list" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Navigation Menu Links</h4>
+                                <button type="button" class="btn btn-hero-secondary btn-sm" onclick="addNewNavLinkItem()">
+                                    <i class="fa-solid fa-plus"></i> Add Nav Link
+                                </button>
+                            </div>
+                            <div id="adminNavLinksList" class="dynamic-cta-list" style="margin-top: 1rem;"></div>
+                        </form>
+                    </div>
+                </section>
+
                 <!-- TAB 1: HERO & SHOWREEL -->
-                <section class="admin-tab-content active" id="tab-hero">
+                <section class="admin-tab-content" id="tab-hero">
                     <div class="panel-card">
                         <div class="panel-header">
                             <div>
