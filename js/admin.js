@@ -625,31 +625,31 @@ function renderAdminAboutCtaButtons(ctaButtons) {
     ];
 
     listContainer.innerHTML = list.map((btn, index) => `
-        <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
+        <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); border-radius: 12px; border: 1px solid var(--border-glow); box-sizing: border-box; margin-bottom: 0;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                 <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}</h4>
             </div>
             
-            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
-                <div style="flex: 1;">
-                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+            <div style="display: flex; gap: 0.6rem; align-items: center; margin-bottom: 1rem;">
+                <div style="flex: 1; min-width: 0;">
+                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                 </div>
 
-                <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.8rem;">
+                <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.4rem;">
                     <input type="file" id="aboutBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleAboutCtaIconUpload(event, '${btn.id}')">
-                    <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 1.2rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px; font-size: 0.88rem; box-sizing: border-box; white-space: nowrap;">
+                    <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 8px; font-size: 0.82rem; box-sizing: border-box; white-space: nowrap;">
                         <i class="fa-solid fa-upload"></i> Choose Icon
                     </button>
-                    <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0 0.8rem; height: 44px; border-radius: 8px; border: 1px solid var(--border-glow); box-sizing: border-box;">
-                        <img id="aboutIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
-                        <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;" onclick="removeAboutCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
+                    <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.08); padding: 0 0.5rem; height: 44px; border-radius: 8px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                        <img id="aboutIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 20px; height: 20px; object-fit: contain;">
+                        <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.82rem;" onclick="removeAboutCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
                 <input type="hidden" id="aboutBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
             </div>
 
             <div>
-                <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+                <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
             </div>
         </div>
     `).join('');

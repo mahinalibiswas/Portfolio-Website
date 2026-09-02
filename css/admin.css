@@ -574,6 +574,7 @@
         grid-template-columns: 1fr;
     }
     .admin-form-grid,
+    .dynamic-cta-grid,
     .admin-projects-list,
     .admin-settings-grid {
         grid-template-columns: 1fr;
