@@ -340,10 +340,10 @@ function getSiteData() {
     return JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
 }
 
-const CLOUD_DB_URL = 'https://portfolio-mahin-default-rtdb.asia-southeast1.firebasedatabase.app/siteData.json';
+const CLOUD_DB_URL = '/api/syncData';
 
 /**
- * Saves updated site data to localStorage & Cloud Database
+ * Saves updated site data to localStorage & Vercel Live API
  */
 function saveSiteData(data) {
     try {
@@ -352,35 +352,35 @@ function saveSiteData(data) {
         console.error("Error saving site data to localStorage", e);
     }
 
-    // Cloud Database Realtime Sync across all devices worldwide
+    // Vercel Live API Realtime Sync across all devices worldwide
     try {
         fetch(CLOUD_DB_URL, {
-            method: 'PUT',
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         }).then(res => {
             if (res.ok) {
-                console.log("Cloud Database synced live!");
+                console.log("Vercel Live API synced successfully!");
             }
         }).catch(err => {
-            console.warn("Cloud DB save warning:", err);
+            console.warn("Vercel Live API save warning:", err);
         });
     } catch (err) {
-        console.warn("Cloud DB sync error:", err);
+        console.warn("Vercel Live API sync error:", err);
     }
 
     return true;
 }
 
 /**
- * Fetches latest site data from Cloud Database and updates local storage
+ * Fetches latest site data from Vercel Live API and updates local storage
  */
 function fetchCloudSiteData(callback) {
     try {
         fetch(CLOUD_DB_URL)
             .then(res => res.json())
             .then(cloudData => {
-                if (cloudData && typeof cloudData === 'object' && !cloudData.error) {
+                if (cloudData && typeof cloudData === 'object' && Object.keys(cloudData).length > 0 && !cloudData.error) {
                     try {
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudData));
                     } catch (e) {}
@@ -390,7 +390,7 @@ function fetchCloudSiteData(callback) {
                 }
             })
             .catch(err => {
-                console.warn("Using local cache, cloud DB offline:", err);
+                console.warn("Using local cache, Vercel Live API offline:", err);
             });
     } catch (err) {
         console.warn("Cloud fetch error:", err);
