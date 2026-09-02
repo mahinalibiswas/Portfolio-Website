@@ -383,7 +383,7 @@ function renderAdminCtaButtons(ctaButtons) {
     listContainer.innerHTML = ctaButtons.map((btn, index) => `
         <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">CTA Button #${index + 1}: ${btn.text}</h4>
+                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">CTA Button #${index + 1}</h4>
                 <button type="button" class="action-btn delete-btn" onclick="deleteHeroCtaButton('${btn.id}')" title="Delete Button">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
@@ -612,7 +612,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
     listContainer.innerHTML = list.map((btn, index) => `
         <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}: ${btn.text}</h4>
+                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}</h4>
                 <button type="button" class="action-btn delete-btn" onclick="deleteAboutCtaButton('${btn.id}')" title="Delete Button">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
