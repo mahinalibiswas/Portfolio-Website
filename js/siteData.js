@@ -340,16 +340,60 @@ function getSiteData() {
     return JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
 }
 
+const CLOUD_DB_URL = 'https://portfolio-mahin-default-rtdb.asia-southeast1.firebasedatabase.app/siteData.json';
+
 /**
- * Saves updated site data to localStorage
+ * Saves updated site data to localStorage & Cloud Database
  */
 function saveSiteData(data) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        return true;
     } catch (e) {
         console.error("Error saving site data to localStorage", e);
-        return false;
+    }
+
+    // Cloud Database Realtime Sync across all devices worldwide
+    try {
+        fetch(CLOUD_DB_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => {
+            if (res.ok) {
+                console.log("Cloud Database synced live!");
+            }
+        }).catch(err => {
+            console.warn("Cloud DB save warning:", err);
+        });
+    } catch (err) {
+        console.warn("Cloud DB sync error:", err);
+    }
+
+    return true;
+}
+
+/**
+ * Fetches latest site data from Cloud Database and updates local storage
+ */
+function fetchCloudSiteData(callback) {
+    try {
+        fetch(CLOUD_DB_URL)
+            .then(res => res.json())
+            .then(cloudData => {
+                if (cloudData && typeof cloudData === 'object' && !cloudData.error) {
+                    try {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudData));
+                    } catch (e) {}
+                    if (typeof callback === 'function') {
+                        callback(cloudData);
+                    }
+                }
+            })
+            .catch(err => {
+                console.warn("Using local cache, cloud DB offline:", err);
+            });
+    } catch (err) {
+        console.warn("Cloud fetch error:", err);
     }
 }
 

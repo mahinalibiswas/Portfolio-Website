@@ -311,8 +311,20 @@ function initTabNavigation() {
 }
 
 /* --- 3. Load All Current Site Data into Admin Forms --- */
-function loadAllAdminData() {
+/* --- 3. Load All Current Site Data into Admin Forms --- */
+function loadAllAdminData(skipCloud) {
     const data = getSiteData();
+    renderAdminFormsWithData(data);
+
+    if (!skipCloud && typeof fetchCloudSiteData === 'function') {
+        fetchCloudSiteData((cloudData) => {
+            if (cloudData) renderAdminFormsWithData(cloudData);
+        });
+    }
+}
+
+function renderAdminFormsWithData(data) {
+    if (!data) return;
 
     // 0. Load Navigation Bar Data
     if (data.navigation) {
@@ -324,26 +336,26 @@ function loadAllAdminData() {
 
     // 1. Load Hero Section Data
     if (data.hero) {
-        document.getElementById('heroBadge').value = data.hero.badge || '';
-        document.getElementById('heroTitleTop').value = data.hero.titleTop || '';
-        document.getElementById('heroTitleBottom').value = data.hero.titleBottom || '';
-        document.getElementById('heroSubtitleTag').value = data.hero.subtitleTag || '';
-        document.getElementById('heroSubtitle').value = data.hero.subtitle || '';
-        document.getElementById('heroShowreelVideo').value = data.hero.showreelVideo || '';
-        document.getElementById('heroShowreelPoster').value = data.hero.showreelPoster || '';
-        document.getElementById('heroStatsEdited').value = data.hero.statsEdited || '100+';
-        document.getElementById('heroStatsClients').value = data.hero.statsClients || '50+';
-        document.getElementById('heroStatsDelivery').value = data.hero.statsDelivery || '100%';
+        if (document.getElementById('heroBadge')) document.getElementById('heroBadge').value = data.hero.badge || '';
+        if (document.getElementById('heroTitleTop')) document.getElementById('heroTitleTop').value = data.hero.titleTop || '';
+        if (document.getElementById('heroTitleBottom')) document.getElementById('heroTitleBottom').value = data.hero.titleBottom || '';
+        if (document.getElementById('heroSubtitleTag')) document.getElementById('heroSubtitleTag').value = data.hero.subtitleTag || '';
+        if (document.getElementById('heroSubtitle')) document.getElementById('heroSubtitle').value = data.hero.subtitle || '';
+        if (document.getElementById('heroShowreelVideo')) document.getElementById('heroShowreelVideo').value = data.hero.showreelVideo || '';
+        if (document.getElementById('heroShowreelPoster')) document.getElementById('heroShowreelPoster').value = data.hero.showreelPoster || '';
+        if (document.getElementById('heroStatsEdited')) document.getElementById('heroStatsEdited').value = data.hero.statsEdited || '100+';
+        if (document.getElementById('heroStatsClients')) document.getElementById('heroStatsClients').value = data.hero.statsClients || '50+';
+        if (document.getElementById('heroStatsDelivery')) document.getElementById('heroStatsDelivery').value = data.hero.statsDelivery || '100%';
         renderAdminCtaButtons(data.hero.ctaButtons || []);
     }
 
     // 2. Load About Section Data
     if (data.about) {
-        document.getElementById('aboutTagBadge').value = data.about.tagBadge || '';
-        document.getElementById('aboutExpYears').value = data.about.expYears || '';
-        document.getElementById('aboutTitleTop').value = data.about.titleTop || '';
-        document.getElementById('aboutTitleGradient').value = data.about.titleGradient || '';
-        document.getElementById('aboutBio').value = data.about.bio || '';
+        if (document.getElementById('aboutTagBadge')) document.getElementById('aboutTagBadge').value = data.about.tagBadge || '';
+        if (document.getElementById('aboutExpYears')) document.getElementById('aboutExpYears').value = data.about.expYears || '';
+        if (document.getElementById('aboutTitleTop')) document.getElementById('aboutTitleTop').value = data.about.titleTop || '';
+        if (document.getElementById('aboutTitleGradient')) document.getElementById('aboutTitleGradient').value = data.about.titleGradient || '';
+        if (document.getElementById('aboutBio')) document.getElementById('aboutBio').value = data.about.bio || '';
         renderAdminAboutCtaButtons(data.about.ctaButtons || []);
 
         if (data.about.features && Array.isArray(data.about.features)) {
@@ -366,12 +378,12 @@ function loadAllAdminData() {
 
     // 6. Load Contact Info
     if (data.contact) {
-        document.getElementById('contactEmail').value = data.contact.email || '';
-        document.getElementById('contactWhatsApp').value = data.contact.whatsapp || '';
-        document.getElementById('contactLocation').value = data.contact.location || '';
-        document.getElementById('contactBehance').value = data.contact.behanceUrl || '';
-        document.getElementById('contactYoutube').value = data.contact.youtubeUrl || '';
-        document.getElementById('contactFacebook').value = data.contact.facebookUrl || '';
+        if (document.getElementById('contactEmail')) document.getElementById('contactEmail').value = data.contact.email || '';
+        if (document.getElementById('contactWhatsApp')) document.getElementById('contactWhatsApp').value = data.contact.whatsapp || '';
+        if (document.getElementById('contactLocation')) document.getElementById('contactLocation').value = data.contact.location || '';
+        if (document.getElementById('contactBehance')) document.getElementById('contactBehance').value = data.contact.behanceUrl || '';
+        if (document.getElementById('contactYoutube')) document.getElementById('contactYoutube').value = data.contact.youtubeUrl || '';
+        if (document.getElementById('contactFacebook')) document.getElementById('contactFacebook').value = data.contact.facebookUrl || '';
     }
 }
 

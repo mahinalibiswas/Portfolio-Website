@@ -18,7 +18,15 @@ function extractYoutubeId(url) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Render immediate local cache
     renderSiteData();
+
+    // 2. Fetch live Cloud Database data & re-render for all visitors worldwide (~200ms)
+    if (typeof fetchCloudSiteData === 'function') {
+        fetchCloudSiteData(() => {
+            renderSiteData();
+        });
+    }
 });
 
 function renderSiteData() {
