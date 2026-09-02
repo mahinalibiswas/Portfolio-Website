@@ -380,6 +380,13 @@ function renderAdminCtaButtons(ctaButtons) {
     const listContainer = document.getElementById('adminCtaButtonsList');
     if (!listContainer) return;
 
+    if (ctaButtons && Array.isArray(ctaButtons)) {
+        ctaButtons.forEach(b => {
+            if (b.text === 'New Social Link' || b.text === 'New CTA Button' || b.text === 'New Link' || b.text === 'New Action Button') b.text = '';
+            if (b.link === 'https://' || b.link === '#') b.link = '';
+        });
+    }
+
     listContainer.innerHTML = ctaButtons.map((btn, index) => `
         <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
@@ -604,6 +611,13 @@ function deleteHeroCtaButton(btnId) {
 function renderAdminAboutCtaButtons(ctaButtons) {
     const listContainer = document.getElementById('adminAboutCtaButtonsList');
     if (!listContainer) return;
+
+    if (ctaButtons && Array.isArray(ctaButtons)) {
+        ctaButtons.forEach(b => {
+            if (b.text === 'New Social Link' || b.text === 'New CTA Button' || b.text === 'New Link' || b.text === 'New Action Button') b.text = '';
+            if (b.link === 'https://' || b.link === '#') b.link = '';
+        });
+    }
 
     const list = (ctaButtons && Array.isArray(ctaButtons) && ctaButtons.length > 0) ? ctaButtons : [
         { id: "about-btn-1", text: "Visit Behance Profile", link: "https://www.behance.net/mahinalibiswas", icon: "fa-brands fa-behance", iconImage: "" },
