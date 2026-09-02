@@ -36,10 +36,10 @@ function renderSiteData() {
             if (data.navigation.ctaUrl) navCtaBtn.setAttribute('href', data.navigation.ctaUrl);
         }
 
-        const navLinksContainer = document.querySelector('.nav-links');
+        const navLinksContainer = document.getElementById('navLinks');
         if (navLinksContainer && Array.isArray(data.navigation.navLinks) && data.navigation.navLinks.length > 0) {
             navLinksContainer.innerHTML = data.navigation.navLinks.map(link => 
-                `<li><a href="${link.url}">${link.label}</a></li>`
+                `<a href="${link.url}" class="nav-link">${link.label}</a>`
             ).join('');
         }
     }

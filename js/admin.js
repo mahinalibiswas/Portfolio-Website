@@ -391,12 +391,13 @@ let tempNavLinksList = [];
 
 function renderAdminNavLinks(navLinks) {
     tempNavLinksList = (navLinks && navLinks.length) ? [...navLinks] : [
-        { id: 1, label: "Showreel", url: "#showreel" },
-        { id: 2, label: "About", url: "#about" },
-        { id: 3, label: "Projects", url: "#projects" },
-        { id: 4, label: "Services", url: "#services" },
-        { id: 5, label: "Process", url: "#process" },
-        { id: 6, label: "Contact", url: "#contact" }
+        { id: 1, label: "Home", url: "#hero" },
+        { id: 2, label: "About Me", url: "#about" },
+        { id: 3, label: "Showreel", url: "#showreel" },
+        { id: 4, label: "Projects", url: "#works" },
+        { id: 5, label: "Services", url: "#services" },
+        { id: 6, label: "Toolkit", url: "#pipeline" },
+        { id: 7, label: "Estimator", url: "#estimator" }
     ];
 
     const container = document.getElementById('adminNavLinksList');
