@@ -73,20 +73,28 @@ let currentResetOtp = null;
 let otpCountdownTimer = null;
 
 function openForgotPassModal() {
+    console.log('openForgotPassModal triggered');
     const modal = document.getElementById('forgotPassModal');
     if (modal) {
-        document.getElementById('resetStep1').style.display = 'block';
-        document.getElementById('resetStep2').style.display = 'none';
-        document.getElementById('masterResetKeyInput').value = '';
-        if (document.getElementById('resetErrorMsgStep1')) document.getElementById('resetErrorMsgStep1').style.display = 'none';
-        
+        const step1 = document.getElementById('resetStep1');
+        const step2 = document.getElementById('resetStep2');
+        const keyInput = document.getElementById('masterResetKeyInput');
+        const error1 = document.getElementById('resetErrorMsgStep1');
         const sendBtn = document.getElementById('sendOtpBtn');
+
+        if (step1) step1.style.display = 'block';
+        if (step2) step2.style.display = 'none';
+        if (keyInput) keyInput.value = '';
+        if (error1) error1.style.display = 'none';
         if (sendBtn) {
             sendBtn.disabled = false;
             sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send 6-Digit Code to Email';
         }
-        modal.classList.add('active');
+
         modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+        modal.classList.add('active');
     }
 }
 
@@ -146,6 +154,8 @@ function closeForgotPassModal() {
     if (modal) {
         modal.classList.remove('active');
         modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
     }
 }
 
