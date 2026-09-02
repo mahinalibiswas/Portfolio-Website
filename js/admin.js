@@ -403,16 +403,16 @@ function renderAdminNavLinks(navLinks) {
     if (!container) return;
 
     container.innerHTML = tempNavLinksList.map((item, index) => `
-        <div class="cta-item-card" style="display: flex; gap: 1rem; align-items: center; background: rgba(30, 41, 59, 0.6); padding: 1rem; border-radius: 8px; margin-bottom: 0.8rem; border: 1px solid var(--border-color);">
+        <div class="cta-item-card" style="display: flex; gap: 1rem; align-items: center; background: rgba(15, 23, 42, 0.7); padding: 1.2rem; border-radius: 12px; margin-bottom: 0.8rem; border: 1px solid var(--border-glow); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
             <div style="flex: 1;">
-                <label style="font-size: 0.78rem; color: var(--accent-neon);">Nav Label #${index + 1}</label>
-                <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="e.g. Showreel" style="width: 100%; margin-top: 0.2rem;">
+                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Nav Label #${index + 1}</label>
+                <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="e.g. Showreel" style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; outline: none;">
             </div>
             <div style="flex: 1.5;">
-                <label style="font-size: 0.78rem; color: var(--accent-neon);">Target URL / Section Anchor</label>
-                <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="e.g. #showreel or https://..." style="width: 100%; margin-top: 0.2rem;">
+                <label style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 600; display: block; margin-bottom: 0.4rem;">Target URL / Section Anchor</label>
+                <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="e.g. #showreel or https://..." style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; outline: none;">
             </div>
-            <button type="button" class="btn btn-hero-secondary btn-sm danger-btn" onclick="deleteNavLinkItem(${index})" style="margin-top: 1rem;">
+            <button type="button" class="btn btn-hero-secondary btn-sm danger-btn" onclick="deleteNavLinkItem(${index})" style="margin-top: 1.4rem; height: 38px;">
                 <i class="fa-solid fa-trash"></i>
             </button>
         </div>
