@@ -34,13 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchCloudSiteData((cloudData) => {
             renderSiteData(cloudData);
         });
-
-        // 3. Periodic Auto-Sync (Realtime Live Update Every 4 Seconds)
-        setInterval(() => {
-            fetchCloudSiteData((cloudData) => {
-                renderSiteData(cloudData);
-            });
-        }, 4000);
     }
 });
 
