@@ -444,21 +444,49 @@ function renderAdminNavLinks(navLinks) {
     const container = document.getElementById('adminNavLinksList');
     if (!container) return;
 
-    container.innerHTML = tempNavLinksList.map((item, index) => `
-        <div class="cta-item-card" style="display: flex; gap: 1rem; align-items: center; background: rgba(15, 23, 42, 0.7); padding: 1.2rem; border-radius: 12px; margin-bottom: 0.8rem; border: 1px solid var(--border-glow); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-            <div style="flex: 1;">
-                <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+    if (tempNavLinksList.length === 0) {
+        container.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: var(--text-dim); background: rgba(15, 23, 42, 0.4); border-radius: 12px; border: 1px dashed var(--border-glow);">
+                No navigation links found. Click "+ Add Nav Link" to add your first menu link.
             </div>
-            <div style="flex: 1.5;">
-                <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+        `;
+        return;
+    }
+
+    const rowsHtml = tempNavLinksList.map((item, index) => `
+        <div style="display: flex; gap: 1rem; align-items: center; padding: 0.8rem 1rem; ${index !== tempNavLinksList.length - 1 ? 'border-bottom: 1px solid rgba(255, 255, 255, 0.06);' : ''} transition: background 0.2s ease;" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background='transparent'">
+            <div style="display: flex; align-items: center; color: var(--accent-neon); font-weight: 700; font-size: 0.88rem; width: 45px; flex-shrink: 0;">
+                <i class="fa-solid fa-grip-vertical" style="color: rgba(255,255,255,0.25); margin-right: 0.5rem; font-size: 0.85rem;"></i>
+                #${index + 1}
             </div>
-            <div style="display: flex; align-items: center; height: 44px;">
+
+            <div style="flex: 1; min-width: 0;">
+                <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="Enter your button name..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+            </div>
+
+            <div style="flex: 1.5; min-width: 0;">
+                <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="Enter your target URL..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+            </div>
+
+            <div style="display: flex; align-items: center; flex-shrink: 0;">
                 <button type="button" class="action-btn delete-btn" onclick="deleteNavLinkItem(${index})" title="Delete Link">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
         </div>
     `).join('');
+
+    container.innerHTML = `
+        <div style="background: rgba(15, 23, 42, 0.6); border-radius: 12px; border: 1px solid var(--border-glow); box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden;">
+            <div style="display: flex; gap: 1rem; align-items: center; padding: 0.8rem 1rem; background: rgba(2, 8, 23, 0.7); border-bottom: 1px solid var(--border-glow); font-size: 0.78rem; font-weight: 700; color: var(--accent-neon); letter-spacing: 0.04em; text-transform: uppercase;">
+                <div style="width: 45px; flex-shrink: 0;">#</div>
+                <div style="flex: 1;">Link Label / Name</div>
+                <div style="flex: 1.5;">Target URL / Section Anchor</div>
+                <div style="width: 40px; text-align: center; flex-shrink: 0;">Action</div>
+            </div>
+            ${rowsHtml}
+        </div>
+    `;
 }
 
 function updateNavLinkProp(index, prop, val) {
