@@ -311,14 +311,20 @@ function initTabNavigation() {
 }
 
 /* --- 3. Load All Current Site Data into Admin Forms --- */
-/* --- 3. Load All Current Site Data into Admin Forms --- */
+let adminDataLoadedFromCloud = false;
+
 function loadAllAdminData(skipCloud) {
     const data = getSiteData();
     renderAdminFormsWithData(data);
 
-    if (!skipCloud && typeof fetchCloudSiteData === 'function') {
+    if (!skipCloud && !adminDataLoadedFromCloud && typeof fetchCloudSiteData === 'function') {
         fetchCloudSiteData((cloudData) => {
-            if (cloudData) renderAdminFormsWithData(cloudData);
+            adminDataLoadedFromCloud = true;
+            const activeEl = document.activeElement;
+            const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+            if (!isTyping && cloudData) {
+                renderAdminFormsWithData(cloudData);
+            }
         });
     }
 }
