@@ -344,7 +344,11 @@ function saveSiteData(data) {
  * Gets current admin password
  */
 function getAdminPassword() {
-    return localStorage.getItem(PASSWORD_STORAGE_KEY) || DEFAULT_ADMIN_PASSWORD;
+    try {
+        return localStorage.getItem(PASSWORD_STORAGE_KEY) || window._mem_admin_pass || DEFAULT_ADMIN_PASSWORD;
+    } catch (e) {
+        return window._mem_admin_pass || DEFAULT_ADMIN_PASSWORD;
+    }
 }
 
 /**
@@ -352,7 +356,11 @@ function getAdminPassword() {
  */
 function setAdminPassword(newPassword) {
     if (newPassword && newPassword.trim().length >= 4) {
-        localStorage.setItem(PASSWORD_STORAGE_KEY, newPassword.trim());
+        const clean = newPassword.trim();
+        try {
+            localStorage.setItem(PASSWORD_STORAGE_KEY, clean);
+        } catch (e) {}
+        window._mem_admin_pass = clean;
         return true;
     }
     return false;

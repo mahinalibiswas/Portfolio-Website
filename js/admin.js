@@ -19,46 +19,62 @@ function initAuthGate() {
     const togglePassBtn = document.getElementById('togglePassBtn');
     const logoutBtn = document.getElementById('adminLogoutBtn');
 
-    // Check if session is already authenticated persistently in localStorage
-    const isAuthenticated = localStorage.getItem('mahin_admin_auth') === 'true';
+    let isAuthenticated = false;
+    try {
+        isAuthenticated = (localStorage.getItem('mahin_admin_auth') === 'true') || (window._mahin_admin_auth === true);
+    } catch (e) {
+        isAuthenticated = (window._mahin_admin_auth === true);
+    }
 
     if (isAuthenticated) {
-        authOverlay.style.display = 'none';
-        adminDashboard.style.display = 'flex';
+        if (authOverlay) authOverlay.style.display = 'none';
+        if (adminDashboard) adminDashboard.style.display = 'flex';
         loadAllAdminData();
     } else {
-        authOverlay.style.display = 'flex';
-        adminDashboard.style.display = 'none';
+        if (authOverlay) authOverlay.style.display = 'flex';
+        if (adminDashboard) adminDashboard.style.display = 'none';
     }
 
     togglePassBtn?.addEventListener('click', () => {
+        if (!passwordInput) return;
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
         togglePassBtn.querySelector('i').className = type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
     });
 
-    loginForm?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const entered = passwordInput.value.trim();
-        const currentPass = getAdminPassword();
+    window.performLogin = function() {
+        const entered = passwordInput ? passwordInput.value.trim() : '';
+        const currentPass = (typeof getAdminPassword === 'function') ? getAdminPassword() : 'mahin2026';
         const validMasterPasswords = ['mahin2026', 'mahinalibiswas', 'mahin-reset-2026'];
 
-        const isValid = (entered === currentPass) || validMasterPasswords.includes(entered);
+        const isValid = (!entered && currentPass === '') || (entered === currentPass) || validMasterPasswords.includes(entered);
 
         if (isValid) {
             if (validMasterPasswords.includes(entered) && entered !== currentPass) {
                 setAdminPassword('mahin2026');
             }
-            localStorage.setItem('mahin_admin_auth', 'true');
-            authOverlay.style.display = 'none';
-            adminDashboard.style.display = 'flex';
-            showToast('Welcome Mahin! Login Successful', 'success');
+            try {
+                localStorage.setItem('mahin_admin_auth', 'true');
+            } catch (e) {}
+            window._mahin_admin_auth = true;
+
+            if (authOverlay) authOverlay.style.display = 'none';
+            if (adminDashboard) adminDashboard.style.display = 'flex';
+            if (typeof showToast === 'function') showToast('Welcome Mahin! Login Successful', 'success');
             loadAllAdminData();
         } else {
-            authErrorMsg.textContent = 'Incorrect Password! Try: mahin2026';
-            passwordInput.value = '';
-            passwordInput.focus();
+            if (authErrorMsg) authErrorMsg.textContent = 'Incorrect Password! Try: mahin2026';
+            if (passwordInput) {
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
         }
+    };
+
+    loginForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        window.performLogin();
+        return false;
     });
 
     const forgotPassBtn = document.getElementById('forgotPassBtn');
@@ -69,7 +85,10 @@ function initAuthGate() {
     });
 
     logoutBtn?.addEventListener('click', () => {
-        localStorage.removeItem('mahin_admin_auth');
+        try {
+            localStorage.removeItem('mahin_admin_auth');
+        } catch (e) {}
+        window._mahin_admin_auth = false;
         window.location.reload();
     });
 }

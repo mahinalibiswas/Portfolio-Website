@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="auth-error-msg" id="authErrorMsg"></div>
-                <button type="submit" class="btn btn-primary btn-block">
+                <button type="submit" onclick="if(window.performLogin){window.performLogin();} return false;" class="btn btn-primary btn-block">
                     <span>Login to Dashboard</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
