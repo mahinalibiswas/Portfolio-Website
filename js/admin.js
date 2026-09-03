@@ -428,7 +428,7 @@ function renderAdminFormsWithData(data) {
     renderAllLivePreviews();
 }
 
-/* --- Live Section Preview Renderers --- */
+/* --- Live Section Preview Renderers (AUTHENTIC REAL SITE STYLES) --- */
 function renderLiveNavPreview() {
     const canvas = document.getElementById('previewNavCanvas');
     if (!canvas) return;
@@ -443,19 +443,17 @@ function renderLiveNavPreview() {
     });
 
     canvas.innerHTML = `
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.8rem 1.4rem; background:rgba(2,8,23,0.95); border-radius:50px; border:1px solid rgba(163,230,53,0.4); box-shadow:0 10px 30px rgba(0,0,0,0.6); max-width:960px; margin:0 auto; flex-wrap:wrap; gap:0.8rem;">
-            <div style="font-family:'Outfit',sans-serif; font-size:1.2rem; font-weight:800; color:#fff; letter-spacing:1px; white-space:nowrap;">
-                ${brand}
+        <header class="navbar" style="position:relative; top:0; left:0; transform:none; width:100%; max-width:1100px; margin:0 auto; box-shadow:0 10px 30px rgba(2,8,23,0.8);">
+            <div class="nav-container" style="padding:0.6rem 1.5rem;">
+                <a href="#hero" class="nav-brand font-accent">${brand}</a>
+                <nav class="nav-menu" style="display:flex; gap:1.2rem; align-items:center;">
+                    ${links.map(l => `<a class="nav-link" style="font-size:0.85rem; cursor:pointer;">${l}</a>`).join('')}
+                </nav>
+                <div class="nav-actions">
+                    <a class="btn btn-primary btn-sm">${ctaText}</a>
+                </div>
             </div>
-
-            <div style="display:flex; align-items:center; gap:1.2rem; font-size:0.85rem; font-weight:600; color:#cbd5e1; flex-wrap:wrap;">
-                ${links.map(l => `<span style="transition:color 0.2s ease;">${l}</span>`).join('')}
-            </div>
-
-            <div style="background:var(--accent-neon); color:#000; padding:0.45rem 1.1rem; border-radius:30px; font-weight:800; font-size:0.82rem; white-space:nowrap; box-shadow:0 0 15px rgba(163,230,53,0.4);">
-                ${ctaText}
-            </div>
-        </div>
+        </header>
     `;
 }
 
@@ -468,42 +466,62 @@ function renderLiveHeroPreview() {
     const titleBottom = document.getElementById('heroTitleBottom')?.value || 'BISWAS';
     const subTag = document.getElementById('heroSubtitleTag')?.value || 'Motion Graphics Artist & Senior Video Editor';
     const sub = document.getElementById('heroSubtitle')?.value || '';
+    const rawVideo = document.getElementById('heroShowreelVideo')?.value || '';
+    const posterUrl = document.getElementById('heroShowreelPoster')?.value || '';
     const statsEdited = document.getElementById('heroStatsEdited')?.value || '100+';
     const statsClients = document.getElementById('heroStatsClients')?.value || '50+';
     const statsDelivery = document.getElementById('heroStatsDelivery')?.value || '100%';
 
+    const data = getSiteData();
+    const ctaButtons = data.hero?.ctaButtons || [];
+
+    let videoContent = '';
+    if (rawVideo.includes('<iframe')) {
+        const iframeStart = rawVideo.indexOf('<iframe');
+        let clean = rawVideo.substring(iframeStart).replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+        if (!clean.includes('style=')) {
+            clean = clean.replace('<iframe', '<iframe style="width:100%; height:100%; border:none; border-radius:20px;"');
+        }
+        videoContent = clean;
+    } else {
+        const ytId = (typeof extractYoutubeId === 'function') ? extractYoutubeId(rawVideo) : null;
+        if (ytId) {
+            videoContent = `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1" style="width:100%; height:100%; border:none; border-radius:20px;" allowfullscreen></iframe>`;
+        } else if (rawVideo) {
+            videoContent = `<video src="${rawVideo}" poster="${posterUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:20px;" autoplay loop muted playsinline></video>`;
+        } else {
+            videoContent = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#000; color:var(--text-dim); border-radius:20px; font-size:0.85rem;"><span>No Video Link Set</span></div>`;
+        }
+    }
+
     canvas.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:0.8rem; font-family:'Inter',sans-serif;">
-            <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.4); padding:0.25rem 0.6rem; border-radius:20px; font-size:0.7rem; color:var(--accent-neon); width:fit-content; font-weight:700;">
-                <span style="width:6px; height:6px; background:var(--accent-neon); border-radius:50%;"></span>
-                <span>${badge}</span>
+        <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:2rem; align-items:center; text-align:left; background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow);">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span>${badge}</span>
+                </div>
+                <h1 class="hero-title" style="font-size:2.2rem; margin:0.8rem 0;">
+                    <span class="title-top">${titleTop}</span>
+                    <span class="gradient-text title-bottom">${titleBottom}</span>
+                </h1>
+                <p class="hero-subtitle-tag font-accent" style="font-size:0.9rem;">${subTag}</p>
+                <p class="hero-subtitle" style="font-size:0.82rem; line-height:1.5; color:var(--text-dim); margin-top:0.6rem;">${sub}</p>
+                <div class="hero-cta-group" style="margin-top:1rem; display:flex; gap:0.6rem; flex-wrap:wrap;">
+                    ${ctaButtons.map(b => `<a class="btn ${b.isModal ? 'btn-hero-primary' : 'btn-primary'} btn-sm">${b.text}</a>`).join('')}
+                </div>
             </div>
             
-            <h2 style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; margin:0; line-height:1.1; color:#fff;">
-                ${titleTop}<br>
-                <span style="background:linear-gradient(135deg, #a3e635 0%, #22c55e 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">${titleBottom}</span>
-            </h2>
-
-            <p style="color:var(--accent-neon); font-size:0.82rem; font-weight:600; margin:0;">
-                ${subTag}
-            </p>
-
-            <p style="color:#94a3b8; font-size:0.78rem; margin:0; line-height:1.4; max-height:60px; overflow:hidden;">
-                ${sub}
-            </p>
-
-            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid rgba(255,255,255,0.1); text-align:center;">
-                <div>
-                    <div style="font-size:1rem; font-weight:800; color:var(--accent-neon);">${statsEdited}</div>
-                    <div style="font-size:0.65rem; color:#64748b;">VIDEOS EDITED</div>
+            <div class="hero-right-col" style="display:flex; flex-direction:column; gap:1rem;">
+                <div class="hero-main-card" style="aspect-ratio:16/10; height:220px; margin:0;">
+                    ${videoContent}
                 </div>
-                <div>
-                    <div style="font-size:1rem; font-weight:800; color:var(--accent-neon);">${statsClients}</div>
-                    <div style="font-size:0.65rem; color:#64748b;">HAPPY CLIENTS</div>
-                </div>
-                <div>
-                    <div style="font-size:1rem; font-weight:800; color:var(--accent-neon);">${statsDelivery}</div>
-                    <div style="font-size:0.65rem; color:#64748b;">ON-TIME DELIVERY</div>
+                <div class="hero-stats" style="margin:0; padding:0.8rem;">
+                    <div class="stat-item"><span class="stat-number">${statsEdited}</span><span class="stat-label">Videos Edited</span></div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item"><span class="stat-number">${statsClients}</span><span class="stat-label">Happy Clients</span></div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item"><span class="stat-number">${statsDelivery}</span><span class="stat-label">On-Time Delivery</span></div>
                 </div>
             </div>
         </div>
@@ -529,26 +547,24 @@ function renderLiveAboutPreview() {
     }
 
     canvas.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:0.8rem;">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-                <span style="color:var(--accent-neon); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1px;">${tagBadge}</span>
-                <span style="background:rgba(163,230,53,0.2); color:var(--accent-neon); padding:0.2rem 0.5rem; border-radius:8px; font-size:0.75rem; font-weight:800;">${expYears} Years Exp</span>
+        <div style="background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow); display:flex; flex-direction:column; gap:1.5rem;">
+            <div class="about-content" style="text-align:left;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
+                    <span class="section-tag">${tagBadge}</span>
+                    <span class="experience-badge" style="background:rgba(163,230,53,0.15); color:var(--accent-neon); padding:0.3rem 0.8rem; border-radius:20px; font-weight:800; font-size:0.8rem; border:1px solid var(--border-glow);">${expYears} Years Experience</span>
+                </div>
+                <h2 class="section-title" style="font-size:1.8rem; margin:0.4rem 0;">
+                    ${titleTop} <span class="gradient-text">${titleGradient}</span>
+                </h2>
+                <p class="about-bio" style="font-size:0.85rem; line-height:1.6; color:var(--text-dim); margin:0;">${bio}</p>
             </div>
 
-            <h3 style="font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:800; color:#fff; margin:0;">
-                ${titleTop} <span style="background:linear-gradient(135deg,#a3e635,#22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${titleGradient}</span>
-            </h3>
-
-            <p style="color:#94a3b8; font-size:0.78rem; line-height:1.4; margin:0; max-height:55px; overflow:hidden;">
-                ${bio}
-            </p>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
+            <div class="about-features-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
                 ${feats.map(f => `
-                    <div style="background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px;">
-                        <i class="${f.icon}" style="color:var(--accent-neon); font-size:0.85rem; margin-bottom:0.3rem;"></i>
-                        <div style="font-size:0.75rem; font-weight:700; color:#fff;">${f.title}</div>
-                        <div style="font-size:0.65rem; color:#64748b; margin-top:0.2rem;">${f.desc}</div>
+                    <div class="feature-card" style="padding:1rem; text-align:left;">
+                        <div class="feature-icon" style="width:40px; height:40px; font-size:1.1rem; margin-bottom:0.6rem;"><i class="${f.icon}"></i></div>
+                        <h4 class="feature-title" style="font-size:0.85rem; margin-bottom:0.3rem;">${f.title}</h4>
+                        <p class="feature-desc" style="font-size:0.75rem; line-height:1.4; color:var(--text-dim); margin:0;">${f.desc}</p>
                     </div>
                 `).join('')}
             </div>
@@ -564,17 +580,22 @@ function renderLiveServicesPreview() {
     const services = data.services || [];
 
     canvas.innerHTML = `
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
-            ${services.slice(0, 4).map((s, i) => {
+        <div class="services-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
+            ${services.map((s, i) => {
                 const title = document.getElementById(`servTitle${i}`)?.value || s.title;
                 const icon = document.getElementById(`servIcon${i}`)?.value || s.icon;
                 const desc = document.getElementById(`servDesc${i}`)?.value || s.desc;
+                const checkpointsRaw = document.getElementById(`servCheck${i}`)?.value;
+                const checkpoints = checkpointsRaw ? checkpointsRaw.split(',').map(c => c.trim()).filter(Boolean) : (s.checkpoints || []);
 
                 return `
-                    <div style="background:rgba(2,6,23,0.8); border:1px solid rgba(163,230,53,0.2); padding:0.7rem; border-radius:10px;">
-                        <i class="${icon}" style="color:var(--accent-neon); font-size:1.1rem; margin-bottom:0.4rem; display:block;"></i>
-                        <div style="font-size:0.8rem; font-weight:700; color:#fff; margin-bottom:0.2rem;">${title}</div>
-                        <div style="font-size:0.68rem; color:#94a3b8; line-height:1.3; max-height:40px; overflow:hidden;">${desc}</div>
+                    <div class="service-card" style="padding:1.2rem; text-align:left;">
+                        <div class="service-icon" style="width:45px; height:45px; font-size:1.2rem; margin-bottom:0.8rem;"><i class="${icon}"></i></div>
+                        <h3 class="service-title" style="font-size:1rem; margin-bottom:0.5rem;">${title}</h3>
+                        <p class="service-desc" style="font-size:0.78rem; line-height:1.4; color:var(--text-dim); margin-bottom:0.8rem;">${desc}</p>
+                        <ul class="service-check-list" style="padding:0; margin:0; list-style:none; display:flex; flex-direction:column; gap:0.4rem;">
+                            ${checkpoints.map(c => `<li style="font-size:0.72rem; color:var(--text-light); display:flex; align-items:center; gap:0.4rem;"><i class="fa-solid fa-check" style="color:var(--accent-neon); font-size:0.7rem;"></i> ${c}</li>`).join('')}
+                        </ul>
                     </div>
                 `;
             }).join('')}
@@ -590,23 +611,27 @@ function renderLiveSoftwarePreview() {
     const software = data.software || [];
 
     canvas.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:0.6rem;">
+        <div class="software-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
             ${software.map((sw, i) => {
                 const title = document.getElementById(`softTitle${i}`)?.value || sw.title;
                 const sub = document.getElementById(`softSub${i}`)?.value || sw.subtitle;
+                const icon = document.getElementById(`softIcon${i}`)?.value || sw.icon;
                 const level = document.getElementById(`softLevel${i}`)?.value || sw.level || 90;
 
                 return `
-                    <div style="background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem 0.8rem; border-radius:8px;">
-                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.3rem;">
-                            <div>
-                                <span style="font-size:0.8rem; font-weight:700; color:#fff;">${title}</span>
-                                <span style="font-size:0.68rem; color:#64748b; margin-left:0.4rem;">${sub}</span>
+                    <div class="software-card" style="padding:1rem; text-align:left;">
+                        <div class="software-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
+                            <div class="software-info" style="display:flex; align-items:center; gap:0.6rem;">
+                                ${icon ? `<img src="${icon}" style="width:24px; height:24px; object-fit:contain;">` : ''}
+                                <div>
+                                    <h4 style="font-size:0.88rem; font-weight:700; color:#fff; margin:0;">${title}</h4>
+                                    <span style="font-size:0.7rem; color:var(--text-dim);">${sub}</span>
+                                </div>
                             </div>
-                            <span style="font-size:0.75rem; font-weight:800; color:var(--accent-neon);">${level}%</span>
+                            <span class="skill-percent" style="font-size:0.8rem; font-weight:800; color:var(--accent-neon);">${level}%</span>
                         </div>
-                        <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
-                            <div style="width:${level}%; height:100%; background:linear-gradient(90deg,#a3e635,#22c55e); border-radius:3px;"></div>
+                        <div class="progress-bar-wrap" style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+                            <div class="progress-bar-fill" style="width:${level}%; height:100%; background:linear-gradient(90deg,#a3e635,#22c55e); border-radius:3px; transition:width 0.3s ease;"></div>
                         </div>
                     </div>
                 `;
@@ -624,29 +649,26 @@ function renderLiveContactPreview() {
     const location = document.getElementById('contactLocation')?.value || 'Dhaka, Bangladesh';
 
     canvas.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:0.6rem;">
-            <div style="display:flex; align-items:center; gap:0.6rem; background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px;">
-                <i class="fa-solid fa-envelope" style="color:var(--accent-neon); font-size:0.9rem;"></i>
-                <div style="font-size:0.78rem; color:#fff; word-break:break-all;">${email}</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:0.6rem; background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px;">
-                <i class="fa-brands fa-whatsapp" style="color:var(--accent-neon); font-size:0.9rem;"></i>
-                <div style="font-size:0.78rem; color:#fff;">${whatsapp}</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:0.6rem; background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px;">
-                <i class="fa-solid fa-location-dot" style="color:var(--accent-neon); font-size:0.9rem;"></i>
-                <div style="font-size:0.78rem; color:#fff;">${location}</div>
-            </div>
-
-            <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
-                <div style="flex:1; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.3); text-align:center; padding:0.5rem; border-radius:8px; color:var(--accent-neon); font-size:0.75rem; font-weight:700;">
-                    <i class="fa-brands fa-behance"></i> Behance
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
+            <div class="contact-method-card" style="padding:1rem; display:flex; align-items:center; gap:0.8rem;">
+                <div class="method-icon" style="width:40px; height:40px; font-size:1.1rem;"><i class="fa-solid fa-envelope"></i></div>
+                <div class="method-info" style="text-align:left;">
+                    <span class="method-label" style="font-size:0.7rem; color:var(--text-dim); display:block;">Email Me</span>
+                    <a class="method-val" style="font-size:0.8rem; font-weight:700; color:#fff; word-break:break-all;">${email}</a>
                 </div>
-                <div style="flex:1; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.3); text-align:center; padding:0.5rem; border-radius:8px; color:var(--accent-neon); font-size:0.75rem; font-weight:700;">
-                    <i class="fa-brands fa-youtube"></i> YouTube
+            </div>
+            <div class="contact-method-card" style="padding:1rem; display:flex; align-items:center; gap:0.8rem;">
+                <div class="method-icon" style="width:40px; height:40px; font-size:1.1rem;"><i class="fa-brands fa-whatsapp"></i></div>
+                <div class="method-info" style="text-align:left;">
+                    <span class="method-label" style="font-size:0.7rem; color:var(--text-dim); display:block;">WhatsApp</span>
+                    <a class="method-val" style="font-size:0.8rem; font-weight:700; color:#fff;">${whatsapp}</a>
                 </div>
-                <div style="flex:1; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.3); text-align:center; padding:0.5rem; border-radius:8px; color:var(--accent-neon); font-size:0.75rem; font-weight:700;">
-                    <i class="fa-brands fa-facebook"></i> Facebook
+            </div>
+            <div class="contact-method-card" style="padding:1rem; display:flex; align-items:center; gap:0.8rem;">
+                <div class="method-icon" style="width:40px; height:40px; font-size:1.1rem;"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="method-info" style="text-align:left;">
+                    <span class="method-label" style="font-size:0.7rem; color:var(--text-dim); display:block;">Location</span>
+                    <span class="method-val" style="font-size:0.8rem; font-weight:700; color:#fff;">${location}</span>
                 </div>
             </div>
         </div>
