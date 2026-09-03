@@ -469,7 +469,11 @@ function renderLiveHeroPreview() {
     const statsDelivery = document.getElementById('heroStatsDelivery')?.value || '100%';
 
     const data = getSiteData();
-    const ctaButtons = data.hero?.ctaButtons || [];
+    const ctaButtons = (data.hero?.ctaButtons && data.hero.ctaButtons.length > 0) ? data.hero.ctaButtons : [
+        { id: 'b1', text: 'Watch Showreel', link: '', icon: 'fa-solid fa-play', isModal: true },
+        { id: 'b2', text: 'Hire Me', link: '#contact', icon: 'fa-solid fa-paper-plane', isModal: false },
+        { id: 'b3', text: 'About & Photo', link: '#about', icon: 'fa-solid fa-user', isModal: false }
+    ];
 
     let videoContent = '';
     if (rawVideo.includes('<iframe')) {
@@ -490,6 +494,51 @@ function renderLiveHeroPreview() {
         }
     }
 
+    const ctaHtml = ctaButtons.map(b => {
+        let iconHtml = '';
+        if (b.iconImage) {
+            iconHtml = `<img src="${b.iconImage}" alt="" style="width: 16px; height: 16px; object-fit: contain;">`;
+        } else if (b.icon) {
+            iconHtml = `<i class="${b.icon}"></i>`;
+        }
+
+        if (b.isModal) {
+            return `
+                <button class="btn btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:800; padding:0.45rem 1rem;">
+                    <span>${b.text}</span>
+                    <span class="btn-icon-circle" style="width:22px; height:22px; background:#020817; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.65rem;">${iconHtml || '<i class="fa-solid fa-play"></i>'}</span>
+                </button>
+            `;
+        } else {
+            return `
+                <a href="${b.link || '#contact'}" class="btn btn-hero-secondary btn-sm" style="display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:600; padding:0.45rem 1rem; background:rgba(2,8,23,0.8); border:1px solid var(--border-glow); color:#fff; text-decoration:none;">
+                    ${iconHtml} <span>${b.text}</span>
+                </a>
+            `;
+        }
+    }).join('');
+
+    const behanceUrl = data.contact?.behanceUrl || 'https://www.behance.net/mahinalibiswas';
+    const youtubeUrl = data.contact?.youtubeUrl || 'https://www.youtube.com/@mahinalibiswas';
+    const facebookUrl = data.contact?.facebookUrl || 'https://www.facebook.com/mahinalibiswas';
+
+    const socialHtml = `
+        <div class="hero-social-row" style="margin-top: 0.8rem; display: flex; gap: 0.6rem; flex-wrap: wrap;">
+            <a href="${behanceUrl}" target="_blank" class="hero-social-link" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; background: rgba(2,8,23,0.7); border: 1px solid var(--border-glow); border-radius: 30px; font-size: 0.75rem; color: #fff; text-decoration: none;">
+                <span class="social-icon-circle" style="color: var(--accent-neon);"><i class="fa-brands fa-behance"></i></span>
+                <span>Behance</span>
+            </a>
+            <a href="${youtubeUrl}" target="_blank" class="hero-social-link" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; background: rgba(2,8,23,0.7); border: 1px solid var(--border-glow); border-radius: 30px; font-size: 0.75rem; color: #fff; text-decoration: none;">
+                <span class="social-icon-circle" style="color: var(--accent-neon);"><i class="fa-brands fa-youtube"></i></span>
+                <span>YouTube</span>
+            </a>
+            <a href="${facebookUrl}" target="_blank" class="hero-social-link" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; background: rgba(2,8,23,0.7); border: 1px solid var(--border-glow); border-radius: 30px; font-size: 0.75rem; color: #fff; text-decoration: none;">
+                <span class="social-icon-circle" style="color: var(--accent-neon);"><i class="fa-brands fa-facebook"></i></span>
+                <span>Facebook</span>
+            </a>
+        </div>
+    `;
+
     canvas.innerHTML = `
         <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:2rem; align-items:center; text-align:left; background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow);">
             <div class="hero-content">
@@ -504,8 +553,9 @@ function renderLiveHeroPreview() {
                 <p class="hero-subtitle-tag font-accent" style="font-size:0.9rem;">${subTag}</p>
                 <p class="hero-subtitle" style="font-size:0.82rem; line-height:1.5; color:var(--text-dim); margin-top:0.6rem;">${sub}</p>
                 <div class="hero-cta-group" style="margin-top:1rem; display:flex; gap:0.6rem; flex-wrap:wrap;">
-                    ${ctaButtons.map(b => `<a class="btn ${b.isModal ? 'btn-hero-primary' : 'btn-primary'} btn-sm">${b.text}</a>`).join('')}
+                    ${ctaHtml}
                 </div>
+                ${socialHtml}
             </div>
             
             <div class="hero-right-col" style="display:flex; flex-direction:column; gap:1rem;">
