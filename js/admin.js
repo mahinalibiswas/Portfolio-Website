@@ -594,41 +594,80 @@ function renderLiveAboutPreview() {
     const canvas = document.getElementById('previewAboutCanvas');
     if (!canvas) return;
 
-    const tagBadge = document.getElementById('aboutTagBadge')?.value || 'ABOUT MAHIN ALI';
-    const expYears = document.getElementById('aboutExpYears')?.value || '5+';
-    const titleTop = document.getElementById('aboutTitleTop')?.value || 'CRAFTING VISUAL';
-    const titleGradient = document.getElementById('aboutTitleGradient')?.value || 'MASTERPIECES';
-    const bio = document.getElementById('aboutBio')?.value || '';
+    const tagBadge = document.getElementById('aboutTagBadge')?.value || 'ABOUT THE ARTIST';
+    const expYears = document.getElementById('aboutExpYears')?.value || '3+';
+    const titleTop = document.getElementById('aboutTitleTop')?.value || 'Elevating Content Through';
+    const titleGradient = document.getElementById('aboutTitleGradient')?.value || 'Motion & Storytelling';
+    const bio = document.getElementById('aboutBio')?.value || `Hi, I'm Mahin Ali Biswas (@mahinalibiswas) — a Motion Graphics Artist & Senior Video Editor based in Bangladesh. I work with content creators, digital agencies, and global brands to deliver high-impact motion graphics, 2D/3D title intros, kinetic typography, and cinematic video editing.`;
 
+    const data = getSiteData();
     const feats = [];
     for (let i = 0; i < 4; i++) {
-        const title = document.getElementById(`featTitle${i}`)?.value || `Superpower #${i+1}`;
-        const icon = document.getElementById(`featIcon${i}`)?.value || 'fa-solid fa-bolt';
-        const desc = document.getElementById(`featDesc${i}`)?.value || '';
+        const title = document.getElementById(`featTitle${i}`)?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].title : `Superpower #${i+1}`);
+        const icon = document.getElementById(`featIcon${i}`)?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].icon : 'fa-solid fa-bolt');
+        const desc = document.getElementById(`featDesc${i}`)?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].desc : '');
         feats.push({ title, icon, desc });
     }
 
-    canvas.innerHTML = `
-        <div style="background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow); display:flex; flex-direction:column; gap:1.5rem;">
-            <div class="about-content" style="text-align:left;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
-                    <span class="section-tag">${tagBadge}</span>
-                    <span class="experience-badge" style="background:rgba(163,230,53,0.15); color:var(--accent-neon); padding:0.3rem 0.8rem; border-radius:20px; font-weight:800; font-size:0.8rem; border:1px solid var(--border-glow);">${expYears} Years Experience</span>
-                </div>
-                <h2 class="section-title" style="font-size:1.8rem; margin:0.4rem 0;">
-                    ${titleTop} <span class="gradient-text">${titleGradient}</span>
-                </h2>
-                <p class="about-bio" style="font-size:0.85rem; line-height:1.6; color:var(--text-dim); margin:0;">${bio}</p>
-            </div>
+    const behanceUrl = data.contact?.behanceUrl || 'https://www.behance.net/mahinalibiswas';
 
-            <div class="about-features-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
-                ${feats.map(f => `
-                    <div class="feature-card" style="padding:1rem; text-align:left;">
-                        <div class="feature-icon" style="width:40px; height:40px; font-size:1.1rem; margin-bottom:0.6rem;"><i class="${f.icon}"></i></div>
-                        <h4 class="feature-title" style="font-size:0.85rem; margin-bottom:0.3rem;">${f.title}</h4>
-                        <p class="feature-desc" style="font-size:0.75rem; line-height:1.4; color:var(--text-dim); margin:0;">${f.desc}</p>
+    canvas.innerHTML = `
+        <div class="about-card" style="width:100%; max-width:100%; box-sizing:border-box; margin:0; background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow);">
+            <div class="about-grid" style="display:grid; grid-template-columns: 0.85fr 1.15fr; gap:2rem; align-items:center; text-align:left;">
+                <!-- Left Column: Portrait Photo & Experience Badge -->
+                <div class="about-image-wrapper" style="position:relative; width:100%; max-width:340px; margin:0 auto; aspect-ratio:3/4; border-radius:20px; overflow:hidden; border:2px solid var(--accent-neon); box-shadow:0 0 30px rgba(163,230,53,0.3); background:#000;">
+                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas" class="about-img" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Mahin+Biswas&background=84cc16&color=000';">
+                    <div class="experience-badge" style="position:absolute; bottom:1rem; left:1rem; right:1rem; background:rgba(2,8,23,0.85); backdrop-filter:blur(10px); border:1px solid var(--border-glow); padding:0.6rem 1rem; border-radius:14px; display:flex; align-items:center; gap:0.8rem;">
+                        <span class="exp-years" style="font-size:1.6rem; font-weight:800; color:var(--accent-neon); font-family:'Outfit',sans-serif; line-height:1;">${expYears}</span>
+                        <div class="exp-text-block" style="display:flex; flex-direction:column;">
+                            <strong class="exp-title" style="font-size:0.78rem; color:#fff; font-weight:700; line-height:1.2;">Years Experience</strong>
+                            <span class="exp-sub" style="font-size:0.68rem; color:var(--text-dim);">Motion & Video Specialist</span>
+                        </div>
                     </div>
-                `).join('')}
+                </div>
+
+                <!-- Right Column: Text, 2x2 Feature Grid & CTA Buttons -->
+                <div class="about-text-content" style="display:flex; flex-direction:column; gap:1rem;">
+                    <div class="about-tag-badge" style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.3); padding:0.35rem 0.8rem; border-radius:30px; font-size:0.75rem; font-weight:800; color:var(--accent-neon); width:fit-content;">
+                        <i class="fa-solid fa-user-astronaut"></i>
+                        <span>${tagBadge}</span>
+                    </div>
+
+                    <h2 class="section-title" style="font-size:1.8rem; margin:0; line-height:1.2;">
+                        ${titleTop} <span class="gradient-text">${titleGradient}</span>
+                    </h2>
+
+                    <p class="about-desc" style="font-size:0.82rem; line-height:1.5; color:var(--text-dim); margin:0;">
+                        ${bio}
+                    </p>
+
+                    <!-- 2x2 Feature Cards Grid -->
+                    <div class="about-highlights-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-top:0.4rem;">
+                        ${feats.map(f => `
+                            <div class="about-feature-box" style="display:flex; align-items:flex-start; gap:0.7rem; background:rgba(2,8,23,0.7); border:1px solid var(--border-glow); padding:0.75rem; border-radius:12px;">
+                                <div class="feature-icon" style="width:34px; height:34px; background:rgba(163,230,53,0.15); border:1px solid rgba(163,230,53,0.3); color:var(--accent-neon); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.95rem; flex-shrink:0;">
+                                    <i class="${f.icon}"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size:0.82rem; font-weight:700; color:#fff; margin:0 0 0.2rem 0;">${f.title}</h4>
+                                    <p style="font-size:0.72rem; color:var(--text-dim); margin:0; line-height:1.3;">${f.desc}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Bottom CTA Action Buttons -->
+                    <div class="about-cta-row" style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.5rem;">
+                        <a href="${behanceUrl}" target="_blank" class="btn btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:800; padding:0.45rem 1.1rem; text-decoration:none;">
+                            <span>Visit Behance Profile</span>
+                            <i class="fa-brands fa-behance" style="width:22px; height:22px; background:#020817; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem;"></i>
+                        </a>
+                        <a href="#contact" class="btn btn-hero-secondary btn-sm" style="display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:600; padding:0.45rem 1.1rem; background:rgba(2,8,23,0.8); border:1px solid var(--border-glow); color:#fff; text-decoration:none;">
+                            <span>Contact Direct</span>
+                            <i class="fa-solid fa-paper-plane" style="font-size:0.8rem; color:var(--accent-neon);"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     `;
