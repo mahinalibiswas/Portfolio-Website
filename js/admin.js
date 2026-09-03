@@ -679,14 +679,32 @@ function renderLiveAboutPreview() {
 
                     <!-- Bottom CTA Action Buttons -->
                     <div class="about-cta-row" style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.5rem;">
-                        <a href="${behanceUrl}" target="_blank" class="btn btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:800; padding:0.45rem 1.1rem; text-decoration:none;">
-                            <span>Visit Behance Profile</span>
-                            <i class="fa-brands fa-behance" style="width:22px; height:22px; background:#020817; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem;"></i>
-                        </a>
-                        <a href="#contact" class="btn btn-hero-secondary btn-sm" style="display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:600; padding:0.45rem 1.1rem; background:rgba(2,8,23,0.8); border:1px solid var(--border-glow); color:#fff; text-decoration:none;">
-                            <span>Contact Direct</span>
-                            <i class="fa-solid fa-paper-plane" style="font-size:0.8rem; color:var(--accent-neon);"></i>
-                        </a>
+                        ${(data.about?.ctaButtons && data.about.ctaButtons.length > 0 ? data.about.ctaButtons : [
+                            { id: 'about-btn-1', text: 'Visit Behance Profile', link: 'https://www.behance.net/mahinalibiswas', icon: '' },
+                            { id: 'about-btn-2', text: 'Contact Direct', link: '#contact', icon: '' }
+                        ]).map((b, idx) => {
+                            const isPrimary = idx === 0;
+                            const btnClass = isPrimary ? 'btn btn-primary btn-sm' : 'btn btn-hero-secondary btn-sm';
+                            let iconContent = '<i class="fa-solid fa-arrow-right"></i>';
+                            if (b.iconImage) {
+                                iconContent = `<img src="${b.iconImage}" style="width: 14px; height: 14px; object-fit: contain;">`;
+                            } else if (b.icon) {
+                                iconContent = `<i class="${b.icon}"></i>`;
+                            }
+
+                            const styleAttr = isPrimary 
+                                ? 'display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:800; padding:0.45rem 1.1rem; text-decoration:none;'
+                                : 'display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:600; padding:0.45rem 1.1rem; background:rgba(2,8,23,0.8); border:1px solid var(--border-glow); color:#fff; text-decoration:none;';
+
+                            return `
+                                <a href="${b.link || '#'}" class="${btnClass}" style="${styleAttr}">
+                                    <span>${b.text}</span>
+                                    <span class="btn-icon-circle" style="width:22px; height:22px; background:#020817; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.65rem;">
+                                        ${iconContent}
+                                    </span>
+                                </a>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             </div>
