@@ -575,6 +575,12 @@
     color: #ef4444;
 }
 
+@media (max-width: 1400px) {
+    .dynamic-cta-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    }
+}
+
 @media (max-width: 900px) {
     .admin-container {
         grid-template-columns: 1fr;

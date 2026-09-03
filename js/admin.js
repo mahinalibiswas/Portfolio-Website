@@ -932,7 +932,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
                     </h4>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
                     <!-- Col 1: Icon Badge + Button Text -->
                     <div style="display: flex; flex-direction: column; gap: 0.4rem;">
                         <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Button Text & Active Icon</label>
