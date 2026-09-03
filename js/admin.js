@@ -469,11 +469,23 @@ function renderLiveHeroPreview() {
     const statsDelivery = document.getElementById('heroStatsDelivery')?.value || '100%';
 
     const data = getSiteData();
-    const ctaButtons = (data.hero?.ctaButtons && data.hero.ctaButtons.length > 0) ? data.hero.ctaButtons : [
+    let ctaButtons = (data.hero?.ctaButtons && data.hero.ctaButtons.length > 0) ? data.hero.ctaButtons : [
         { id: 'b1', text: 'Watch Showreel', link: '', icon: 'fa-solid fa-play', isModal: true },
         { id: 'b2', text: 'Hire Me', link: '#contact', icon: 'fa-solid fa-paper-plane', isModal: false },
         { id: 'b3', text: 'About & Photo', link: '#about', icon: 'fa-solid fa-user', isModal: false }
     ];
+
+    ctaButtons = ctaButtons.map(b => {
+        const liveTextEl = document.getElementById(`ctaBtnText_${b.id}`);
+        const liveLinkEl = document.getElementById(`ctaBtnLink_${b.id}`);
+        const liveModalEl = document.getElementById(`ctaBtnModal_${b.id}`);
+        return {
+            ...b,
+            text: (liveTextEl && liveTextEl.value !== undefined) ? liveTextEl.value : b.text,
+            link: (liveLinkEl && liveLinkEl.value !== undefined) ? liveLinkEl.value : b.link,
+            isModal: (liveModalEl) ? liveModalEl.checked : b.isModal
+        };
+    });
 
     let videoContent = '';
     if (rawVideo.includes('<iframe')) {
@@ -758,7 +770,7 @@ function renderAdminCtaButtons(ctaButtons) {
             <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1rem;">
                 <div style="flex: 1;">
                     <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Button Text</label>
-                    <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+                    <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name..." oninput="renderLiveHeroPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
                 </div>
 
                 <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.8rem; height: 44px;">
@@ -776,12 +788,12 @@ function renderAdminCtaButtons(ctaButtons) {
 
             <div style="margin-bottom: 1rem;">
                 <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Target URL</label>
-                <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+                <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL..." oninput="renderLiveHeroPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
             </div>
 
             <div>
                 <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; color: #ffffff; font-size: 0.88rem;">
-                    <input type="checkbox" id="ctaBtnModal_${btn.id}" ${btn.isModal ? 'checked' : ''} style="width: auto;">
+                    <input type="checkbox" id="ctaBtnModal_${btn.id}" ${btn.isModal ? 'checked' : ''} onchange="renderLiveHeroPreview()" style="width: auto;">
                     <span>Opens Showreel Video Lightbox Modal (Play Video Action)</span>
                 </label>
             </div>
