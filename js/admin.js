@@ -594,18 +594,39 @@ function renderLiveAboutPreview() {
     const canvas = document.getElementById('previewAboutCanvas');
     if (!canvas) return;
 
-    const tagBadge = document.getElementById('aboutTagBadge')?.value || 'ABOUT THE ARTIST';
-    const expYears = document.getElementById('aboutExpYears')?.value || '3+';
-    const titleTop = document.getElementById('aboutTitleTop')?.value || 'Elevating Content Through';
-    const titleGradient = document.getElementById('aboutTitleGradient')?.value || 'Motion & Storytelling';
-    const bio = document.getElementById('aboutBio')?.value || `Hi, I'm Mahin Ali Biswas (@mahinalibiswas) — a Motion Graphics Artist & Senior Video Editor based in Bangladesh. I work with content creators, digital agencies, and global brands to deliver high-impact motion graphics, 2D/3D title intros, kinetic typography, and cinematic video editing.`;
-
     const data = getSiteData();
+
+    const tagBadgeEl = document.getElementById('aboutTagBadge');
+    const expYearsEl = document.getElementById('aboutExpYears');
+    const titleTopEl = document.getElementById('aboutTitleTop');
+    const titleGradientEl = document.getElementById('aboutTitleGradient');
+    const bioEl = document.getElementById('aboutBio');
+
+    if (tagBadgeEl && !tagBadgeEl.value && data.about?.tagBadge) tagBadgeEl.value = data.about.tagBadge;
+    if (expYearsEl && !expYearsEl.value && data.about?.expYears) expYearsEl.value = data.about.expYears;
+    if (titleTopEl && !titleTopEl.value && data.about?.titleTop) titleTopEl.value = data.about.titleTop;
+    if (titleGradientEl && !titleGradientEl.value && data.about?.titleGradient) titleGradientEl.value = data.about.titleGradient;
+    if (bioEl && !bioEl.value && data.about?.bio) bioEl.value = data.about.bio;
+
+    const tagBadge = tagBadgeEl?.value || data.about?.tagBadge || 'ABOUT THE ARTIST';
+    const expYears = expYearsEl?.value || data.about?.expYears || '3+';
+    const titleTop = titleTopEl?.value || data.about?.titleTop || 'Elevating Content Through';
+    const titleGradient = titleGradientEl?.value || data.about?.titleGradient || 'Motion & Storytelling';
+    const bio = bioEl?.value || data.about?.bio || `Hi, I'm Mahin Ali Biswas (@mahinalibiswas) — a Motion Graphics Artist & Senior Video Editor based in Bangladesh. I work with content creators, digital agencies, and global brands to deliver high-impact motion graphics, 2D/3D title intros, kinetic typography, and cinematic video editing.`;
+
     const feats = [];
     for (let i = 0; i < 4; i++) {
-        const title = document.getElementById(`featTitle${i}`)?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].title : `Superpower #${i+1}`);
-        const icon = document.getElementById(`featIcon${i}`)?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].icon : 'fa-solid fa-bolt');
-        const desc = document.getElementById(`featDesc${i}`)?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].desc : '');
+        const titleEl = document.getElementById(`featTitle${i}`);
+        const iconEl = document.getElementById(`featIcon${i}`);
+        const descEl = document.getElementById(`featDesc${i}`);
+
+        if (titleEl && !titleEl.value && data.about?.features && data.about.features[i]?.title) titleEl.value = data.about.features[i].title;
+        if (iconEl && !iconEl.value && data.about?.features && data.about.features[i]?.icon) iconEl.value = data.about.features[i].icon;
+        if (descEl && !descEl.value && data.about?.features && data.about.features[i]?.desc) descEl.value = data.about.features[i].desc;
+
+        const title = titleEl?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].title : `Superpower #${i+1}`);
+        const icon = iconEl?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].icon : 'fa-solid fa-bolt');
+        const desc = descEl?.value || (data.about?.features && data.about.features[i] ? data.about.features[i].desc : '');
         feats.push({ title, icon, desc });
     }
 
