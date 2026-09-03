@@ -2051,11 +2051,13 @@ function toggleLivePreviewCollapse(btn) {
 function updatePreviewToggleButtons(isCollapsed) {
     document.querySelectorAll('.btn-preview-toggle').forEach(b => {
         if (isCollapsed) {
-            b.innerHTML = '<i class="fa-solid fa-chevron-down"></i> <span>Expand Live Preview</span>';
+            b.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+            b.setAttribute('title', 'Expand Live Preview');
             b.style.borderColor = 'var(--accent-neon)';
             b.style.color = 'var(--accent-neon)';
         } else {
-            b.innerHTML = '<i class="fa-solid fa-chevron-up"></i> <span>Minimize Preview</span>';
+            b.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+            b.setAttribute('title', 'Minimize Live Preview');
             b.style.borderColor = 'var(--border-glow)';
             b.style.color = '#ffffff';
         }

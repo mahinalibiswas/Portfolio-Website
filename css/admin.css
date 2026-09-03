@@ -654,24 +654,27 @@
 }
 
 .btn-preview-toggle {
-    background: rgba(255, 255, 255, 0.06);
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--border-glow);
     color: #ffffff;
-    padding: 0.3rem 0.85rem;
     border-radius: 8px;
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-size: 0.85rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    justify-content: center;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .btn-preview-toggle:hover {
-    background: rgba(163, 230, 53, 0.15);
+    background: rgba(163, 230, 53, 0.2);
     border-color: var(--accent-neon);
     color: var(--accent-neon);
+    box-shadow: 0 0 10px rgba(163, 230, 53, 0.25);
+    transform: translateY(-1px);
 }
 
 .admin-preview-pane.collapsed .admin-preview-canvas {
