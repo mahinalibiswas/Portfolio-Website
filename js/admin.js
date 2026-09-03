@@ -443,25 +443,17 @@ function renderLiveNavPreview() {
     });
 
     canvas.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:0.8rem; width:100%; box-sizing:border-box;">
-            <!-- Brand & Top CTA Bar -->
-            <div style="display:flex; align-items:center; justify-content:space-between; padding:0.6rem 0.9rem; background:rgba(2,8,23,0.95); border-radius:12px; border:1px solid rgba(163,230,53,0.4); box-shadow:0 8px 25px rgba(0,0,0,0.5);">
-                <div style="font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:0.5px; white-space:nowrap;">
-                    ${brand}
-                </div>
-                <div style="background:var(--accent-neon); color:#000; padding:0.35rem 0.8rem; border-radius:20px; font-weight:800; font-size:0.75rem; white-space:nowrap; box-shadow:0 0 10px rgba(163,230,53,0.4);">
-                    ${ctaText}
-                </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.8rem 1.4rem; background:rgba(2,8,23,0.95); border-radius:50px; border:1px solid rgba(163,230,53,0.4); box-shadow:0 10px 30px rgba(0,0,0,0.6); max-width:960px; margin:0 auto; flex-wrap:wrap; gap:0.8rem;">
+            <div style="font-family:'Outfit',sans-serif; font-size:1.2rem; font-weight:800; color:#fff; letter-spacing:1px; white-space:nowrap;">
+                ${brand}
             </div>
 
-            <!-- Responsive Navigation Links Pills Grid -->
-            <div style="padding:0.7rem; background:rgba(15,23,42,0.85); border-radius:10px; border:1px solid rgba(255,255,255,0.08); box-sizing:border-box;">
-                <div style="font-size:0.65rem; font-weight:700; color:var(--accent-neon); text-transform:uppercase; margin-bottom:0.5rem; letter-spacing:0.5px;">
-                    Header Links (${links.length}):
-                </div>
-                <div style="display:flex; flex-wrap:wrap; align-items:center; gap:0.4rem 0.5rem;">
-                    ${links.map(l => `<span style="font-size:0.72rem; color:#e2e8f0; background:rgba(255,255,255,0.06); padding:0.25rem 0.55rem; border-radius:6px; border:1px solid rgba(255,255,255,0.1); white-space:nowrap;">${l}</span>`).join('')}
-                </div>
+            <div style="display:flex; align-items:center; gap:1.2rem; font-size:0.85rem; font-weight:600; color:#cbd5e1; flex-wrap:wrap;">
+                ${links.map(l => `<span style="transition:color 0.2s ease;">${l}</span>`).join('')}
+            </div>
+
+            <div style="background:var(--accent-neon); color:#000; padding:0.45rem 1.1rem; border-radius:30px; font-weight:800; font-size:0.82rem; white-space:nowrap; box-shadow:0 0 15px rgba(163,230,53,0.4);">
+                ${ctaText}
             </div>
         </div>
     `;

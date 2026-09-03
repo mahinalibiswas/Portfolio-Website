@@ -585,30 +585,27 @@
     }
 }
 
-/* --- Live Visual Preview Split Pane Layout --- */
+/* --- Live Visual Preview Stacked Layout --- */
 .admin-split-layout {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    display: flex;
+    flex-direction: column;
     gap: 1.8rem;
-    align-items: start;
-}
-
-@media (max-width: 1200px) {
-    .admin-split-layout {
-        grid-template-columns: 1fr;
-    }
+    width: 100%;
 }
 
 .admin-preview-pane {
     position: sticky;
-    top: 1.5rem;
-    background: rgba(2, 6, 23, 0.9);
+    top: 1rem;
+    z-index: 90;
+    background: rgba(2, 6, 23, 0.95);
     border: 1px solid var(--border-glow);
     border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(20px);
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(163, 230, 53, 0.15);
+    backdrop-filter: blur(25px);
     overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .admin-preview-header {
