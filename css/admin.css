@@ -209,7 +209,7 @@
 
 /* --- Content Area --- */
 .admin-main {
-    padding: 0 2.5rem 2.5rem 2.5rem;
+    padding: 2.5rem;
     background: var(--bg-dark);
 }
 
@@ -233,7 +233,6 @@
     border-radius: var(--radius-lg);
     padding: 2.5rem;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    margin-top: 1.5rem;
 }
 
 .panel-header {
@@ -596,12 +595,11 @@
 
 .admin-preview-pane {
     position: sticky;
-    top: 68px;
-    z-index: 990;
+    top: 67px;
+    z-index: 900;
     background: #020617;
     border: 1px solid var(--border-glow);
-    border-top: none;
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border-radius: var(--radius-lg);
     padding: 0.4rem;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
     overflow: hidden;

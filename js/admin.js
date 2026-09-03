@@ -329,35 +329,6 @@ function loadAllAdminData(skipCloud) {
     }
 }
 
-function updateHeroAdminVideoPreview() {
-    const input = (document.getElementById('heroShowreelVideo')?.value || '').trim();
-    const previewBox = document.getElementById('adminVideoPreviewBox');
-    if (!previewBox) return;
-
-    if (!input) {
-        previewBox.style.display = 'none';
-        previewBox.innerHTML = '';
-        return;
-    }
-
-    let iframeSrc = '';
-    if (input.includes('<iframe')) {
-        const srcMatch = input.match(/src=["']([^"']+)["']/);
-        if (srcMatch && srcMatch[1]) iframeSrc = srcMatch[1];
-    } else {
-        const ytId = (typeof extractYoutubeId === 'function') ? extractYoutubeId(input) : null;
-        if (ytId) iframeSrc = `https://www.youtube.com/embed/${ytId}`;
-    }
-
-    if (iframeSrc) {
-        previewBox.style.display = 'block';
-        previewBox.innerHTML = `<iframe src="${iframeSrc}" style="width:100%; height:100%; border:none; border-radius:12px;" allowfullscreen></iframe>`;
-    } else {
-        previewBox.style.display = 'block';
-        previewBox.innerHTML = `<div style="padding:1rem; color:#ef4444; background:rgba(239,68,68,0.1); border-radius:12px; font-size:0.85rem;">⚠️ Could not parse YouTube video ID. Please check your video URL or embed code.</div>`;
-    }
-}
-
 function renderAdminFormsWithData(data) {
     if (!data) return;
 
@@ -378,7 +349,6 @@ function renderAdminFormsWithData(data) {
         if (document.getElementById('heroSubtitle')) document.getElementById('heroSubtitle').value = data.hero.subtitle || '';
         if (document.getElementById('heroShowreelVideo')) {
             document.getElementById('heroShowreelVideo').value = data.hero.showreelVideo || '';
-            updateHeroAdminVideoPreview();
         }
         if (document.getElementById('heroShowreelPoster')) document.getElementById('heroShowreelPoster').value = data.hero.showreelPoster || '';
         if (document.getElementById('heroStatsEdited')) document.getElementById('heroStatsEdited').value = data.hero.statsEdited || '100+';
