@@ -445,10 +445,11 @@ function renderLiveNavPreview() {
     });
 
     canvas.innerHTML = `
-        <div class="navbar-wrapper" style="position:relative; width:100%; background:transparent; padding:0.5rem 0; box-sizing:border-box;">
-            <nav class="navbar container" style="position:relative; top:0; left:0; transform:none; width:100%; max-width:1200px; margin:0 auto; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
-                <a href="#" class="brand-logo" style="display:flex; align-items:center; gap:0.8rem; text-decoration:none;">
-                    <div class="nav-avatar-box" style="width:42px; height:42px; border-radius:50%; border:2px solid var(--accent-neon); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#000;">
+        <div class="navbar-wrapper" style="position:relative; width:100%; background:transparent; padding:0.3rem 0; box-sizing:border-box;">
+            <nav class="navbar container" style="position:relative; top:0; left:0; transform:none; width:100%; max-width:1200px; margin:0 auto; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:0.8rem; flex-wrap:nowrap; overflow-x:auto;">
+                <!-- Far Left: Logo & Avatar -->
+                <a href="#" class="brand-logo" style="display:flex; align-items:center; gap:0.8rem; text-decoration:none; white-space:nowrap; flex-shrink:0;">
+                    <div class="nav-avatar-box" style="width:42px; height:42px; border-radius:50%; border:2px solid var(--accent-neon); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#000; flex-shrink:0;">
                         <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas" class="nav-avatar-img" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Mahin+Biswas&background=84cc16&color=000';">
                     </div>
                     <div class="logo-text-group" style="display:flex; flex-direction:column; align-items:flex-start;">
@@ -457,18 +458,20 @@ function renderLiveNavPreview() {
                     </div>
                 </a>
 
-                <div class="nav-links" style="display:flex; align-items:center; gap:0.3rem; background:rgba(2,8,23,0.7); border:1px solid var(--border-glow); padding:0.4rem 0.8rem; border-radius:50px; backdrop-filter:blur(10px);">
-                    ${links.map((l, idx) => `<a class="nav-link ${idx === 0 ? 'active' : ''}" style="font-size:0.82rem; font-weight:600; padding:0.4rem 0.8rem; text-decoration:none; cursor:pointer;">${l}</a>`).join('')}
+                <!-- Center: Navigation Links Pill -->
+                <div class="nav-links" style="display:flex; align-items:center; gap:0.15rem; background:rgba(2,8,23,0.7); border:1px solid var(--border-glow); padding:0.35rem 0.6rem; border-radius:50px; backdrop-filter:blur(10px); flex-shrink:0;">
+                    ${links.map((l, idx) => `<a class="nav-link ${idx === 0 ? 'active' : ''}" style="font-size:0.8rem; font-weight:600; padding:0.35rem 0.6rem; text-decoration:none; cursor:pointer; white-space:nowrap;">${l}</a>`).join('')}
                 </div>
 
-                <div class="nav-actions" style="display:flex; align-items:center; gap:0.8rem;">
-                    <div class="status-pill" style="display:flex; align-items:center; gap:0.5rem; background:rgba(163,230,53,0.08); border:1px solid rgba(163,230,53,0.3); padding:0.4rem 0.8rem; border-radius:30px;">
-                        <span class="status-dot" style="width:8px; height:8px; background:var(--accent-neon); border-radius:50%; box-shadow:0 0 8px var(--accent-neon);"></span>
-                        <span class="status-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-neon);">Available for Work</span>
+                <!-- Far Right: Status Pill & Contact CTA Button -->
+                <div class="nav-actions" style="display:flex; align-items:center; gap:0.6rem; white-space:nowrap; flex-shrink:0;">
+                    <div class="status-pill" style="display:flex; align-items:center; gap:0.4rem; background:rgba(163,230,53,0.08); border:1px solid rgba(163,230,53,0.3); padding:0.35rem 0.7rem; border-radius:30px;">
+                        <span class="status-dot" style="width:7px; height:7px; background:var(--accent-neon); border-radius:50%; box-shadow:0 0 8px var(--accent-neon);"></span>
+                        <span class="status-text" style="font-size:0.72rem; font-weight:700; color:var(--accent-neon);">Available for Work</span>
                     </div>
-                    <a href="${ctaUrl}" class="btn btn-primary nav-cta" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.5rem 1.2rem; border-radius:30px; font-weight:800; font-size:0.85rem; text-decoration:none;">
+                    <a href="${ctaUrl}" class="btn btn-primary nav-cta" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.45rem 1rem; border-radius:30px; font-weight:800; font-size:0.82rem; text-decoration:none;">
                         <span>${ctaText}</span>
-                        <i class="fa-solid fa-arrow-right" style="width:24px; height:24px; background:#020817; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem;"></i>
+                        <i class="fa-solid fa-arrow-right" style="width:22px; height:22px; background:#020817; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.65rem;"></i>
                     </a>
                 </div>
             </nav>
