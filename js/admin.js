@@ -423,6 +423,241 @@ function renderAdminFormsWithData(data) {
         if (document.getElementById('contactYoutube')) document.getElementById('contactYoutube').value = data.contact.youtubeUrl || '';
         if (document.getElementById('contactFacebook')) document.getElementById('contactFacebook').value = data.contact.facebookUrl || '';
     }
+
+    // Render All Live Preview Panes
+    renderAllLivePreviews();
+}
+
+/* --- Live Section Preview Renderers --- */
+function renderLiveNavPreview() {
+    const canvas = document.getElementById('previewNavCanvas');
+    if (!canvas) return;
+
+    const brand = document.getElementById('navBrandLogo')?.value || 'MAHIN.';
+    const ctaText = document.getElementById('navCtaText')?.value || 'Hire Me';
+    
+    const data = getSiteData();
+    const links = (data.navigation?.navLinks || []).map(l => {
+        const val = document.getElementById(`navLinkLabel_${l.id}`)?.value;
+        return val !== undefined ? val : l.label;
+    });
+
+    canvas.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.8rem 1.2rem; background:rgba(2,8,23,0.95); border-radius:14px; border:1px solid rgba(163,230,53,0.3);">
+            <div style="font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:1px;">
+                ${brand}
+            </div>
+            <div style="display:flex; align-items:center; gap:0.8rem; font-size:0.75rem; color:#94a3b8;">
+                ${links.map(l => `<span>${l}</span>`).join('')}
+            </div>
+            <div style="background:var(--accent-neon); color:#000; padding:0.35rem 0.8rem; border-radius:20px; font-weight:700; font-size:0.75rem;">
+                ${ctaText}
+            </div>
+        </div>
+    `;
+}
+
+function renderLiveHeroPreview() {
+    const canvas = document.getElementById('previewHeroCanvas');
+    if (!canvas) return;
+
+    const badge = document.getElementById('heroBadge')?.value || 'MOTION & VIDEO ARTIST';
+    const titleTop = document.getElementById('heroTitleTop')?.value || 'MAHIN ALI';
+    const titleBottom = document.getElementById('heroTitleBottom')?.value || 'BISWAS';
+    const subTag = document.getElementById('heroSubtitleTag')?.value || 'Motion Graphics Artist & Senior Video Editor';
+    const sub = document.getElementById('heroSubtitle')?.value || '';
+    const statsEdited = document.getElementById('heroStatsEdited')?.value || '100+';
+    const statsClients = document.getElementById('heroStatsClients')?.value || '50+';
+    const statsDelivery = document.getElementById('heroStatsDelivery')?.value || '100%';
+
+    canvas.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:0.8rem; font-family:'Inter',sans-serif;">
+            <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.4); padding:0.25rem 0.6rem; border-radius:20px; font-size:0.7rem; color:var(--accent-neon); width:fit-content; font-weight:700;">
+                <span style="width:6px; height:6px; background:var(--accent-neon); border-radius:50%;"></span>
+                <span>${badge}</span>
+            </div>
+            
+            <h2 style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; margin:0; line-height:1.1; color:#fff;">
+                ${titleTop}<br>
+                <span style="background:linear-gradient(135deg, #a3e635 0%, #22c55e 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">${titleBottom}</span>
+            </h2>
+
+            <p style="color:var(--accent-neon); font-size:0.82rem; font-weight:600; margin:0;">
+                ${subTag}
+            </p>
+
+            <p style="color:#94a3b8; font-size:0.78rem; margin:0; line-height:1.4; max-height:60px; overflow:hidden;">
+                ${sub}
+            </p>
+
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid rgba(255,255,255,0.1); text-align:center;">
+                <div>
+                    <div style="font-size:1rem; font-weight:800; color:var(--accent-neon);">${statsEdited}</div>
+                    <div style="font-size:0.65rem; color:#64748b;">VIDEOS EDITED</div>
+                </div>
+                <div>
+                    <div style="font-size:1rem; font-weight:800; color:var(--accent-neon);">${statsClients}</div>
+                    <div style="font-size:0.65rem; color:#64748b;">HAPPY CLIENTS</div>
+                </div>
+                <div>
+                    <div style="font-size:1rem; font-weight:800; color:var(--accent-neon);">${statsDelivery}</div>
+                    <div style="font-size:0.65rem; color:#64748b;">ON-TIME DELIVERY</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderLiveAboutPreview() {
+    const canvas = document.getElementById('previewAboutCanvas');
+    if (!canvas) return;
+
+    const tagBadge = document.getElementById('aboutTagBadge')?.value || 'ABOUT MAHIN ALI';
+    const expYears = document.getElementById('aboutExpYears')?.value || '5+';
+    const titleTop = document.getElementById('aboutTitleTop')?.value || 'CRAFTING VISUAL';
+    const titleGradient = document.getElementById('aboutTitleGradient')?.value || 'MASTERPIECES';
+    const bio = document.getElementById('aboutBio')?.value || '';
+
+    const feats = [];
+    for (let i = 0; i < 4; i++) {
+        const title = document.getElementById(`featTitle${i}`)?.value || `Superpower #${i+1}`;
+        const icon = document.getElementById(`featIcon${i}`)?.value || 'fa-solid fa-bolt';
+        const desc = document.getElementById(`featDesc${i}`)?.value || '';
+        feats.push({ title, icon, desc });
+    }
+
+    canvas.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:0.8rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span style="color:var(--accent-neon); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1px;">${tagBadge}</span>
+                <span style="background:rgba(163,230,53,0.2); color:var(--accent-neon); padding:0.2rem 0.5rem; border-radius:8px; font-size:0.75rem; font-weight:800;">${expYears} Years Exp</span>
+            </div>
+
+            <h3 style="font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:800; color:#fff; margin:0;">
+                ${titleTop} <span style="background:linear-gradient(135deg,#a3e635,#22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${titleGradient}</span>
+            </h3>
+
+            <p style="color:#94a3b8; font-size:0.78rem; line-height:1.4; margin:0; max-height:55px; overflow:hidden;">
+                ${bio}
+            </p>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
+                ${feats.map(f => `
+                    <div style="background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px;">
+                        <i class="${f.icon}" style="color:var(--accent-neon); font-size:0.85rem; margin-bottom:0.3rem;"></i>
+                        <div style="font-size:0.75rem; font-weight:700; color:#fff;">${f.title}</div>
+                        <div style="font-size:0.65rem; color:#64748b; margin-top:0.2rem;">${f.desc}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function renderLiveServicesPreview() {
+    const canvas = document.getElementById('previewServicesCanvas');
+    if (!canvas) return;
+
+    const data = getSiteData();
+    const services = data.services || [];
+
+    canvas.innerHTML = `
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
+            ${services.slice(0, 4).map((s, i) => {
+                const title = document.getElementById(`servTitle${i}`)?.value || s.title;
+                const icon = document.getElementById(`servIcon${i}`)?.value || s.icon;
+                const desc = document.getElementById(`servDesc${i}`)?.value || s.desc;
+
+                return `
+                    <div style="background:rgba(2,6,23,0.8); border:1px solid rgba(163,230,53,0.2); padding:0.7rem; border-radius:10px;">
+                        <i class="${icon}" style="color:var(--accent-neon); font-size:1.1rem; margin-bottom:0.4rem; display:block;"></i>
+                        <div style="font-size:0.8rem; font-weight:700; color:#fff; margin-bottom:0.2rem;">${title}</div>
+                        <div style="font-size:0.68rem; color:#94a3b8; line-height:1.3; max-height:40px; overflow:hidden;">${desc}</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function renderLiveSoftwarePreview() {
+    const canvas = document.getElementById('previewSoftwareCanvas');
+    if (!canvas) return;
+
+    const data = getSiteData();
+    const software = data.software || [];
+
+    canvas.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            ${software.map((sw, i) => {
+                const title = document.getElementById(`softTitle${i}`)?.value || sw.title;
+                const sub = document.getElementById(`softSub${i}`)?.value || sw.subtitle;
+                const level = document.getElementById(`softLevel${i}`)?.value || sw.level || 90;
+
+                return `
+                    <div style="background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem 0.8rem; border-radius:8px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.3rem;">
+                            <div>
+                                <span style="font-size:0.8rem; font-weight:700; color:#fff;">${title}</span>
+                                <span style="font-size:0.68rem; color:#64748b; margin-left:0.4rem;">${sub}</span>
+                            </div>
+                            <span style="font-size:0.75rem; font-weight:800; color:var(--accent-neon);">${level}%</span>
+                        </div>
+                        <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+                            <div style="width:${level}%; height:100%; background:linear-gradient(90deg,#a3e635,#22c55e); border-radius:3px;"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function renderLiveContactPreview() {
+    const canvas = document.getElementById('previewContactCanvas');
+    if (!canvas) return;
+
+    const email = document.getElementById('contactEmail')?.value || 'mahinalibiswas@gmail.com';
+    const whatsapp = document.getElementById('contactWhatsApp')?.value || '+880123456789';
+    const location = document.getElementById('contactLocation')?.value || 'Dhaka, Bangladesh';
+
+    canvas.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            <div style="display:flex; align-items:center; gap:0.6rem; background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px;">
+                <i class="fa-solid fa-envelope" style="color:var(--accent-neon); font-size:0.9rem;"></i>
+                <div style="font-size:0.78rem; color:#fff; word-break:break-all;">${email}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.6rem; background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px;">
+                <i class="fa-brands fa-whatsapp" style="color:var(--accent-neon); font-size:0.9rem;"></i>
+                <div style="font-size:0.78rem; color:#fff;">${whatsapp}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.6rem; background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px;">
+                <i class="fa-solid fa-location-dot" style="color:var(--accent-neon); font-size:0.9rem;"></i>
+                <div style="font-size:0.78rem; color:#fff;">${location}</div>
+            </div>
+
+            <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
+                <div style="flex:1; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.3); text-align:center; padding:0.5rem; border-radius:8px; color:var(--accent-neon); font-size:0.75rem; font-weight:700;">
+                    <i class="fa-brands fa-behance"></i> Behance
+                </div>
+                <div style="flex:1; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.3); text-align:center; padding:0.5rem; border-radius:8px; color:var(--accent-neon); font-size:0.75rem; font-weight:700;">
+                    <i class="fa-brands fa-youtube"></i> YouTube
+                </div>
+                <div style="flex:1; background:rgba(163,230,53,0.1); border:1px solid rgba(163,230,53,0.3); text-align:center; padding:0.5rem; border-radius:8px; color:var(--accent-neon); font-size:0.75rem; font-weight:700;">
+                    <i class="fa-brands fa-facebook"></i> Facebook
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderAllLivePreviews() {
+    renderLiveNavPreview();
+    renderLiveHeroPreview();
+    renderLiveAboutPreview();
+    renderLiveServicesPreview();
+    renderLiveSoftwarePreview();
+    renderLiveContactPreview();
 }
 
 /* --- 4. Dynamic CTA Button List Manager --- */
@@ -1090,19 +1325,19 @@ function renderAdminServicesList(services) {
             <div class="admin-form-grid">
                 <div class="form-group">
                     <label>Title</label>
-                    <input type="text" id="servTitle${index}" value="${serv.title || ''}">
+                    <input type="text" id="servTitle${index}" value="${serv.title || ''}" oninput="renderLiveServicesPreview()">
                 </div>
                 <div class="form-group">
                     <label>FontAwesome Icon Class</label>
-                    <input type="text" id="servIcon${index}" value="${serv.icon || ''}">
+                    <input type="text" id="servIcon${index}" value="${serv.icon || ''}" oninput="renderLiveServicesPreview()">
                 </div>
                 <div class="form-group full-width">
                     <label>Description</label>
-                    <input type="text" id="servDesc${index}" value="${serv.desc || ''}">
+                    <input type="text" id="servDesc${index}" value="${serv.desc || ''}" oninput="renderLiveServicesPreview()">
                 </div>
                 <div class="form-group full-width">
                     <label>Checklist Points (Comma Separated)</label>
-                    <input type="text" id="servCheck${index}" value="${(serv.checkpoints || []).join(', ')}">
+                    <input type="text" id="servCheck${index}" value="${(serv.checkpoints || []).join(', ')}" oninput="renderLiveServicesPreview()">
                 </div>
             </div>
         </div>
@@ -1149,19 +1384,19 @@ function renderAdminSoftwareList(software) {
             <div class="admin-form-grid">
                 <div class="form-group">
                     <label>Software Name</label>
-                    <input type="text" id="softTitle${index}" value="${soft.title || ''}">
+                    <input type="text" id="softTitle${index}" value="${soft.title || ''}" oninput="renderLiveSoftwarePreview()">
                 </div>
                 <div class="form-group">
                     <label>Subtitle / Specialty</label>
-                    <input type="text" id="softSub${index}" value="${soft.subtitle || ''}">
+                    <input type="text" id="softSub${index}" value="${soft.subtitle || ''}" oninput="renderLiveSoftwarePreview()">
                 </div>
                 <div class="form-group">
                     <label>Icon Image File / URL</label>
-                    <input type="text" id="softIcon${index}" value="${soft.icon || ''}">
+                    <input type="text" id="softIcon${index}" value="${soft.icon || ''}" oninput="renderLiveSoftwarePreview()">
                 </div>
                 <div class="form-group">
                     <label>Skill Level % (1-100)</label>
-                    <input type="number" id="softLevel${index}" value="${soft.level || 90}" min="1" max="100">
+                    <input type="number" id="softLevel${index}" value="${soft.level || 90}" min="1" max="100" oninput="renderLiveSoftwarePreview()">
                 </div>
             </div>
         </div>

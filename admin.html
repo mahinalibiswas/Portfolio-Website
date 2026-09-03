@@ -118,211 +118,250 @@
 
                 <!-- TAB 0: NAVIGATION BAR -->
                 <section class="admin-tab-content active" id="tab-nav">
-                    <div class="panel-card">
-                        <div class="panel-header">
-                            <div>
-                                <h3>Navigation Bar & Header Settings</h3>
-                                <p>Customize your brand logo, top right CTA button, and main header navigation links.</p>
-                            </div>
-                            <button type="button" class="btn btn-primary btn-save" onclick="saveNavSection()">
-                                <i class="fa-solid fa-floppy-disk"></i> Save Navigation Changes
-                            </button>
-                        </div>
-
-                        <form id="navForm" onsubmit="event.preventDefault(); saveNavSection();">
-                            <div class="admin-form-grid">
-                                <div class="form-group">
-                                    <label>Brand Logo / Text</label>
-                                    <input type="text" id="navBrandLogo" placeholder="e.g. MAHIN.">
+                    <div class="admin-split-layout">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Navigation Bar & Header Settings</h3>
+                                    <p>Customize your brand logo, top right CTA button, and main header navigation links.</p>
                                 </div>
-                                <div class="form-group">
-                                    <label>Header CTA Button Text</label>
-                                    <input type="text" id="navCtaText" placeholder="e.g. Hire Me">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Header CTA Button Link Target</label>
-                                    <input type="text" id="navCtaUrl" placeholder="e.g. #contact or https://...">
-                                </div>
-                            </div>
-
-                            <div class="form-section-title" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
-                                <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-list" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Navigation Menu Links</h4>
-                                <button type="button" class="btn btn-hero-secondary btn-sm" onclick="addNewNavLinkItem()">
-                                    <i class="fa-solid fa-plus"></i> Add Nav Link
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveNavSection()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Navigation Changes
                                 </button>
                             </div>
-                            <div id="adminNavLinksList" class="dynamic-cta-list" style="margin-top: 1rem;"></div>
-                        </form>
+
+                            <form id="navForm" onsubmit="event.preventDefault(); saveNavSection();">
+                                <div class="admin-form-grid">
+                                    <div class="form-group">
+                                        <label>Brand Logo / Text</label>
+                                        <input type="text" id="navBrandLogo" placeholder="e.g. MAHIN." oninput="renderLiveNavPreview()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Header CTA Button Text</label>
+                                        <input type="text" id="navCtaText" placeholder="e.g. Hire Me" oninput="renderLiveNavPreview()">
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label>Header CTA Button Link Target</label>
+                                        <input type="text" id="navCtaUrl" placeholder="e.g. #contact or https://..." oninput="renderLiveNavPreview()">
+                                    </div>
+                                </div>
+
+                                <div class="form-section-title" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-list" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Navigation Menu Links</h4>
+                                    <button type="button" class="btn btn-hero-secondary btn-sm" onclick="addNewNavLinkItem()">
+                                        <i class="fa-solid fa-plus"></i> Add Nav Link
+                                    </button>
+                                </div>
+                                <div id="adminNavLinksList" class="dynamic-cta-list" style="margin-top: 1rem;"></div>
+                            </form>
+                        </div>
+
+                        <!-- Right Live Preview Pane -->
+                        <div class="admin-preview-pane">
+                            <div class="admin-preview-header">
+                                <h4><i class="fa-solid fa-eye" style="color: var(--accent-neon);"></i> Header Navigation Live Preview</h4>
+                                <span class="admin-preview-badge"><i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> LIVE PREVIEW</span>
+                            </div>
+                            <div class="admin-preview-canvas" id="previewNavCanvas">
+                                <!-- Dynamically rendered by JS -->
+                            </div>
+                        </div>
                     </div>
                 </section>
 
                 <!-- TAB 1: HERO & SHOWREEL -->
                 <section class="admin-tab-content" id="tab-hero">
-                    <div class="panel-card">
-                        <div class="panel-header">
-                            <div>
-                                <h3>Hero Section & Top Headline Controls</h3>
-                                <p>Customize your primary introduction text, subheadline, showreel video URL, and key stats.</p>
-                            </div>
-                            <button type="button" class="btn btn-primary btn-save" onclick="saveHeroSection()">
-                                <i class="fa-solid fa-floppy-disk"></i> Save Hero Changes
-                            </button>
-                        </div>
-
-                        <form id="heroForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveHeroSection();">
-                            <div class="form-group full-width">
-                                <label>Hero Pill Badge Text</label>
-                                <input type="text" id="heroBadge" placeholder="Enter your hero badge text...">
-                            </div>
-                            <div class="form-group">
-                                <label>Title Top Line</label>
-                                <input type="text" id="heroTitleTop" placeholder="Enter your title top line...">
-                            </div>
-                            <div class="form-group">
-                                <label>Title Bottom Line (Gradient Text)</label>
-                                <input type="text" id="heroTitleBottom" placeholder="Enter your title bottom line...">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Headline Accent Subtag</label>
-                                <input type="text" id="heroSubtitleTag" placeholder="Enter your headline subtag...">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Main Bio Paragraph</label>
-                                <textarea id="heroSubtitle" rows="3" placeholder="Enter your hero bio paragraph..."></textarea>
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Hero Video Teaser (YouTube Embed Code / Video URL)</label>
-                                <textarea id="heroShowreelVideo" rows="3" placeholder="Enter your YouTube video URL or embed code..." oninput="updateHeroAdminVideoPreview()"></textarea>
-                                <div id="adminVideoPreviewBox" style="margin-top: 0.8rem; display: none; width: 100%; max-width: 540px; height: 300px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); background: #000;"></div>
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Hero Video Poster Cover Image</label>
-                                <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
-                                    <input type="file" id="heroPosterFileInput" accept="image/*" style="display: none;" onchange="handleHeroPosterUpload(event)">
-                                    <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('heroPosterFileInput').click()">
-                                        <i class="fa-solid fa-upload"></i> Choose Cover Image from PC
-                                    </button>
-                                    <input type="text" id="heroShowreelPoster" placeholder="Enter image URL or upload from PC..." style="flex: 1; min-width: 250px;">
-                                    <div id="heroPosterPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
-                                        <img id="heroPosterPreview" src="" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;">
-                                        <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer;" onclick="removeHeroPosterImage()"><i class="fa-solid fa-xmark"></i></button>
-                                    </div>
+                    <div class="admin-split-layout">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Hero Section & Top Headline Controls</h3>
+                                    <p>Customize your primary introduction text, subheadline, showreel video URL, and key stats.</p>
                                 </div>
-                            </div>
-
-                            <div class="form-section-title full-width" style="display: flex; align-items: center; justify-between; flex-wrap: wrap; margin-top: 2rem;">
-                                <h4>Hero Call-To-Action (CTA) Buttons</h4>
-                                <button type="button" class="btn btn-hero-secondary btn-sm" onclick="addNewHeroCtaButton()">
-                                    <i class="fa-solid fa-plus"></i> Add New CTA Button
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveHeroSection()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Hero Changes
                                 </button>
                             </div>
-                            <div class="full-width" id="adminCtaButtonsList" style="display: flex; flex-direction: column; gap: 1rem;">
-                                <!-- Dynamic CTA Buttons Cards Populated by JS -->
-                            </div>
 
-                            <div class="form-section-title full-width">
-                                <h4>Key Statistics Counters (Hero Banner)</h4>
+                            <form id="heroForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveHeroSection();">
+                                <div class="form-group full-width">
+                                    <label>Hero Pill Badge Text</label>
+                                    <input type="text" id="heroBadge" placeholder="Enter your hero badge text..." oninput="renderLiveHeroPreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Title Top Line</label>
+                                    <input type="text" id="heroTitleTop" placeholder="Enter your title top line..." oninput="renderLiveHeroPreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Title Bottom Line (Gradient Text)</label>
+                                    <input type="text" id="heroTitleBottom" placeholder="Enter your title bottom line..." oninput="renderLiveHeroPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Headline Accent Subtag</label>
+                                    <input type="text" id="heroSubtitleTag" placeholder="Enter your headline subtag..." oninput="renderLiveHeroPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Main Bio Paragraph</label>
+                                    <textarea id="heroSubtitle" rows="3" placeholder="Enter your hero bio paragraph..." oninput="renderLiveHeroPreview()"></textarea>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Hero Video Teaser (YouTube Embed Code / Video URL)</label>
+                                    <textarea id="heroShowreelVideo" rows="3" placeholder="Enter your YouTube video URL or embed code..." oninput="updateHeroAdminVideoPreview(); renderLiveHeroPreview();"></textarea>
+                                    <div id="adminVideoPreviewBox" style="margin-top: 0.8rem; display: none; width: 100%; max-width: 540px; height: 300px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); background: #000;"></div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Hero Video Poster Cover Image</label>
+                                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                                        <input type="file" id="heroPosterFileInput" accept="image/*" style="display: none;" onchange="handleHeroPosterUpload(event)">
+                                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('heroPosterFileInput').click()">
+                                            <i class="fa-solid fa-upload"></i> Choose Cover Image from PC
+                                        </button>
+                                        <input type="text" id="heroShowreelPoster" placeholder="Enter image URL or upload from PC..." style="flex: 1; min-width: 250px;" oninput="renderLiveHeroPreview()">
+                                        <div id="heroPosterPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                                            <img id="heroPosterPreview" src="" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;">
+                                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer;" onclick="removeHeroPosterImage()"><i class="fa-solid fa-xmark"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-section-title full-width" style="display: flex; align-items: center; justify-between; flex-wrap: wrap; margin-top: 2rem;">
+                                    <h4>Hero Call-To-Action (CTA) Buttons</h4>
+                                    <button type="button" class="btn btn-hero-secondary btn-sm" onclick="addNewHeroCtaButton()">
+                                        <i class="fa-solid fa-plus"></i> Add New CTA Button
+                                    </button>
+                                </div>
+                                <div class="full-width" id="adminCtaButtonsList" style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <!-- Dynamic CTA Buttons Cards Populated by JS -->
+                                </div>
+
+                                <div class="form-section-title full-width">
+                                    <h4>Key Statistics Counters (Hero Banner)</h4>
+                                </div>
+                                <div class="form-group">
+                                    <label>Videos Edited Count</label>
+                                    <input type="text" id="heroStatsEdited" placeholder="Enter videos edited count..." oninput="renderLiveHeroPreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Happy Clients Count</label>
+                                    <input type="text" id="heroStatsClients" placeholder="Enter happy clients count..." oninput="renderLiveHeroPreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label>On-Time Delivery %</label>
+                                    <input type="text" id="heroStatsDelivery" placeholder="Enter on-time delivery percentage..." oninput="renderLiveHeroPreview()">
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Right Live Preview Pane -->
+                        <div class="admin-preview-pane">
+                            <div class="admin-preview-header">
+                                <h4><i class="fa-solid fa-eye" style="color: var(--accent-neon);"></i> Hero Section Live Preview</h4>
+                                <span class="admin-preview-badge"><i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> LIVE PREVIEW</span>
                             </div>
-                            <div class="form-group">
-                                <label>Videos Edited Count</label>
-                                <input type="text" id="heroStatsEdited" placeholder="Enter videos edited count...">
+                            <div class="admin-preview-canvas" id="previewHeroCanvas">
+                                <!-- Dynamically rendered by JS -->
                             </div>
-                            <div class="form-group">
-                                <label>Happy Clients Count</label>
-                                <input type="text" id="heroStatsClients" placeholder="Enter happy clients count...">
-                            </div>
-                            <div class="form-group">
-                                <label>On-Time Delivery %</label>
-                                <input type="text" id="heroStatsDelivery" placeholder="Enter on-time delivery percentage...">
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </section>
 
                 <!-- TAB 2: ABOUT ME & BIO -->
                 <section class="admin-tab-content" id="tab-about">
-                    <div class="panel-card">
-                        <div class="panel-header">
-                            <div>
-                                <h3>About Me Section & 4 Feature Boxes</h3>
-                                <p>Update your bio paragraph, years of experience badge, and 4 core video editing superpowers.</p>
+                    <div class="admin-split-layout">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>About Me Section & 4 Feature Boxes</h3>
+                                    <p>Update your bio paragraph, years of experience badge, and 4 core video editing superpowers.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveAboutSection()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save About Changes
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-primary btn-save" onclick="saveAboutSection()">
-                                <i class="fa-solid fa-floppy-disk"></i> Save About Changes
-                            </button>
+
+                            <form id="aboutForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveAboutSection();">
+                                <div class="form-group">
+                                    <label>Section Tag Badge</label>
+                                    <input type="text" id="aboutTagBadge" placeholder="Enter section badge text..." oninput="renderLiveAboutPreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Years Experience Number</label>
+                                    <input type="text" id="aboutExpYears" placeholder="Enter years of experience..." oninput="renderLiveAboutPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Title (First Part)</label>
+                                    <input type="text" id="aboutTitleTop" placeholder="Enter title top line..." oninput="renderLiveAboutPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Title (Gradient Highlight Part)</label>
+                                    <input type="text" id="aboutTitleGradient" placeholder="Enter title gradient highlight..." oninput="renderLiveAboutPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>About Me Bio Text</label>
+                                    <textarea id="aboutBio" rows="4" placeholder="Enter full About Me description..." oninput="renderLiveAboutPreview()"></textarea>
+                                </div>
+
+                                <div class="form-section-title full-width" style="margin-top: 1.5rem;">
+                                    <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About Me Action CTA Buttons</h4>
+                                </div>
+                                <div id="adminAboutCtaButtonsList" class="dynamic-cta-grid full-width" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; grid-column: span 2;"></div>
+
+                                <div class="form-section-title full-width">
+                                    <h4>4 Core Superpowers / Feature Cards</h4>
+                                </div>
+                                
+                                <!-- Feature 1 -->
+                                <div class="form-group">
+                                    <label>Feature 1 Title</label>
+                                    <input type="text" id="featTitle0" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 1 Icon Class</label>
+                                    <input type="text" id="featIcon0" placeholder="e.g. fa-solid fa-bolt" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 1 Description</label>
+                                    <input type="text" id="featDesc0" oninput="renderLiveAboutPreview()">
+                                </div>
+
+                                <!-- Feature 2 -->
+                                <div class="form-group">
+                                    <label>Feature 2 Title</label>
+                                    <input type="text" id="featTitle1" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 2 Icon Class</label>
+                                    <input type="text" id="featIcon1" placeholder="e.g. fa-solid fa-closed-captioning" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 2 Description</label>
+                                    <input type="text" id="featDesc1" oninput="renderLiveAboutPreview()">
+                                </div>
+
+                                <!-- Feature 3 -->
+                                <div class="form-group">
+                                    <label>Feature 3 Title</label>
+                                    <input type="text" id="featTitle2" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 3 Icon Class</label>
+                                    <input type="text" id="featIcon2" placeholder="e.g. fa-solid fa-sliders" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 3 Description</label>
+                                    <input type="text" id="featDesc2" oninput="renderLiveAboutPreview()">
+                                </div>
+
+                                <!-- Feature 4 -->
+                                <div class="form-group">
+                                    <label>Feature 4 Title</label>
+                                    <input type="text" id="featTitle3" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 4 Icon Class</label>
+                                    <input type="text" id="featIcon3" placeholder="e.g. fa-solid fa-compact-disc" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 4 Description</label>
+                                    <input type="text" id="featDesc3" oninput="renderLiveAboutPreview()">
+                                </div>
+                            </form>
                         </div>
 
-                        <form id="aboutForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveAboutSection();">
-                            <div class="form-group">
-                                <label>Section Tag Badge</label>
-                                <input type="text" id="aboutTagBadge" placeholder="Enter section badge text...">
+                        <!-- Right Live Preview Pane -->
+                        <div class="admin-preview-pane">
+                            <div class="admin-preview-header">
+                                <h4><i class="fa-solid fa-eye" style="color: var(--accent-neon);"></i> About Me Live Preview</h4>
+                                <span class="admin-preview-badge"><i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> LIVE PREVIEW</span>
                             </div>
-                            <div class="form-group">
-                                <label>Years Experience Number</label>
-                                <input type="text" id="aboutExpYears" placeholder="Enter years of experience...">
+                            <div class="admin-preview-canvas" id="previewAboutCanvas">
+                                <!-- Dynamically rendered by JS -->
                             </div>
-                            <div class="form-group full-width">
-                                <label>Title (First Part)</label>
-                                <input type="text" id="aboutTitleTop" placeholder="Enter title top line...">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Title (Gradient Highlight Part)</label>
-                                <input type="text" id="aboutTitleGradient" placeholder="Enter title gradient highlight...">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>About Me Bio Text</label>
-                                <textarea id="aboutBio" rows="4" placeholder="Enter full About Me description..."></textarea>
-                            </div>
-
-                            <div class="form-section-title full-width" style="margin-top: 1.5rem;">
-                                <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About Me Action CTA Buttons</h4>
-                            </div>
-                            <div id="adminAboutCtaButtonsList" class="dynamic-cta-grid full-width" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; grid-column: span 2;"></div>
-
-                            <div class="form-section-title full-width">
-                                <h4>4 Core Superpowers / Feature Cards</h4>
-                            </div>
-                            
-                            <!-- Feature 1 -->
-                            <div class="form-group">
-                                <label>Feature 1 Title</label>
-                                <input type="text" id="featTitle0">
-                                <label style="margin-top: 0.5rem;">Feature 1 Icon Class</label>
-                                <input type="text" id="featIcon0" placeholder="e.g. fa-solid fa-bolt">
-                                <label style="margin-top: 0.5rem;">Feature 1 Description</label>
-                                <input type="text" id="featDesc0">
-                            </div>
-
-                            <!-- Feature 2 -->
-                            <div class="form-group">
-                                <label>Feature 2 Title</label>
-                                <input type="text" id="featTitle1">
-                                <label style="margin-top: 0.5rem;">Feature 2 Icon Class</label>
-                                <input type="text" id="featIcon1" placeholder="e.g. fa-solid fa-closed-captioning">
-                                <label style="margin-top: 0.5rem;">Feature 2 Description</label>
-                                <input type="text" id="featDesc1">
-                            </div>
-
-                            <!-- Feature 3 -->
-                            <div class="form-group">
-                                <label>Feature 3 Title</label>
-                                <input type="text" id="featTitle2">
-                                <label style="margin-top: 0.5rem;">Feature 3 Icon Class</label>
-                                <input type="text" id="featIcon2" placeholder="e.g. fa-solid fa-sliders">
-                                <label style="margin-top: 0.5rem;">Feature 3 Description</label>
-                                <input type="text" id="featDesc2">
-                            </div>
-
-                            <!-- Feature 4 -->
-                            <div class="form-group">
-                                <label>Feature 4 Title</label>
-                                <input type="text" id="featTitle3">
-                                <label style="margin-top: 0.5rem;">Feature 4 Icon Class</label>
-                                <input type="text" id="featIcon3" placeholder="e.g. fa-solid fa-compact-disc">
-                                <label style="margin-top: 0.5rem;">Feature 4 Description</label>
-                                <input type="text" id="featDesc3">
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </section>
 
@@ -347,81 +386,120 @@
 
                 <!-- TAB 4: SERVICES OFFERED -->
                 <section class="admin-tab-content" id="tab-services">
-                    <div class="panel-card">
-                        <div class="panel-header">
-                            <div>
-                                <h3>Services Offered Manager</h3>
-                                <p>Edit your 6 service packages, descriptions, icons, and bullet point checklists.</p>
+                    <div class="admin-split-layout">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Services Offered Manager</h3>
+                                    <p>Edit your 6 service packages, descriptions, icons, and bullet point checklists.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveServicesSection()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Services Changes
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-primary btn-save" onclick="saveServicesSection()">
-                                <i class="fa-solid fa-floppy-disk"></i> Save Services Changes
-                            </button>
+
+                            <div class="admin-services-list" id="adminServicesList">
+                                <!-- Dynamically populated via JS -->
+                            </div>
                         </div>
 
-                        <div class="admin-services-list" id="adminServicesList">
-                            <!-- Dynamically populated via JS -->
+                        <!-- Right Live Preview Pane -->
+                        <div class="admin-preview-pane">
+                            <div class="admin-preview-header">
+                                <h4><i class="fa-solid fa-eye" style="color: var(--accent-neon);"></i> Services Live Preview</h4>
+                                <span class="admin-preview-badge"><i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> LIVE PREVIEW</span>
+                            </div>
+                            <div class="admin-preview-canvas" id="previewServicesCanvas">
+                                <!-- Dynamically rendered by JS -->
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- TAB 5: SOFTWARE & TOOLKIT -->
                 <section class="admin-tab-content" id="tab-software">
-                    <div class="panel-card">
-                        <div class="panel-header">
-                            <div>
-                                <h3>Software & Toolkit Manager</h3>
-                                <p>Manage software names, subtitles, icon image URLs, and progress bar skill percentages.</p>
+                    <div class="admin-split-layout">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Software & Toolkit Manager</h3>
+                                    <p>Manage software names, subtitles, icon image URLs, and progress bar skill percentages.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveSoftwareSection()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Software Changes
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-primary btn-save" onclick="saveSoftwareSection()">
-                                <i class="fa-solid fa-floppy-disk"></i> Save Software Changes
-                            </button>
+
+                            <div class="admin-software-list" id="adminSoftwareList">
+                                <!-- Dynamically populated via JS -->
+                            </div>
                         </div>
 
-                        <div class="admin-software-list" id="adminSoftwareList">
-                            <!-- Dynamically populated via JS -->
+                        <!-- Right Live Preview Pane -->
+                        <div class="admin-preview-pane">
+                            <div class="admin-preview-header">
+                                <h4><i class="fa-solid fa-eye" style="color: var(--accent-neon);"></i> Software Toolkit Live Preview</h4>
+                                <span class="admin-preview-badge"><i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> LIVE PREVIEW</span>
+                            </div>
+                            <div class="admin-preview-canvas" id="previewSoftwareCanvas">
+                                <!-- Dynamically rendered by JS -->
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- TAB 6: CONTACT & SOCIALS -->
                 <section class="admin-tab-content" id="tab-contact">
-                    <div class="panel-card">
-                        <div class="panel-header">
-                            <div>
-                                <h3>Contact Information & Social Links</h3>
-                                <p>Update your email address, WhatsApp number, Behance, YouTube, and Facebook URLs.</p>
+                    <div class="admin-split-layout">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Contact Information & Social Links</h3>
+                                    <p>Update your email address, WhatsApp number, Behance, YouTube, and Facebook URLs.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveContactSection()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Contact Changes
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-primary btn-save" onclick="saveContactSection()">
-                                <i class="fa-solid fa-floppy-disk"></i> Save Contact Changes
-                            </button>
+
+                            <form id="contactForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveContactSection();">
+                                <div class="form-group">
+                                    <label>Contact Email Address</label>
+                                    <input type="email" id="contactEmail" placeholder="Enter your email address..." oninput="renderLiveContactPreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label>WhatsApp Phone Number</label>
+                                    <input type="text" id="contactWhatsApp" placeholder="Enter your WhatsApp phone number..." oninput="renderLiveContactPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Location Text</label>
+                                    <input type="text" id="contactLocation" placeholder="Enter your location text..." oninput="renderLiveContactPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Behance Profile URL</label>
+                                    <input type="url" id="contactBehance" placeholder="Enter your Behance profile URL..." oninput="renderLiveContactPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>YouTube Channel URL</label>
+                                    <input type="url" id="contactYoutube" placeholder="Enter your YouTube channel URL..." oninput="renderLiveContactPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Facebook Profile URL</label>
+                                    <input type="url" id="contactFacebook" placeholder="Enter your Facebook profile URL..." oninput="renderLiveContactPreview()">
+                                </div>
+                            </form>
                         </div>
 
-                        <form id="contactForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveContactSection();">
-                            <div class="form-group">
-                                <label>Contact Email Address</label>
-                                <input type="email" id="contactEmail" placeholder="Enter your email address...">
+                        <!-- Right Live Preview Pane -->
+                        <div class="admin-preview-pane">
+                            <div class="admin-preview-header">
+                                <h4><i class="fa-solid fa-eye" style="color: var(--accent-neon);"></i> Contact Methods Live Preview</h4>
+                                <span class="admin-preview-badge"><i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> LIVE PREVIEW</span>
                             </div>
-                            <div class="form-group">
-                                <label>WhatsApp Phone Number</label>
-                                <input type="text" id="contactWhatsApp" placeholder="Enter your WhatsApp phone number...">
+                            <div class="admin-preview-canvas" id="previewContactCanvas">
+                                <!-- Dynamically rendered by JS -->
                             </div>
-                            <div class="form-group full-width">
-                                <label>Location Text</label>
-                                <input type="text" id="contactLocation" placeholder="Enter your location text...">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Behance Profile URL</label>
-                                <input type="url" id="contactBehance" placeholder="Enter your Behance profile URL...">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>YouTube Channel URL</label>
-                                <input type="url" id="contactYoutube" placeholder="Enter your YouTube channel URL...">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Facebook Profile URL</label>
-                                <input type="url" id="contactFacebook" placeholder="Enter your Facebook profile URL...">
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </section>
 
