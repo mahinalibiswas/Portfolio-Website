@@ -595,7 +595,7 @@
 
 .admin-preview-pane {
     position: sticky;
-    top: 1rem;
+    top: 5.5rem;
     z-index: 90;
     background: rgba(2, 6, 23, 0.95);
     border: 1px solid var(--border-glow);
