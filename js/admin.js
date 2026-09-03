@@ -930,7 +930,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
                     <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}</h4>
                 </div>
                 
-                <div style="display: flex; gap: 0.8rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1rem;">
+                <div style="display: flex; gap: 0.6rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1rem;">
                     <!-- Dedicated Active Icon Preview Badge -->
                     <div style="display: flex; flex-direction: column; gap: 0.3rem;">
                         <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block;">Icon</label>
@@ -939,20 +939,20 @@ function renderAdminAboutCtaButtons(ctaButtons) {
                         </div>
                     </div>
 
-                    <div style="width: 260px; min-width: 180px;">
+                    <div style="flex: 1; min-width: 130px;">
                         <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Button Text</label>
-                        <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" oninput="renderLiveAboutPreview()" placeholder="Enter button text..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                        <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" oninput="renderLiveAboutPreview()" placeholder="Enter button text..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.7rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                     </div>
 
-                    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.4rem; height: 44px;">
-                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('aboutBtnIconClass_${btn.id}', 'aboutBtnIconBadge_${btn.id}', 'about')" style="height: 44px; padding: 0 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
-                            <i class="fa-solid fa-icons"></i> Pick Icon
+                    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.3rem; height: 44px;">
+                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('aboutBtnIconClass_${btn.id}', 'aboutBtnIconBadge_${btn.id}', 'about')" style="height: 44px; padding: 0 0.6rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; border-radius: 10px; font-size: 0.78rem; white-space: nowrap;">
+                            <i class="fa-solid fa-icons"></i> Pick
                         </button>
                         <input type="file" id="aboutBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleAboutCtaIconUpload(event, '${btn.id}')">
-                        <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                        <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 0.6rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; border-radius: 10px; font-size: 0.78rem; white-space: nowrap;">
                             <i class="fa-solid fa-upload"></i> Upload
                         </button>
-                        <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.3rem; background: rgba(239, 68, 68, 0.15); padding: 0 0.5rem; height: 44px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.4); box-sizing: border-box;">
+                        <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.3rem; background: rgba(239, 68, 68, 0.15); padding: 0 0.4rem; height: 44px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.4); box-sizing: border-box;">
                             <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.82rem;" title="Remove uploaded custom icon image" onclick="removeAboutCtaIconImage('${btn.id}', '${defaultIcon}')"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </div>
