@@ -438,10 +438,14 @@ function renderLiveNavPreview() {
     const ctaText = document.getElementById('navCtaText')?.value || 'Contact Me';
     const ctaUrl = document.getElementById('navCtaUrl')?.value || '#contact';
     
-    const data = getSiteData();
-    const links = (data.navigation?.navLinks || []).map(l => {
-        const val = document.getElementById(`navLinkLabel_${l.id}`)?.value;
-        return (val !== undefined && val !== '') ? val : l.label;
+    const list = (typeof tempNavLinksList !== 'undefined' && tempNavLinksList && tempNavLinksList.length > 0) 
+        ? tempNavLinksList 
+        : (getSiteData().navigation?.navLinks || []);
+
+    const links = list.map((l, index) => {
+        const inputVal = document.getElementById(`navLinkLabel_${index}`)?.value;
+        if (inputVal !== undefined && inputVal !== '') return inputVal;
+        return (l.label !== undefined && l.label !== '') ? l.label : (l.text || '');
     });
 
     canvas.innerHTML = `
@@ -799,12 +803,12 @@ function renderAdminNavLinks(navLinks) {
 
                     <div style="flex: 1; min-width: 0;">
                         <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Button Text</label>
-                        <input type="text" value="${item.label || ''}" onchange="updateNavLinkProp(${index}, 'label', this.value)" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 10px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
+                        <input type="text" id="navLinkLabel_${index}" value="${item.label || ''}" oninput="updateNavLinkProp(${index}, 'label', this.value)" placeholder="Enter your button name..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 10px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
                     </div>
 
                     <div style="flex: 1.4; min-width: 0;">
                         <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Target URL</label>
-                        <input type="text" value="${item.url || ''}" onchange="updateNavLinkProp(${index}, 'url', this.value)" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 10px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
+                        <input type="text" id="navLinkUrl_${index}" value="${item.url || ''}" oninput="updateNavLinkProp(${index}, 'url', this.value)" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); padding: 0 1rem; border-radius: 10px; font-size: 0.9rem; outline: none; box-sizing: border-box; transition: all 0.2s ease;" onfocus="this.style.borderColor='var(--accent-neon)'; this.style.boxShadow='0 0 12px rgba(163, 230, 53, 0.2)';" onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
                     </div>
 
                     <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0;">
@@ -823,6 +827,7 @@ function updateNavLinkProp(index, prop, val) {
     if (tempNavLinksList[index]) {
         tempNavLinksList[index][prop] = val;
     }
+    renderLiveNavPreview();
 }
 
 function addNewNavLinkItem() {
@@ -832,6 +837,7 @@ function addNewNavLinkItem() {
         url: ""
     });
     renderAdminNavLinks(tempNavLinksList);
+    renderLiveNavPreview();
 }
 
 function deleteNavLinkItem(index) {
@@ -840,22 +846,9 @@ function deleteNavLinkItem(index) {
     openDeleteConfirmModal(`Are you sure you want to delete ${name}?`, () => {
         tempNavLinksList.splice(index, 1);
         renderAdminNavLinks(tempNavLinksList);
-        showToast('Link removed! Click "Save Navigation Settings" to update live site.', 'info');
+        renderLiveNavPreview();
+        showToast('Link removed! Click "Save Navigation Changes" to update live site.', 'info');
     });
-}
-
-function saveNavSection() {
-    const data = getSiteData();
-    data.navigation = {
-        brandLogo: document.getElementById('navBrandLogo')?.value.trim() || 'MAHIN.',
-        ctaText: document.getElementById('navCtaText')?.value.trim() || 'Hire Me',
-        ctaUrl: document.getElementById('navCtaUrl')?.value.trim() || '#contact',
-        navLinks: tempNavLinksList
-    };
-
-    saveSiteData(data);
-    if (typeof renderSiteData === 'function') renderSiteData();
-    showToast('Navigation Bar settings saved & updated on live site!', 'success');
 }
 
 window.saveNavSection = saveNavSection;
@@ -1080,16 +1073,18 @@ async function saveNavSection() {
     }
 
     const data = getSiteData();
-    const navLinks = (data.navigation?.navLinks || []).map(link => ({
-        id: link.id,
-        label: document.getElementById(`navLinkLabel_${link.id}`)?.value || link.label,
-        url: document.getElementById(`navLinkUrl_${link.id}`)?.value || link.url
-    }));
+    const navLinks = (typeof tempNavLinksList !== 'undefined' && tempNavLinksList && tempNavLinksList.length > 0)
+        ? tempNavLinksList.map((link, index) => ({
+            id: link.id || (index + 1),
+            label: document.getElementById(`navLinkLabel_${index}`)?.value || link.label || '',
+            url: document.getElementById(`navLinkUrl_${index}`)?.value || link.url || ''
+        }))
+        : (data.navigation?.navLinks || []);
 
     data.navigation = {
         ...data.navigation,
-        brandLogo: document.getElementById('navBrandLogo')?.value || 'MAHIN.',
-        ctaText: document.getElementById('navCtaText')?.value || 'Hire Me',
+        brandLogo: document.getElementById('navBrandLogo')?.value || 'Mahin Ali Biswas',
+        ctaText: document.getElementById('navCtaText')?.value || 'Contact Me',
         ctaUrl: document.getElementById('navCtaUrl')?.value || '#contact',
         navLinks: navLinks
     };
