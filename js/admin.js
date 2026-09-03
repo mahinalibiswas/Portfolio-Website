@@ -552,7 +552,7 @@ function renderLiveHeroPreview() {
     `;
 
     canvas.innerHTML = `
-        <div style="width:100%; max-width:1150px; margin:0 auto; display:grid; grid-template-columns: 1fr 450px; gap:1.8rem; align-items:stretch; text-align:left; background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow); box-sizing:border-box;">
+        <div style="width:100%; max-width:100%; margin:0; box-sizing:border-box; display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; align-items:stretch; text-align:left; background:var(--bg-dark); padding:1.2rem; border-radius:20px; border:1px solid var(--border-glow);">
             <div class="hero-content" style="display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                     <div class="hero-badge">
@@ -574,7 +574,7 @@ function renderLiveHeroPreview() {
                 </div>
             </div>
             
-            <div class="hero-right-col" style="width:100%; display:flex; flex-direction:column; justify-content:space-between; gap:1.2rem; height:100%;">
+            <div class="hero-right-col" style="display:flex; flex-direction:column; justify-content:space-between; gap:1.2rem; height:100%;">
                 <div class="hero-main-card" style="flex:1; width:100%; min-height:220px; margin:0; border-radius:20px; overflow:hidden;">
                     ${videoContent}
                 </div>

@@ -632,3 +632,7 @@
 #previewNavCanvas {
     padding: 0.4rem 0.6rem;
 }
+
+#previewHeroCanvas {
+    padding: 0.2rem;
+}
