@@ -705,6 +705,34 @@
         </div>
     </div>
 
+    <!-- FontAwesome Icon Selector Modal -->
+    <div class="modal-backdrop" id="iconPickerModal">
+        <div class="modal-content admin-modal-box" style="max-width: 580px; padding: 1.5rem; position: relative;">
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-glow); padding: 0 0 1rem 0; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.8rem;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(163, 230, 53, 0.15); border: 1px solid var(--border-glow); display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-icons" style="color: var(--accent-neon); font-size: 1.1rem;"></i>
+                    </div>
+                    <div>
+                        <h3 style="color: #ffffff; margin: 0; font-size: 1.1rem; font-weight: 700;">Choose Icon</h3>
+                        <p style="color: var(--text-dim); font-size: 0.8rem; margin: 0.1rem 0 0 0;">Select a FontAwesome icon from the library</p>
+                    </div>
+                </div>
+                <button type="button" class="modal-close" onclick="closeIconPickerModal()" style="position: static; top: auto; right: auto;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="modal-body" style="padding: 1.2rem 0 0 0;">
+                <div style="margin-bottom: 1rem;">
+                    <input type="text" id="iconSearchInput" placeholder="Search icons (e.g. behance, paper-plane, play, arrow)..." oninput="filterIconPickerGrid()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.9rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                </div>
+                
+                <div id="iconPickerGrid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; max-height: 320px; overflow-y: auto; padding-right: 0.3rem;">
+                    <!-- Dynamically populated icons -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Confirmation Modal -->
     <div class="modal-backdrop" id="deleteConfirmModal">
         <div class="modal-content admin-modal-box" style="max-width: 440px; padding: 1.5rem; position: relative;">
