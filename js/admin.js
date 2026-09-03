@@ -685,7 +685,7 @@ function renderLiveAboutPreview() {
                         ]).map((b, idx) => {
                             const isPrimary = idx === 0;
                             const btnClass = isPrimary ? 'btn btn-primary btn-sm' : 'btn btn-hero-secondary btn-sm';
-                            let iconContent = '<i class="fa-solid fa-arrow-right"></i>';
+                            let iconContent = isPrimary ? '<i class="fa-brands fa-behance"></i>' : '<i class="fa-solid fa-paper-plane"></i>';
                             if (b.iconImage) {
                                 iconContent = `<img src="${b.iconImage}" style="width: 14px; height: 14px; object-fit: contain;">`;
                             } else if (b.icon) {

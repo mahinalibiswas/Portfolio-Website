@@ -215,10 +215,10 @@ function renderSiteData(customData) {
             aboutCtaGroup.innerHTML = data.about.ctaButtons.map((btn, idx) => {
                 const isPrimary = idx === 0;
                 const btnClass = isPrimary ? 'btn btn-primary' : 'btn btn-hero-secondary';
-                const targetAttr = (btn.link && btn.link.startsWith('http')) ? 'target="_blank" rel="noopener noreferrer"' : '';
+                const defaultIcon = isPrimary ? 'fa-brands fa-behance' : 'fa-solid fa-paper-plane';
                 const iconHtml = btn.iconImage 
                     ? `<img src="${btn.iconImage}" style="width: 18px; height: 18px; object-fit: contain;">`
-                    : `<i class="${btn.icon || 'fa-solid fa-arrow-right'}"></i>`;
+                    : `<i class="${btn.icon || defaultIcon}"></i>`;
 
                 return `
                     <a href="${btn.link || '#'}" ${targetAttr} class="${btnClass}">
