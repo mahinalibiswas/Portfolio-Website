@@ -148,7 +148,7 @@ function renderSiteData(customData) {
 
                 if (btn.isModal) {
                     return `
-                        <button class="btn btn-primary" id="heroPlayReelBtn" data-video-src="${btn.link || 'assets/videos/main_showreel.mp4'}">
+                        <button class="btn btn-primary trigger-video-modal" data-video-src="${btn.link || 'assets/videos/main_showreel.mp4'}">
                             <span>${btn.text}</span>
                             <span class="btn-icon-circle">${iconHtml || '<i class="fa-solid fa-play"></i>'}</span>
                         </button>
@@ -162,13 +162,12 @@ function renderSiteData(customData) {
                 }
             }).join('');
 
-            const playBtn = document.getElementById('heroPlayReelBtn');
-            if (playBtn) {
+            heroCtaGroup.querySelectorAll('.trigger-video-modal').forEach(playBtn => {
                 playBtn.addEventListener('click', () => {
                     const videoSrc = playBtn.getAttribute('data-video-src') || 'assets/videos/main_showreel.mp4';
                     if (typeof openDirectVideoModal === 'function') openDirectVideoModal(videoSrc);
                 });
-            }
+            });
         }
 
         // Social Links

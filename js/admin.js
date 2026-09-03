@@ -787,8 +787,8 @@ function renderAdminCtaButtons(ctaButtons) {
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Target URL</label>
-                <input type="text" id="ctaBtnLink_${btn.id}" value="${btn.link || ''}" placeholder="Enter your target URL..." oninput="renderLiveHeroPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Target URL / YouTube Embed Code / Video Link</label>
+                <textarea id="ctaBtnLink_${btn.id}" rows="2" placeholder="Paste YouTube URL (e.g. https://youtu.be/...), Video Embed Code (<iframe...>), or MP4 link..." oninput="renderLiveHeroPreview()" style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box; font-family: inherit; resize: vertical; min-height: 52px;">${btn.link || ''}</textarea>
             </div>
 
             <div>
