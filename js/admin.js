@@ -836,47 +836,67 @@ function renderAdminCtaButtons(ctaButtons) {
         });
     }
 
-    listContainer.innerHTML = ctaButtons.map((btn, index) => `
-        <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-                <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">CTA Button #${index + 1}</h4>
-                <button type="button" class="action-btn delete-btn" onclick="deleteHeroCtaButton('${btn.id}')" title="Delete Button">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1rem;">
-                <div style="flex: 1;">
-                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Button Text</label>
-                    <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name..." oninput="renderLiveHeroPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box;">
-                </div>
+    listContainer.innerHTML = ctaButtons.map((btn, index) => {
+        const defaultIcon = (index === 0) ? 'fa-solid fa-play' : (index === 1 ? 'fa-solid fa-paper-plane' : 'fa-solid fa-user');
+        const activeIcon = btn.icon || defaultIcon;
+        let activeIconHtml = `<i id="ctaBtnIconDisplay_${btn.id}" class="${activeIcon}"></i>`;
+        if (btn.iconImage) {
+            activeIconHtml = `<img id="ctaBtnIconImageDisplay_${btn.id}" src="${btn.iconImage}" style="width: 22px; height: 22px; object-fit: contain;">`;
+        }
 
-                <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.8rem; height: 44px;">
-                    <input type="file" id="ctaBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleCtaIconUpload(event, '${btn.id}')">
-                    <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('ctaBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 1.2rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px; font-size: 0.88rem; box-sizing: border-box; white-space: nowrap;">
-                        <i class="fa-solid fa-upload"></i> Choose Icon
+        return `
+            <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">CTA Button #${index + 1}</h4>
+                    <button type="button" class="action-btn delete-btn" onclick="deleteHeroCtaButton('${btn.id}')" title="Delete Button">
+                        <i class="fa-solid fa-trash-can"></i>
                     </button>
-                    <div id="ctaIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0 0.8rem; height: 44px; border-radius: 8px; border: 1px solid var(--border-glow); box-sizing: border-box;">
-                        <img id="ctaIconPreview_${btn.id}" src="${btn.iconImage || ''}" style="width: 24px; height: 24px; object-fit: contain;">
-                        <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem;" onclick="removeCtaIconImage('${btn.id}')"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
                 </div>
-                <input type="hidden" id="ctaBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
-            </div>
+                
+                <div style="display: flex; gap: 0.6rem; align-items: flex-end; margin-bottom: 1rem;">
+                    <!-- Dedicated Active Icon Preview Badge -->
+                    <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block;">Icon</label>
+                        <div id="ctaBtnIconBadge_${btn.id}" title="Current Active Icon" style="width: 44px; height: 44px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 12px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                            ${activeIconHtml}
+                        </div>
+                    </div>
 
-            <div style="margin-bottom: 1rem;">
-                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Target URL / YouTube Embed Code / Video Link</label>
-                <textarea id="ctaBtnLink_${btn.id}" rows="2" placeholder="Paste YouTube URL (e.g. https://youtu.be/...), Video Embed Code (<iframe...>), or MP4 link..." oninput="renderLiveHeroPreview()" style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box; font-family: inherit; resize: vertical; min-height: 52px;">${btn.link || ''}</textarea>
-            </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Button Text</label>
+                        <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter your button name..." oninput="renderLiveHeroPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                    </div>
 
-            <div>
-                <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; color: #ffffff; font-size: 0.88rem;">
-                    <input type="checkbox" id="ctaBtnModal_${btn.id}" ${btn.isModal ? 'checked' : ''} onchange="renderLiveHeroPreview()" style="width: auto;">
-                    <span>Opens Showreel Video Lightbox Modal (Play Video Action)</span>
-                </label>
+                    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.4rem; height: 44px;">
+                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('ctaBtnIconClass_${btn.id}', 'ctaBtnIconBadge_${btn.id}', 'hero')" style="height: 44px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                            <i class="fa-solid fa-icons"></i> Pick Icon
+                        </button>
+                        <input type="file" id="ctaBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleCtaIconUpload(event, '${btn.id}')">
+                        <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('ctaBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                            <i class="fa-solid fa-upload"></i> Upload
+                        </button>
+                        <div id="ctaIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.3rem; background: rgba(239, 68, 68, 0.15); padding: 0 0.5rem; height: 44px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.4); box-sizing: border-box;">
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.82rem;" title="Remove uploaded custom icon image" onclick="removeCtaIconImage('${btn.id}', '${defaultIcon}')"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="ctaBtnIconClass_${btn.id}" value="${btn.icon || defaultIcon}">
+                    <input type="hidden" id="ctaBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;">Target URL / YouTube Embed Code / Video Link</label>
+                    <textarea id="ctaBtnLink_${btn.id}" rows="2" placeholder="Paste YouTube URL (e.g. https://youtu.be/...), Video Embed Code (<iframe...>), or MP4 link..." oninput="renderLiveHeroPreview()" style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.88rem; outline: none; box-sizing: border-box; font-family: inherit; resize: vertical; min-height: 52px;">${btn.link || ''}</textarea>
+                </div>
+
+                <div>
+                    <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; color: #ffffff; font-size: 0.88rem;">
+                        <input type="checkbox" id="ctaBtnModal_${btn.id}" ${btn.isModal ? 'checked' : ''} onchange="renderLiveHeroPreview()" style="width: auto;">
+                        <span>Opens Showreel Video Lightbox Modal (Play Video Action)</span>
+                    </label>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 /* --- Navigation Bar Section CRUD Manager --- */
 let tempNavLinksList = [];
@@ -1026,19 +1046,29 @@ function handleCtaIconUpload(event, btnId) {
     reader.onload = function(e) {
         const dataUrl = e.target.result;
         document.getElementById(`ctaBtnIconImage_${btnId}`).value = dataUrl;
-        const previewImg = document.getElementById(`ctaIconPreview_${btnId}`);
+        
+        const badge = document.getElementById(`ctaBtnIconBadge_${btnId}`);
+        if (badge) badge.innerHTML = `<img src="${dataUrl}" style="width: 22px; height: 22px; object-fit: contain;">`;
+
         const previewWrap = document.getElementById(`ctaIconPreviewWrap_${btnId}`);
-        if (previewImg) previewImg.src = dataUrl;
         if (previewWrap) previewWrap.style.display = 'flex';
-        showToast('Icon image uploaded from PC!', 'success');
+
+        renderLiveHeroPreview();
+        showToast('Hero button custom icon uploaded!', 'success');
     };
     reader.readAsDataURL(file);
 }
 
-function removeCtaIconImage(btnId) {
+function removeCtaIconImage(btnId, defaultIcon) {
     document.getElementById(`ctaBtnIconImage_${btnId}`).value = '';
     const previewWrap = document.getElementById(`ctaIconPreviewWrap_${btnId}`);
     if (previewWrap) previewWrap.style.display = 'none';
+
+    const currentClass = document.getElementById(`ctaBtnIconClass_${btnId}`)?.value || defaultIcon || 'fa-solid fa-play';
+    const badge = document.getElementById(`ctaBtnIconBadge_${btnId}`);
+    if (badge) badge.innerHTML = `<i class="${currentClass}"></i>`;
+
+    renderLiveHeroPreview();
     showToast('Uploaded icon image removed', 'info');
 }
 
@@ -1258,7 +1288,7 @@ async function saveHeroSection() {
         id: btn.id,
         text: document.getElementById(`ctaBtnText_${btn.id}`)?.value || btn.text,
         link: document.getElementById(`ctaBtnLink_${btn.id}`)?.value || btn.link,
-        icon: document.getElementById(`ctaBtnIcon_${btn.id}`)?.value || btn.icon,
+        icon: document.getElementById(`ctaBtnIconClass_${btn.id}`)?.value || document.getElementById(`ctaBtnIcon_${btn.id}`)?.value || btn.icon,
         iconImage: document.getElementById(`ctaBtnIconImage_${btn.id}`)?.value || '',
         isModal: document.getElementById(`ctaBtnModal_${btn.id}`)?.checked || false
     }));
@@ -1513,8 +1543,16 @@ function renderAdminServicesList(services) {
                     <input type="text" id="servTitle${index}" value="${serv.title || ''}" oninput="renderLiveServicesPreview()">
                 </div>
                 <div class="form-group">
-                    <label>FontAwesome Icon Class</label>
-                    <input type="text" id="servIcon${index}" value="${serv.icon || ''}" oninput="renderLiveServicesPreview()">
+                    <label>Service Icon</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <div id="servIconBadge_${index}" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                            <i class="${serv.icon || 'fa-solid fa-layer-group'}"></i>
+                        </div>
+                        <input type="text" id="servIcon${index}" value="${serv.icon || ''}" oninput="document.getElementById('servIconBadge_${index}').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveServicesPreview();" placeholder="Icon class..." style="flex: 1;">
+                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('servIcon${index}', 'servIconBadge_${index}', 'services')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
+                            <i class="fa-solid fa-icons"></i> Pick Icon
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group full-width">
                     <label>Description</label>
@@ -1563,29 +1601,44 @@ function renderAdminSoftwareList(software) {
     const listContainer = document.getElementById('adminSoftwareList');
     if (!listContainer) return;
 
-    listContainer.innerHTML = software.map((soft, index) => `
-        <div class="admin-card-row">
-            <h4>Software #${index + 1}: ${soft.title}</h4>
-            <div class="admin-form-grid">
-                <div class="form-group">
-                    <label>Software Name</label>
-                    <input type="text" id="softTitle${index}" value="${soft.title || ''}" oninput="renderLiveSoftwarePreview()">
-                </div>
-                <div class="form-group">
-                    <label>Subtitle / Specialty</label>
-                    <input type="text" id="softSub${index}" value="${soft.subtitle || ''}" oninput="renderLiveSoftwarePreview()">
-                </div>
-                <div class="form-group">
-                    <label>Icon Image File / URL</label>
-                    <input type="text" id="softIcon${index}" value="${soft.icon || ''}" oninput="renderLiveSoftwarePreview()">
-                </div>
-                <div class="form-group">
-                    <label>Skill Level % (1-100)</label>
-                    <input type="number" id="softLevel${index}" value="${soft.level || 90}" min="1" max="100" oninput="renderLiveSoftwarePreview()">
+    listContainer.innerHTML = software.map((soft, index) => {
+        const isImg = soft.icon && (soft.icon.includes('/') || soft.icon.includes('.') || soft.icon.includes('data:'));
+        const iconBadgeContent = isImg 
+            ? `<img src="${soft.icon}" style="width: 22px; height: 22px; object-fit: contain;">`
+            : `<i class="${soft.icon || 'fa-solid fa-cubes'}"></i>`;
+
+        return `
+            <div class="admin-card-row">
+                <h4>Software #${index + 1}: ${soft.title}</h4>
+                <div class="admin-form-grid">
+                    <div class="form-group">
+                        <label>Software Name</label>
+                        <input type="text" id="softTitle${index}" value="${soft.title || ''}" oninput="renderLiveSoftwarePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Subtitle / Specialty</label>
+                        <input type="text" id="softSub${index}" value="${soft.subtitle || ''}" oninput="renderLiveSoftwarePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Software Icon</label>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <div id="softIconBadge_${index}" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                ${iconBadgeContent}
+                            </div>
+                            <input type="text" id="softIcon${index}" value="${soft.icon || ''}" oninput="renderLiveSoftwarePreview()" placeholder="Icon class or Image URL..." style="flex: 1;">
+                            <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('softIcon${index}', 'softIconBadge_${index}', 'software')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
+                                <i class="fa-solid fa-icons"></i> Pick Icon
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Skill Level % (1-100)</label>
+                        <input type="number" id="softLevel${index}" value="${soft.level || 90}" min="1" max="100" oninput="renderLiveSoftwarePreview()">
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 async function saveSoftwareSection() {

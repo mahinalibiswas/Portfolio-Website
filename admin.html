@@ -327,8 +327,16 @@
                                 <div class="form-group">
                                     <label>Feature 1 Title</label>
                                     <input type="text" id="featTitle0" oninput="renderLiveAboutPreview()">
-                                    <label style="margin-top: 0.5rem;">Feature 1 Icon Class</label>
-                                    <input type="text" id="featIcon0" placeholder="e.g. fa-solid fa-bolt" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 1 Icon</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <div id="featIconBadge0" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                            <i class="fa-solid fa-bolt"></i>
+                                        </div>
+                                        <input type="text" id="featIcon0" placeholder="e.g. fa-solid fa-bolt" oninput="document.getElementById('featIconBadge0').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1;">
+                                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon0', 'featIconBadge0', 'about')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
+                                            <i class="fa-solid fa-icons"></i> Pick
+                                        </button>
+                                    </div>
                                     <label style="margin-top: 0.5rem;">Feature 1 Description</label>
                                     <input type="text" id="featDesc0" oninput="renderLiveAboutPreview()">
                                 </div>
@@ -337,8 +345,16 @@
                                 <div class="form-group">
                                     <label>Feature 2 Title</label>
                                     <input type="text" id="featTitle1" oninput="renderLiveAboutPreview()">
-                                    <label style="margin-top: 0.5rem;">Feature 2 Icon Class</label>
-                                    <input type="text" id="featIcon1" placeholder="e.g. fa-solid fa-closed-captioning" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 2 Icon</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <div id="featIconBadge1" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                            <i class="fa-solid fa-closed-captioning"></i>
+                                        </div>
+                                        <input type="text" id="featIcon1" placeholder="e.g. fa-solid fa-closed-captioning" oninput="document.getElementById('featIconBadge1').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1;">
+                                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon1', 'featIconBadge1', 'about')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
+                                            <i class="fa-solid fa-icons"></i> Pick
+                                        </button>
+                                    </div>
                                     <label style="margin-top: 0.5rem;">Feature 2 Description</label>
                                     <input type="text" id="featDesc1" oninput="renderLiveAboutPreview()">
                                 </div>
@@ -347,8 +363,16 @@
                                 <div class="form-group">
                                     <label>Feature 3 Title</label>
                                     <input type="text" id="featTitle2" oninput="renderLiveAboutPreview()">
-                                    <label style="margin-top: 0.5rem;">Feature 3 Icon Class</label>
-                                    <input type="text" id="featIcon2" placeholder="e.g. fa-solid fa-sliders" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 3 Icon</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <div id="featIconBadge2" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                            <i class="fa-solid fa-sliders"></i>
+                                        </div>
+                                        <input type="text" id="featIcon2" placeholder="e.g. fa-solid fa-sliders" oninput="document.getElementById('featIconBadge2').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1;">
+                                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon2', 'featIconBadge2', 'about')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
+                                            <i class="fa-solid fa-icons"></i> Pick
+                                        </button>
+                                    </div>
                                     <label style="margin-top: 0.5rem;">Feature 3 Description</label>
                                     <input type="text" id="featDesc2" oninput="renderLiveAboutPreview()">
                                 </div>
@@ -357,8 +381,16 @@
                                 <div class="form-group">
                                     <label>Feature 4 Title</label>
                                     <input type="text" id="featTitle3" oninput="renderLiveAboutPreview()">
-                                    <label style="margin-top: 0.5rem;">Feature 4 Icon Class</label>
-                                    <input type="text" id="featIcon3" placeholder="e.g. fa-solid fa-compact-disc" oninput="renderLiveAboutPreview()">
+                                    <label style="margin-top: 0.5rem;">Feature 4 Icon</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <div id="featIconBadge3" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                            <i class="fa-solid fa-compact-disc"></i>
+                                        </div>
+                                        <input type="text" id="featIcon3" placeholder="e.g. fa-solid fa-compact-disc" oninput="document.getElementById('featIconBadge3').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1;">
+                                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon3', 'featIconBadge3', 'about')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
+                                            <i class="fa-solid fa-icons"></i> Pick
+                                        </button>
+                                    </div>
                                     <label style="margin-top: 0.5rem;">Feature 4 Description</label>
                                     <input type="text" id="featDesc3" oninput="renderLiveAboutPreview()">
                                 </div>
