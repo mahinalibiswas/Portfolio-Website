@@ -147,8 +147,9 @@ function renderSiteData(customData) {
                 }
 
                 if (btn.isModal) {
+                    const encodedSrc = encodeURIComponent(btn.link || 'assets/videos/main_showreel.mp4');
                     return `
-                        <button class="btn btn-primary trigger-video-modal" data-video-src="${btn.link || 'assets/videos/main_showreel.mp4'}">
+                        <button class="btn btn-primary trigger-video-modal" data-video-src="${encodedSrc}">
                             <span>${btn.text}</span>
                             <span class="btn-icon-circle">${iconHtml || '<i class="fa-solid fa-play"></i>'}</span>
                         </button>
@@ -164,7 +165,15 @@ function renderSiteData(customData) {
 
             heroCtaGroup.querySelectorAll('.trigger-video-modal').forEach(playBtn => {
                 playBtn.addEventListener('click', () => {
-                    const videoSrc = playBtn.getAttribute('data-video-src') || 'assets/videos/main_showreel.mp4';
+                    const rawSrc = playBtn.getAttribute('data-video-src') || '';
+                    let videoSrc = 'assets/videos/main_showreel.mp4';
+                    if (rawSrc) {
+                        try {
+                            videoSrc = decodeURIComponent(rawSrc);
+                        } catch (e) {
+                            videoSrc = rawSrc;
+                        }
+                    }
                     if (typeof openDirectVideoModal === 'function') openDirectVideoModal(videoSrc);
                 });
             });
