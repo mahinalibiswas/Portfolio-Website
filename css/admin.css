@@ -209,7 +209,7 @@
 
 /* --- Content Area --- */
 .admin-main {
-    padding: 2.5rem;
+    padding: 1.2rem 2.5rem 2.5rem 2.5rem;
     background: var(--bg-dark);
 }
 
@@ -595,7 +595,7 @@
 
 .admin-preview-pane {
     position: sticky;
-    top: 67px;
+    top: 73px;
     z-index: 900;
     background: #020617;
     border: 1px solid var(--border-glow);
