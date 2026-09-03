@@ -449,11 +449,11 @@ function renderLiveNavPreview() {
     });
 
     canvas.innerHTML = `
-        <div class="navbar-wrapper" style="position:relative; width:100%; background:transparent; padding:0.3rem 0; box-sizing:border-box;">
-            <nav class="navbar container" style="position:relative; top:0; left:0; transform:none; width:100%; max-width:1200px; margin:0 auto; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:0.8rem; flex-wrap:nowrap; overflow-x:auto;">
+        <div class="navbar-wrapper" style="position:relative; width:100%; background:transparent; padding:0; box-sizing:border-box;">
+            <nav class="navbar container" style="position:relative; top:0; left:0; transform:none; width:100%; max-width:100%; margin:0; padding:0.4rem 0.6rem; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:0.8rem; flex-wrap:nowrap; overflow-x:auto;">
                 <!-- Far Left: Logo & Avatar -->
                 <a href="#" class="brand-logo" style="display:flex; align-items:center; gap:0.8rem; text-decoration:none; white-space:nowrap; flex-shrink:0;">
-                    <div class="nav-avatar-box" style="width:42px; height:42px; border-radius:50%; border:2px solid var(--accent-neon); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#000; flex-shrink:0;">
+                    <div class="nav-avatar-box" style="width:40px; height:40px; border-radius:50%; border:2px solid var(--accent-neon); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#000; flex-shrink:0;">
                         <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas" class="nav-avatar-img" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Mahin+Biswas&background=84cc16&color=000';">
                     </div>
                     <div class="logo-text-group" style="display:flex; flex-direction:column; align-items:flex-start;">
