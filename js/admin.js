@@ -680,16 +680,22 @@ function renderLiveAboutPreview() {
                     <!-- Bottom CTA Action Buttons -->
                     <div class="about-cta-row" style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.5rem;">
                         ${(data.about?.ctaButtons && data.about.ctaButtons.length > 0 ? data.about.ctaButtons : [
-                            { id: 'about-btn-1', text: 'Visit Behance Profile', link: 'https://www.behance.net/mahinalibiswas', icon: '' },
-                            { id: 'about-btn-2', text: 'Contact Direct', link: '#contact', icon: '' }
+                            { id: 'about-btn-1', text: 'Visit Behance Profile', link: 'https://www.behance.net/mahinalibiswas', icon: 'fa-brands fa-behance' },
+                            { id: 'about-btn-2', text: 'Contact Direct', link: '#contact', icon: 'fa-solid fa-paper-plane' }
                         ]).map((b, idx) => {
                             const isPrimary = idx === 0;
+                            const defaultIcon = isPrimary ? 'fa-brands fa-behance' : 'fa-solid fa-paper-plane';
+                            
+                            const liveText = document.getElementById(`aboutBtnText_${b.id}`)?.value || b.text;
+                            const liveLink = document.getElementById(`aboutBtnLink_${b.id}`)?.value || b.link;
+                            const liveIconClass = document.getElementById(`aboutBtnIconClass_${b.id}`)?.value || b.icon || defaultIcon;
+                            const liveIconImg = document.getElementById(`aboutBtnIconImage_${b.id}`)?.value || b.iconImage || '';
+
                             const btnClass = isPrimary ? 'btn btn-primary btn-sm' : 'btn btn-hero-secondary btn-sm';
-                            let iconContent = isPrimary ? '<i class="fa-brands fa-behance"></i>' : '<i class="fa-solid fa-paper-plane"></i>';
-                            if (b.iconImage) {
-                                iconContent = `<img src="${b.iconImage}" style="width: 14px; height: 14px; object-fit: contain;">`;
-                            } else if (b.icon) {
-                                iconContent = `<i class="${b.icon}"></i>`;
+                            
+                            let iconContent = `<i class="${liveIconClass}"></i>`;
+                            if (liveIconImg) {
+                                iconContent = `<img src="${liveIconImg}" style="width: 14px; height: 14px; object-fit: contain;">`;
                             }
 
                             const styleAttr = isPrimary 
@@ -697,8 +703,8 @@ function renderLiveAboutPreview() {
                                 : 'display:inline-flex; align-items:center; gap:0.5rem; border-radius:30px; font-weight:600; padding:0.45rem 1.1rem; background:rgba(2,8,23,0.8); border:1px solid var(--border-glow); color:#fff; text-decoration:none;';
 
                             return `
-                                <a href="${b.link || '#'}" class="${btnClass}" style="${styleAttr}">
-                                    <span>${b.text}</span>
+                                <a href="${liveLink || '#'}" class="${btnClass}" style="${styleAttr}">
+                                    <span>${liveText}</span>
                                     <span class="btn-icon-circle" style="width:22px; height:22px; background:#020817; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.65rem;">
                                         ${iconContent}
                                     </span>
@@ -1476,12 +1482,16 @@ async function saveAboutSection() {
         });
     }
 
-    const aboutCtaButtons = (data.about?.ctaButtons || []).map(btn => ({
-        id: btn.id,
-        text: document.getElementById(`aboutBtnText_${btn.id}`)?.value || btn.text,
-        link: document.getElementById(`aboutBtnLink_${btn.id}`)?.value || btn.link,
-        iconImage: document.getElementById(`aboutBtnIconImage_${btn.id}`)?.value || ''
-    }));
+    const aboutCtaButtons = (data.about?.ctaButtons || []).map((btn, index) => {
+        const defaultIcon = (index === 0) ? 'fa-brands fa-behance' : 'fa-solid fa-paper-plane';
+        return {
+            id: btn.id,
+            text: document.getElementById(`aboutBtnText_${btn.id}`)?.value || btn.text,
+            link: document.getElementById(`aboutBtnLink_${btn.id}`)?.value || btn.link,
+            icon: document.getElementById(`aboutBtnIconClass_${btn.id}`)?.value || btn.icon || defaultIcon,
+            iconImage: document.getElementById(`aboutBtnIconImage_${btn.id}`)?.value || ''
+        };
+    });
 
     data.about = {
         ...data.about,
