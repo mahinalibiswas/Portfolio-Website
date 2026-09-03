@@ -562,11 +562,11 @@ function renderLiveHeroPreview() {
                 </div>
             </div>
             
-            <div class="hero-right-col" style="display:flex; flex-direction:column; justify-content:space-between; gap:1rem; height:100%;">
-                <div class="hero-main-card" style="aspect-ratio:16/10; height:220px; margin:0;">
+            <div class="hero-right-col" style="display:flex; flex-direction:column; justify-content:space-between; gap:1.2rem; height:100%;">
+                <div class="hero-main-card" style="flex:1; width:100%; min-height:220px; margin:0; border-radius:20px; overflow:hidden;">
                     ${videoContent}
                 </div>
-                <div class="hero-stats" style="margin:0; padding:0.8rem;">
+                <div class="hero-stats" style="margin:0; padding:0.8rem; flex-shrink:0;">
                     <div class="stat-item"><span class="stat-number">${statsEdited}</span><span class="stat-label">Videos Edited</span></div>
                     <div class="stat-divider"></div>
                     <div class="stat-item"><span class="stat-number">${statsClients}</span><span class="stat-label">Happy Clients</span></div>
