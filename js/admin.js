@@ -433,8 +433,10 @@ function renderLiveNavPreview() {
     const canvas = document.getElementById('previewNavCanvas');
     if (!canvas) return;
 
-    const brand = document.getElementById('navBrandLogo')?.value || 'MAHIN.';
-    const ctaText = document.getElementById('navCtaText')?.value || 'Hire Me';
+    let brand = document.getElementById('navBrandLogo')?.value || 'Mahin Ali Biswas';
+    if (brand === 'MAHIN.') brand = 'Mahin Ali Biswas';
+    const ctaText = document.getElementById('navCtaText')?.value || 'Contact Me';
+    const ctaUrl = document.getElementById('navCtaUrl')?.value || '#contact';
     
     const data = getSiteData();
     const links = (data.navigation?.navLinks || []).map(l => {
@@ -443,17 +445,34 @@ function renderLiveNavPreview() {
     });
 
     canvas.innerHTML = `
-        <header class="navbar" style="position:relative; top:0; left:0; transform:none; width:100%; max-width:1100px; margin:0 auto; box-shadow:0 10px 30px rgba(2,8,23,0.8);">
-            <div class="nav-container" style="padding:0.6rem 1.5rem;">
-                <a href="#hero" class="nav-brand font-accent">${brand}</a>
-                <nav class="nav-menu" style="display:flex; gap:1.2rem; align-items:center;">
-                    ${links.map(l => `<a class="nav-link" style="font-size:0.85rem; cursor:pointer;">${l}</a>`).join('')}
-                </nav>
-                <div class="nav-actions">
-                    <a class="btn btn-primary btn-sm">${ctaText}</a>
+        <div class="navbar-wrapper" style="position:relative; width:100%; background:transparent; padding:0.5rem 0; box-sizing:border-box;">
+            <nav class="navbar container" style="position:relative; top:0; left:0; transform:none; width:100%; max-width:1200px; margin:0 auto; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+                <a href="#" class="brand-logo" style="display:flex; align-items:center; gap:0.8rem; text-decoration:none;">
+                    <div class="nav-avatar-box" style="width:42px; height:42px; border-radius:50%; border:2px solid var(--accent-neon); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#000;">
+                        <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas" class="nav-avatar-img" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Mahin+Biswas&background=84cc16&color=000';">
+                    </div>
+                    <div class="logo-text-group" style="display:flex; flex-direction:column; align-items:flex-start;">
+                        <span class="brand-name" style="font-family:'Outfit',sans-serif; font-size:1.05rem; font-weight:800; color:#fff; line-height:1.2;">${brand}</span>
+                        <span class="brand-tag" style="font-size:0.65rem; font-weight:800; color:var(--accent-neon); letter-spacing:1px; line-height:1;">MOTION & VIDEO ARTIST</span>
+                    </div>
+                </a>
+
+                <div class="nav-links" style="display:flex; align-items:center; gap:0.3rem; background:rgba(2,8,23,0.7); border:1px solid var(--border-glow); padding:0.4rem 0.8rem; border-radius:50px; backdrop-filter:blur(10px);">
+                    ${links.map((l, idx) => `<a class="nav-link ${idx === 0 ? 'active' : ''}" style="font-size:0.82rem; font-weight:600; padding:0.4rem 0.8rem; text-decoration:none; cursor:pointer;">${l}</a>`).join('')}
                 </div>
-            </div>
-        </header>
+
+                <div class="nav-actions" style="display:flex; align-items:center; gap:0.8rem;">
+                    <div class="status-pill" style="display:flex; align-items:center; gap:0.5rem; background:rgba(163,230,53,0.08); border:1px solid rgba(163,230,53,0.3); padding:0.4rem 0.8rem; border-radius:30px;">
+                        <span class="status-dot" style="width:8px; height:8px; background:var(--accent-neon); border-radius:50%; box-shadow:0 0 8px var(--accent-neon);"></span>
+                        <span class="status-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-neon);">Available for Work</span>
+                    </div>
+                    <a href="${ctaUrl}" class="btn btn-primary nav-cta" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.5rem 1.2rem; border-radius:30px; font-weight:800; font-size:0.85rem; text-decoration:none;">
+                        <span>${ctaText}</span>
+                        <i class="fa-solid fa-arrow-right" style="width:24px; height:24px; background:#020817; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem;"></i>
+                    </a>
+                </div>
+            </nav>
+        </div>
     `;
 }
 
