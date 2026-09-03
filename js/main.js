@@ -195,18 +195,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const raw = (videoSrc || '').trim();
 
         if (wrapper) {
+            const isVertical = raw.includes('/shorts/') || 
+                              raw.includes('height="848"') || 
+                              raw.includes('height="800"') || 
+                              raw.includes('477') || 
+                              raw.toLowerCase().includes('short') || 
+                              raw.includes('AOWpWckDgLk');
+
+            let iframeStyle = "width: 100%; height: 100%; border: none; border-radius: 16px;";
+            let wrapperStyle = "width: 100%; aspect-ratio: 16/9; max-height: 75vh; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 16px; overflow: hidden;";
+            let containerMaxWidth = "900px";
+
+            if (isVertical) {
+                wrapperStyle = "width: 100%; max-width: 420px; aspect-ratio: 9/16; height: 75vh; max-height: 700px; margin: 0 auto; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 16px; overflow: hidden;";
+                containerMaxWidth = "460px";
+            }
+
+            const modalContainer = videoModal.querySelector('.modal-video-container');
+            if (modalContainer) modalContainer.style.maxWidth = containerMaxWidth;
+
             if (raw.includes('<iframe')) {
                 let clean = raw.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
                 if (!clean.includes('style=')) {
-                    clean = clean.replace('<iframe', '<iframe style="width:100%; height:100%; border:none; border-radius:20px;"');
+                    clean = clean.replace('<iframe', `<iframe style="${iframeStyle}"`);
                 }
+                wrapper.style.cssText = wrapperStyle;
                 wrapper.innerHTML = clean;
             } else {
                 const ytId = extractYoutubeId(raw);
                 if (ytId) {
-                    wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 20px;"></iframe>`;
+                    wrapper.style.cssText = wrapperStyle;
+                    wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="${iframeStyle}"></iframe>`;
                 } else {
-                    wrapper.innerHTML = `<video id="modalHtml5Video" src="${raw || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>`;
+                    wrapper.style.cssText = wrapperStyle;
+                    wrapper.innerHTML = `<video id="modalHtml5Video" src="${raw || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;"></video>`;
                 }
             }
         }

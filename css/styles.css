@@ -1977,13 +1977,26 @@ button {
     background: var(--bg-card);
     border: 1px solid var(--border-glow);
     border-radius: var(--radius-lg);
-    position: relative;
-}.modal-video-container {
-    max-width: 960px;
+}
+
+.modal-video-container {
+    max-width: 900px;
     width: 90vw;
     position: relative;
     overflow: visible;
     border-radius: 20px;
+    transition: max-width 0.3s ease;
+}
+
+.video-responsive-wrapper {
+    width: 100%;
+    position: relative;
+    background: #000000;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-close {
