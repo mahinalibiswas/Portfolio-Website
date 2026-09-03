@@ -242,7 +242,7 @@
                                         <i class="fa-solid fa-plus"></i> Add New CTA Button
                                     </button>
                                 </div>
-                                <div id="adminCtaButtonsList" class="dynamic-cta-grid full-width" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; grid-column: span 2;">
+                                <div class="full-width" id="adminCtaButtonsList" style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 1.2rem;">
                                     <!-- Dynamic CTA Buttons Cards Populated by JS -->
                                 </div>
 
@@ -258,15 +258,15 @@
                                     <input type="text" id="heroStatsClients" placeholder="Enter happy clients count..." oninput="renderLiveHeroPreview()">
                                 </div>
                                 <div class="form-group">
-                                    <label>On-Time Delivery %</label>
-                                    <input type="text" id="heroStatsDelivery" placeholder="Enter on-time delivery percentage..." oninput="renderLiveHeroPreview()">
+                                    <label>On-Time Delivery Rate %</label>
+                                    <input type="text" id="heroStatsDelivery" placeholder="Enter delivery rate..." oninput="renderLiveHeroPreview()">
                                 </div>
                             </form>
                         </div>
                     </div>
                 </section>
 
-                <!-- TAB 2: ABOUT ME & BIO -->
+                <!-- TAB 3: ABOUT ME -->
                 <section class="admin-tab-content" id="tab-about">
                     <div class="admin-split-layout">
                         <!-- Top Sticky Live Preview Pane -->
@@ -317,7 +317,7 @@
                                 <div class="form-section-title full-width" style="margin-top: 1.5rem;">
                                     <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About Me Action CTA Buttons</h4>
                                 </div>
-                                <div id="adminAboutCtaButtonsList" class="dynamic-cta-grid full-width" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; grid-column: span 2;"></div>
+                                <div class="full-width" id="adminAboutCtaButtonsList" style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 1.2rem;"></div>
 
                                 <div class="form-section-title full-width">
                                     <h4>4 Core Superpowers / Feature Cards</h4>
