@@ -189,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openDirectVideoModal(videoSrc) {
+        if (!videoModal) videoModal = document.getElementById('directVideoModal');
         if (!videoModal) return;
         const wrapper = videoModal.querySelector('.video-responsive-wrapper');
         const raw = (videoSrc || '').trim();
@@ -196,6 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (wrapper) {
             if (raw.includes('<iframe')) {
                 let clean = raw.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+                if (!clean.includes('style=')) {
+                    clean = clean.replace('<iframe', '<iframe style="width:100%; height:100%; border:none; border-radius:20px;"');
+                }
                 wrapper.innerHTML = clean;
             } else {
                 const ytId = extractYoutubeId(raw);
@@ -210,14 +214,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function closeDirectVideoModal() {
+        if (!videoModal) videoModal = document.getElementById('directVideoModal');
         if (!videoModal) return;
         videoModal.classList.remove('active');
         const wrapper = videoModal.querySelector('.video-responsive-wrapper');
         if (wrapper) wrapper.innerHTML = '';
     }
 
-    heroPlayReelBtn?.addEventListener('click', () => openDirectVideoModal('assets/videos/main_showreel.mp4'));
-    heroBigPlayBtn?.addEventListener('click', () => openDirectVideoModal(heroMainVideo ? heroMainVideo.src : 'assets/videos/hero_teaser.mp4'));
+    window.openDirectVideoModal = openDirectVideoModal;
+    window.closeDirectVideoModal = closeDirectVideoModal;
+
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.trigger-video-modal, .trigger-reel, #heroPlayReelBtn');
+        if (btn) {
+            e.preventDefault();
+            const rawSrc = btn.getAttribute('data-video-src') || 'assets/videos/main_showreel.mp4';
+            let videoSrc = rawSrc;
+            if (rawSrc) {
+                try {
+                    videoSrc = decodeURIComponent(rawSrc);
+                } catch(err) {
+                    videoSrc = rawSrc;
+                }
+            }
+            openDirectVideoModal(videoSrc);
+        }
+    });
+
     closeVideoModal?.addEventListener('click', closeDirectVideoModal);
     document.getElementById('modalBackToProjectsBtn')?.addEventListener('click', closeDirectVideoModal);
 
