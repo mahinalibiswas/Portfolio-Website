@@ -540,25 +540,29 @@ function renderLiveHeroPreview() {
     `;
 
     canvas.innerHTML = `
-        <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:2rem; align-items:center; text-align:left; background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow);">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span class="badge-dot"></span>
-                    <span>${badge}</span>
+        <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:2rem; align-items:stretch; text-align:left; background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow);">
+            <div class="hero-content" style="display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        <span>${badge}</span>
+                    </div>
+                    <h1 class="hero-title" style="font-size:2.2rem; margin:0.8rem 0;">
+                        <span class="title-top">${titleTop}</span>
+                        <span class="gradient-text title-bottom">${titleBottom}</span>
+                    </h1>
+                    <p class="hero-subtitle-tag font-accent" style="font-size:0.9rem;">${subTag}</p>
+                    <p class="hero-subtitle" style="font-size:0.82rem; line-height:1.5; color:var(--text-dim); margin-top:0.6rem;">${sub}</p>
                 </div>
-                <h1 class="hero-title" style="font-size:2.2rem; margin:0.8rem 0;">
-                    <span class="title-top">${titleTop}</span>
-                    <span class="gradient-text title-bottom">${titleBottom}</span>
-                </h1>
-                <p class="hero-subtitle-tag font-accent" style="font-size:0.9rem;">${subTag}</p>
-                <p class="hero-subtitle" style="font-size:0.82rem; line-height:1.5; color:var(--text-dim); margin-top:0.6rem;">${sub}</p>
-                <div class="hero-cta-group" style="margin-top:1rem; display:flex; gap:0.6rem; flex-wrap:wrap;">
-                    ${ctaHtml}
+                <div>
+                    <div class="hero-cta-group" style="margin-top:1rem; display:flex; gap:0.6rem; flex-wrap:wrap;">
+                        ${ctaHtml}
+                    </div>
+                    ${socialHtml}
                 </div>
-                ${socialHtml}
             </div>
             
-            <div class="hero-right-col" style="display:flex; flex-direction:column; gap:1rem;">
+            <div class="hero-right-col" style="display:flex; flex-direction:column; justify-content:space-between; gap:1rem; height:100%;">
                 <div class="hero-main-card" style="aspect-ratio:16/10; height:220px; margin:0;">
                     ${videoContent}
                 </div>
