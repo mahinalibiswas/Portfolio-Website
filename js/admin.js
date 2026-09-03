@@ -7,6 +7,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     initAuthGate();
     initTabNavigation();
+    initLivePreviewState();
 });
 
 /* --- 1. Authentication Security Gate --- */
@@ -2017,3 +2018,60 @@ function selectIconFromPicker(iconClass) {
 
     showToast('Icon selected!', 'success');
 }
+
+/* --- Live Preview Minimize & Expand System --- */
+function toggleLivePreviewCollapse(btn) {
+    const pane = btn ? btn.closest('.admin-preview-pane') : document.querySelector('.admin-tab-content.active .admin-preview-pane');
+    if (!pane) return;
+
+    const isCollapsed = !pane.classList.contains('collapsed');
+
+    document.querySelectorAll('.admin-preview-pane').forEach(p => {
+        if (isCollapsed) {
+            p.classList.add('collapsed');
+        } else {
+            p.classList.remove('collapsed');
+        }
+    });
+
+    try {
+        localStorage.setItem('mahin_preview_collapsed', isCollapsed ? 'true' : 'false');
+    } catch (e) {}
+
+    updatePreviewToggleButtons(isCollapsed);
+
+    if (isCollapsed) {
+        showToast('Live Preview minimized for maximum editing space', 'info');
+    } else {
+        if (typeof renderAllLivePreviews === 'function') renderAllLivePreviews();
+        showToast('Live Preview expanded!', 'success');
+    }
+}
+
+function updatePreviewToggleButtons(isCollapsed) {
+    document.querySelectorAll('.btn-preview-toggle').forEach(b => {
+        if (isCollapsed) {
+            b.innerHTML = '<i class="fa-solid fa-chevron-down"></i> <span>Expand Live Preview</span>';
+            b.style.borderColor = 'var(--accent-neon)';
+            b.style.color = 'var(--accent-neon)';
+        } else {
+            b.innerHTML = '<i class="fa-solid fa-chevron-up"></i> <span>Minimize Preview</span>';
+            b.style.borderColor = 'var(--border-glow)';
+            b.style.color = '#ffffff';
+        }
+    });
+}
+
+function initLivePreviewState() {
+    let isCollapsed = false;
+    try {
+        isCollapsed = (localStorage.getItem('mahin_preview_collapsed') === 'true');
+    } catch (e) {}
+
+    if (isCollapsed) {
+        document.querySelectorAll('.admin-preview-pane').forEach(p => p.classList.add('collapsed'));
+        updatePreviewToggleButtons(true);
+    }
+}
+
+window.toggleLivePreviewCollapse = toggleLivePreviewCollapse;
