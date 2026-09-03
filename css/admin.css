@@ -156,9 +156,15 @@
 
 /* --- Sidebar Tabs --- */
 .admin-sidebar {
-    background: rgba(15, 23, 42, 0.5);
+    background: rgba(15, 23, 42, 0.95);
     border-right: 1px solid var(--border-color);
-    padding: 2rem 1.2rem;
+    padding: 1.5rem 1.2rem;
+    position: sticky;
+    top: 75px;
+    height: calc(100vh - 75px);
+    overflow-y: auto;
+    align-self: start;
+    box-sizing: border-box;
 }
 
 .admin-tabs {
