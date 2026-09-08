@@ -852,42 +852,46 @@ function renderAdminCtaButtons(ctaButtons) {
         }
 
         return `
-            <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--border-glow);">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-                    <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">CTA Button #${index + 1}</h4>
+            <div class="admin-card-row" style="padding: 1.5rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box; margin-bottom: 0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                    <h4 style="margin: 0; color: #ffffff; font-size: 0.98rem; font-weight: 700;">
+                        <i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> CTA Button #${index + 1}
+                    </h4>
                     <button type="button" class="action-btn delete-btn" onclick="deleteHeroCtaButton('${btn.id}')" title="Delete Button">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
                 
-                <div style="display: flex; gap: 0.8rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1rem;">
-                    <!-- Dedicated Active Icon Preview Badge -->
-                    <div style="display: flex; flex-direction: column; gap: 0.3rem;">
-                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block;">Icon</label>
-                        <div id="ctaBtnIconBadge_${btn.id}" title="Current Active Icon" style="width: 44px; height: 44px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 12px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
-                            ${activeIconHtml}
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <!-- Col 1: Icon Badge + Button Text -->
+                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Button Text & Active Icon</label>
+                        <div style="display: flex; gap: 0.6rem; align-items: center;">
+                            <div id="ctaBtnIconBadge_${btn.id}" title="Current Active Icon" style="width: 44px; height: 44px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 12px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                ${activeIconHtml}
+                            </div>
+                            <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter button name..." oninput="renderLiveHeroPreview()" style="flex: 1; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                         </div>
                     </div>
 
-                    <div style="width: 260px; min-width: 180px;">
-                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Button Text</label>
-                        <input type="text" id="ctaBtnText_${btn.id}" value="${btn.text || ''}" placeholder="Enter button name..." oninput="renderLiveHeroPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
-                    </div>
-
-                    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.4rem; height: 44px;">
-                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('ctaBtnIconClass_${btn.id}', 'ctaBtnIconBadge_${btn.id}', 'hero')" style="height: 44px; padding: 0 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
-                            <i class="fa-solid fa-icons"></i> Pick Icon
-                        </button>
-                        <input type="file" id="ctaBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleCtaIconUpload(event, '${btn.id}')">
-                        <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('ctaBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
-                            <i class="fa-solid fa-upload"></i> Upload
-                        </button>
-                        <div id="ctaIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.3rem; background: rgba(239, 68, 68, 0.15); padding: 0 0.5rem; height: 44px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.4); box-sizing: border-box;">
-                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.82rem;" title="Remove uploaded custom icon image" onclick="removeCtaIconImage('${btn.id}', '${defaultIcon}')"><i class="fa-solid fa-trash-can"></i></button>
+                    <!-- Col 2: Icon Selection Buttons -->
+                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Change Icon</label>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; height: 44px;">
+                            <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('ctaBtnIconClass_${btn.id}', 'ctaBtnIconBadge_${btn.id}', 'hero')" style="flex: 1; height: 44px; padding: 0 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                                <i class="fa-solid fa-icons"></i> Pick Icon
+                            </button>
+                            <input type="file" id="ctaBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleCtaIconUpload(event, '${btn.id}')">
+                            <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('ctaBtnFileInput_${btn.id}').click()" style="flex: 1; height: 44px; padding: 0 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                                <i class="fa-solid fa-upload"></i> Upload
+                            </button>
+                            <div id="ctaIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.3rem; background: rgba(239, 68, 68, 0.15); padding: 0 0.5rem; height: 44px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.4); box-sizing: border-box;">
+                                <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.82rem;" title="Remove uploaded custom icon image" onclick="removeCtaIconImage('${btn.id}', '${defaultIcon}')"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
                         </div>
+                        <input type="hidden" id="ctaBtnIconClass_${btn.id}" value="${btn.icon || defaultIcon}">
+                        <input type="hidden" id="ctaBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
                     </div>
-                    <input type="hidden" id="ctaBtnIconClass_${btn.id}" value="${btn.icon || defaultIcon}">
-                    <input type="hidden" id="ctaBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
                 </div>
 
                 <div style="margin-bottom: 1rem;">
