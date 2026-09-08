@@ -1708,32 +1708,36 @@ function renderAdminServicesList(services) {
     if (!listContainer) return;
 
     listContainer.innerHTML = services.map((serv, index) => `
-        <div class="admin-card-row">
-            <h4>Service Card #${index + 1}: ${serv.title}</h4>
+        <div class="admin-card-row" style="padding: 1.4rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; padding-bottom: 0.7rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                <h4 style="margin: 0; color: var(--accent-neon); font-size: 0.95rem; font-weight: 700;">
+                    <i class="fa-solid fa-layer-group" style="margin-right: 0.4rem;"></i> Service Card #${index + 1}: ${serv.title}
+                </h4>
+            </div>
             <div class="admin-form-grid">
                 <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" id="servTitle${index}" value="${serv.title || ''}" oninput="renderLiveServicesPreview()">
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Title</label>
+                    <input type="text" id="servTitle${index}" value="${serv.title || ''}" oninput="renderLiveServicesPreview()" placeholder="Enter service title..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                 </div>
                 <div class="form-group">
-                    <label>Service Icon</label>
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Service Icon</label>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <div id="servIconBadge_${index}" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
                             <i class="${serv.icon || 'fa-solid fa-layer-group'}"></i>
                         </div>
-                        <input type="text" id="servIcon${index}" value="${serv.icon || ''}" oninput="document.getElementById('servIconBadge_${index}').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveServicesPreview();" placeholder="Icon class..." style="flex: 1;">
-                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('servIcon${index}', 'servIconBadge_${index}', 'services')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
+                        <input type="text" id="servIcon${index}" value="${serv.icon || ''}" oninput="document.getElementById('servIconBadge_${index}').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveServicesPreview();" placeholder="Icon class..." style="flex: 1; min-width: 0; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.6rem; border-radius: 10px; font-size: 0.82rem; outline: none; box-sizing: border-box;">
+                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('servIcon${index}', 'servIconBadge_${index}', 'services')" style="height: 42px; padding: 0 0.6rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; border-radius: 10px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0;">
                             <i class="fa-solid fa-icons"></i> Pick Icon
                         </button>
                     </div>
                 </div>
                 <div class="form-group full-width">
-                    <label>Description</label>
-                    <input type="text" id="servDesc${index}" value="${serv.desc || ''}" oninput="renderLiveServicesPreview()">
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Description</label>
+                    <input type="text" id="servDesc${index}" value="${serv.desc || ''}" oninput="renderLiveServicesPreview()" placeholder="Enter service description..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                 </div>
                 <div class="form-group full-width">
-                    <label>Checklist Points (Comma Separated)</label>
-                    <input type="text" id="servCheck${index}" value="${(serv.checkpoints || []).join(', ')}" oninput="renderLiveServicesPreview()">
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Checklist Points (Comma Separated)</label>
+                    <input type="text" id="servCheck${index}" value="${(serv.checkpoints || []).join(', ')}" oninput="renderLiveServicesPreview()" placeholder="Point 1, Point 2, Point 3..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                 </div>
             </div>
         </div>
@@ -1781,32 +1785,36 @@ function renderAdminSoftwareList(software) {
             : `<i class="${soft.icon || 'fa-solid fa-cubes'}"></i>`;
 
         return `
-            <div class="admin-card-row">
-                <h4>Software #${index + 1}: ${soft.title}</h4>
+            <div class="admin-card-row" style="padding: 1.4rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; padding-bottom: 0.7rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                    <h4 style="margin: 0; color: var(--accent-neon); font-size: 0.95rem; font-weight: 700;">
+                        <i class="fa-solid fa-laptop-code" style="margin-right: 0.4rem;"></i> Software #${index + 1}: ${soft.title}
+                    </h4>
+                </div>
                 <div class="admin-form-grid">
                     <div class="form-group">
-                        <label>Software Name</label>
-                        <input type="text" id="softTitle${index}" value="${soft.title || ''}" oninput="renderLiveSoftwarePreview()">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Software Name</label>
+                        <input type="text" id="softTitle${index}" value="${soft.title || ''}" oninput="renderLiveSoftwarePreview()" placeholder="Software Name..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                     </div>
                     <div class="form-group">
-                        <label>Subtitle / Specialty</label>
-                        <input type="text" id="softSub${index}" value="${soft.subtitle || ''}" oninput="renderLiveSoftwarePreview()">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Subtitle / Specialty</label>
+                        <input type="text" id="softSub${index}" value="${soft.subtitle || ''}" oninput="renderLiveSoftwarePreview()" placeholder="Subtitle..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                     </div>
                     <div class="form-group">
-                        <label>Software Icon</label>
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Software Icon</label>
                         <div style="display: flex; gap: 0.5rem; align-items: center;">
                             <div id="softIconBadge_${index}" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
                                 ${iconBadgeContent}
                             </div>
-                            <input type="text" id="softIcon${index}" value="${soft.icon || ''}" oninput="renderLiveSoftwarePreview()" placeholder="Icon class or Image URL..." style="flex: 1;">
-                            <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('softIcon${index}', 'softIconBadge_${index}', 'software')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
-                                <i class="fa-solid fa-icons"></i> Pick Icon
+                            <input type="text" id="softIcon${index}" value="${soft.icon || ''}" oninput="renderLiveSoftwarePreview()" placeholder="Icon class or Image URL..." style="flex: 1; min-width: 0; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.6rem; border-radius: 10px; font-size: 0.82rem; outline: none; box-sizing: border-box;">
+                            <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('softIcon${index}', 'softIconBadge_${index}', 'software')" style="height: 42px; padding: 0 0.6rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; border-radius: 10px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0;">
+                                <i class="fa-solid fa-icons"></i> Pick
                             </button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Skill Level % (1-100)</label>
-                        <input type="number" id="softLevel${index}" value="${soft.level || 90}" min="1" max="100" oninput="renderLiveSoftwarePreview()">
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem;">Skill Level % (1-100)</label>
+                        <input type="number" id="softLevel${index}" value="${soft.level || 90}" min="1" max="100" oninput="renderLiveSoftwarePreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                     </div>
                 </div>
             </div>

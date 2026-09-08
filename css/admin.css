@@ -402,8 +402,8 @@
 /* --- Services & Software Admin Cards --- */
 .admin-services-list,
 .admin-software-list {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
 }
 
