@@ -1392,19 +1392,59 @@ button {
 }
 
 .card-title {
-    font-size: 1.08rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #ffffff;
-    line-height: 1.18;
+    line-height: 1.25;
     letter-spacing: 0.01em;
-    margin-bottom: 0.1rem;
+    margin-bottom: 0.3rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card-desc {
     font-size: 0.8rem;
     color: var(--text-muted);
-    line-height: 1.3;
+    line-height: 1.4;
     margin-bottom: 0.3rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    transition: var(--transition-fast);
+}
+
+.card-desc.expanded {
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    overflow: visible !important;
+}
+
+.card-desc-more-btn {
+    background: none;
+    border: none;
+    color: var(--accent-neon);
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 2px;
+    margin-bottom: 0.4rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: var(--transition-fast);
+    align-self: flex-start;
+}
+
+.card-desc-more-btn:hover {
+    text-decoration: underline;
+    color: #ffffff;
 }
 
 /* Bottom Compact Footer Row */

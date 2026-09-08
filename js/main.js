@@ -690,6 +690,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delegated Global Event Listeners for statically AND dynamically rendered cards
     document.addEventListener('click', (e) => {
+        const moreBtn = e.target.closest('.card-desc-more-btn');
+        if (moreBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const cardBody = moreBtn.closest('.card-body');
+            const cardDesc = cardBody ? cardBody.querySelector('.card-desc') : null;
+            if (cardDesc) {
+                const isExpanded = cardDesc.classList.toggle('expanded');
+                moreBtn.innerHTML = isExpanded 
+                    ? 'See Less <i class="fa-solid fa-chevron-up"></i>' 
+                    : 'See More <i class="fa-solid fa-chevron-down"></i>';
+            }
+            return;
+        }
+
         const detailsBtn = e.target.closest('.card-details-btn');
         if (detailsBtn) {
             e.preventDefault();

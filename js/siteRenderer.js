@@ -336,6 +336,7 @@ function renderSiteData(customData) {
                         <span class="card-category-pill">${proj.categoryBadge || 'Video Project'}</span>
                         <h3 class="card-title">${proj.title}</h3>
                         <p class="card-desc">${proj.desc}</p>
+                        ${proj.desc && proj.desc.length > 80 ? `<button class="card-desc-more-btn" aria-label="Expand Description">See More <i class="fa-solid fa-chevron-down"></i></button>` : ''}
                     </div>
                     
                     <div class="card-footer">
