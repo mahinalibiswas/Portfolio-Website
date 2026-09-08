@@ -481,45 +481,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const projectModal = document.getElementById('projectModal');
+    /* --- 7 & 8. Project Video Lightbox & Project Details Overlay Engine --- */
+    const projectModal = document.getElementById('projectModal') || document.getElementById('directVideoModal');
     const closeProjectModal = document.getElementById('closeProjectModal');
-    const projectModalBody = document.getElementById('projectModalBody');
-    const viewProjectBtns = document.querySelectorAll('.view-project-btn');
-
-    viewProjectBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const projectId = btn.getAttribute('data-id');
-            const data = projectData[projectId];
-
-            if (data && projectModalBody) {
-                const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-                
-                // Smart Engine: Plays crisp HD video on localhost (0 error); automatically plays Real YouTube Embed on live domain!
-                const playerHtml = (isLocalhost || !data.youtubeId)
-                    ? `<video src="${data.video}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`
-                    : `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>`;
-
-                projectModalBody.innerHTML = `
-                    <div class="pure-video-lightbox">
-                        ${playerHtml}
-                    </div>
-                `;
-                projectModal?.classList.add('active');
-            }
-        });
-    });
-
-    closeProjectModal?.addEventListener('click', () => {
-        projectModal?.classList.remove('active');
-        if (projectModalBody) projectModalBody.innerHTML = '';
-    });
-
-    /* --- 8. Dedicated Project Details Overlay View (Matches Saif Studio Details Page) --- */
+    const projectModalBody = document.getElementById('projectModalBody') || projectModal?.querySelector('.video-responsive-wrapper');
     const projectDetailOverlay = document.getElementById('projectDetailOverlay');
     const closeDetailOverlay = document.getElementById('closeDetailOverlay');
     const projectDetailContent = document.getElementById('projectDetailContent');
-    const detailsBtns = document.querySelectorAll('.card-details-btn');
 
     const fullProjectData = {
         'project-1': {
@@ -602,99 +570,185 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    detailsBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
+    function getProjectDataById(projectId) {
+        if (!projectId) return fullProjectData['project-1'];
 
-            // Ensure any background video modal is closed and paused
-            if (projectModal) projectModal.classList.remove('active');
-            if (projectModalBody) projectModalBody.innerHTML = '';
-
-            const projectId = btn.getAttribute('data-id');
-            const data = fullProjectData[projectId] || fullProjectData['project-1'];
-
-            if (projectDetailContent && projectDetailOverlay) {
-                const toolsHtml = data.tools.map(t => `<span class="detail-tool-pill">${t}</span>`).join(' ');
-
-                projectDetailContent.innerHTML = `
-                    <!-- Large Hero Media Frame with Center Red Play Video Button -->
-                    <div class="detail-media-card" id="detailMediaCard_${projectId}">
-                        <img src="${data.image}" alt="${data.title}">
-                        <button class="detail-play-btn" onclick="startDetailInlineVideo('${projectId}')">
-                            <i class="fa-solid fa-play"></i> Play Video
-                        </button>
-                    </div>
-
-                    <!-- Bottom Details Card Section -->
-                    <div class="detail-info-card">
-                        <div class="detail-header-row">
-                            <h1 class="detail-main-title">${data.title}</h1>
-                            <span class="detail-duration-tag"><i class="fa-regular fa-clock"></i> ${data.duration}</span>
-                        </div>
-                        
-                        <p class="detail-main-desc">${data.desc}</p>
-                        <p class="detail-cta-text">Looking for similar work? <a href="#contact" onclick="document.getElementById('projectDetailOverlay').classList.remove('active')">Visit my services or contact me</a> to discuss your next project.</p>
-
-                        <div class="detail-meta-grid">
-                            <div class="meta-col">
-                                <h4>Project Details</h4>
-                                <p><i class="fa-regular fa-calendar"></i> Published: <strong>${data.date}</strong></p>
-                                <p><i class="fa-regular fa-user"></i> Client: <strong>${data.client}</strong></p>
-                            </div>
-                            <div class="meta-col">
-                                <h4>Tools & Software</h4>
-                                <div class="tools-pills-row">${toolsHtml}</div>
-                            </div>
-                        </div>
-
-                        <div class="detail-categories-row">
-                            <h4>Project Categories</h4>
-                            <span class="card-category-pill">${data.category}</span>
-                        </div>
-
-                        <div class="detail-action-footer">
-                            <a href="${data.youtubeUrl}" target="_blank" class="btn-watch-youtube">
-                                <i class="fa-brands fa-youtube"></i> Watch on YouTube
-                            </a>
-                        </div>
-                    </div>
-                `;
-                projectDetailOverlay.classList.add('active');
-                projectDetailOverlay.scrollTop = 0;
+        if (typeof getSiteData === 'function') {
+            const siteData = getSiteData();
+            if (siteData && siteData.projects && Array.isArray(siteData.projects)) {
+                const found = siteData.projects.find(p => p.id === projectId || p.id === 'project-' + projectId);
+                if (found) {
+                    let ytId = found.youtubeId;
+                    if (!ytId && typeof extractYoutubeId === 'function') {
+                        ytId = extractYoutubeId(found.youtubeUrl || found.videoUrl || found.video || '');
+                    }
+                    return {
+                        id: found.id || projectId,
+                        title: found.title || 'Project Details',
+                        desc: found.desc || '',
+                        image: found.image || 'assets/images/hero_showreel_cover.jpg',
+                        video: found.video || found.videoUrl || found.youtubeUrl || 'assets/videos/main_showreel.mp4',
+                        youtubeId: ytId || 'deQijHls--0',
+                        youtubeUrl: found.youtubeUrl || (ytId ? `https://www.youtube.com/watch?v=${ytId}` : 'https://www.youtube.com/watch?v=deQijHls--0'),
+                        client: found.client || 'Mahin Ali Biswas',
+                        date: found.date || '2026',
+                        duration: found.duration || '03:20',
+                        tools: Array.isArray(found.tools) ? found.tools : (typeof found.tools === 'string' ? found.tools.split(',') : ['Premiere Pro', 'After Effects']),
+                        category: found.categoryBadge || found.category || 'Featured'
+                    };
+                }
             }
-        });
-    });
-
-    function stopAllDetailVideos() {
-        if (!projectDetailOverlay) return;
-        
-        const detailVideos = projectDetailOverlay.querySelectorAll('video');
-        detailVideos.forEach(v => v.pause());
-
-        const detailIframes = projectDetailOverlay.querySelectorAll('iframe');
-        detailIframes.forEach(f => f.src = '');
+        }
+        return fullProjectData[projectId] || fullProjectData['project-' + projectId] || fullProjectData['project-1'];
     }
 
+    function openProjectVideoModal(projectId) {
+        const data = getProjectDataById(projectId);
+        const modal = document.getElementById('projectModal') || document.getElementById('directVideoModal');
+        const body = document.getElementById('projectModalBody') || modal?.querySelector('.video-responsive-wrapper');
+
+        if (data && modal) {
+            const ytId = data.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(data.youtubeUrl || data.video || '') : null);
+            const rawVideo = data.video || data.youtubeUrl || '';
+            
+            let playerHtml = '';
+            if (rawVideo.includes('<iframe')) {
+                playerHtml = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+            } else if (ytId) {
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>`;
+            } else {
+                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`;
+            }
+
+            if (body) {
+                body.innerHTML = `<div class="pure-video-lightbox" style="width:100%; height:100%; aspect-ratio:16/9; max-height:75vh;">${playerHtml}</div>`;
+            }
+            modal.classList.add('active');
+        }
+    }
+
+    function openProjectDetailsOverlay(projectId) {
+        const overlay = document.getElementById('projectDetailOverlay');
+        const content = document.getElementById('projectDetailContent');
+        const modal = document.getElementById('projectModal') || document.getElementById('directVideoModal');
+        const body = document.getElementById('projectModalBody');
+
+        if (modal) modal.classList.remove('active');
+        if (body) body.innerHTML = '';
+
+        const data = getProjectDataById(projectId);
+
+        if (content && overlay) {
+            const toolsArray = Array.isArray(data.tools) ? data.tools : ['Premiere Pro', 'After Effects'];
+            const toolsHtml = toolsArray.map(t => `<span class="detail-tool-pill">${t}</span>`).join(' ');
+
+            content.innerHTML = `
+                <div class="detail-media-card" id="detailMediaCard_${data.id || projectId}">
+                    <img src="${data.image}" alt="${data.title}">
+                    <button class="detail-play-btn" onclick="startDetailInlineVideo('${data.id || projectId}')">
+                        <i class="fa-solid fa-play"></i> Play Video
+                    </button>
+                </div>
+
+                <div class="detail-info-card">
+                    <div class="detail-header-row">
+                        <h1 class="detail-main-title">${data.title}</h1>
+                        <span class="detail-duration-tag"><i class="fa-regular fa-clock"></i> ${data.duration || '03:20'}</span>
+                    </div>
+                    
+                    <p class="detail-main-desc">${data.desc}</p>
+                    <p class="detail-cta-text">Looking for similar work? <a href="#contact" onclick="document.getElementById('projectDetailOverlay').classList.remove('active')">Visit my services or contact me</a> to discuss your next project.</p>
+
+                    <div class="detail-meta-grid">
+                        <div class="meta-col">
+                            <h4>Project Details</h4>
+                            <p><i class="fa-regular fa-calendar"></i> Published: <strong>${data.date || '2026'}</strong></p>
+                            <p><i class="fa-regular fa-user"></i> Client: <strong>${data.client || 'Mahin Ali Biswas'}</strong></p>
+                        </div>
+                        <div class="meta-col">
+                            <h4>Tools & Software</h4>
+                            <div class="tools-pills-row">${toolsHtml}</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-categories-row">
+                        <h4>Project Categories</h4>
+                        <span class="card-category-pill">${data.category || 'Featured'}</span>
+                    </div>
+
+                    <div class="detail-action-footer">
+                        <a href="${data.youtubeUrl || '#'}" target="_blank" class="btn-watch-youtube">
+                            <i class="fa-brands fa-youtube"></i> Watch on YouTube
+                        </a>
+                    </div>
+                </div>
+            `;
+            overlay.classList.add('active');
+            overlay.scrollTop = 0;
+        }
+    }
+
+    // Delegated Global Event Listeners for statically AND dynamically rendered cards
+    document.addEventListener('click', (e) => {
+        const detailsBtn = e.target.closest('.card-details-btn');
+        if (detailsBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const projectId = detailsBtn.getAttribute('data-id');
+            openProjectDetailsOverlay(projectId);
+            return;
+        }
+
+        const playBtn = e.target.closest('.view-project-btn, .card-glass-play-btn');
+        if (playBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const projectId = playBtn.getAttribute('data-id');
+            openProjectVideoModal(projectId);
+            return;
+        }
+    });
+
+    closeProjectModal?.addEventListener('click', () => {
+        const modal = document.getElementById('projectModal') || document.getElementById('directVideoModal');
+        modal?.classList.remove('active');
+        const body = document.getElementById('projectModalBody') || modal?.querySelector('.video-responsive-wrapper');
+        if (body) body.innerHTML = '';
+    });
+
     closeDetailOverlay?.addEventListener('click', () => {
-        stopAllDetailVideos();
-        projectDetailOverlay?.classList.remove('active');
+        const overlay = document.getElementById('projectDetailOverlay');
+        if (overlay) {
+            const detailVideos = overlay.querySelectorAll('video');
+            detailVideos.forEach(v => v.pause());
+            const detailIframes = overlay.querySelectorAll('iframe');
+            detailIframes.forEach(f => f.src = '');
+            overlay.classList.remove('active');
+        }
     });
 
     window.startDetailInlineVideo = function(projectId) {
-        const mediaCard = document.getElementById(`detailMediaCard_${projectId}`);
-        const data = fullProjectData[projectId] || projectData[projectId] || fullProjectData['project-1'];
-        
+        const data = getProjectDataById(projectId);
+        const mediaCard = document.getElementById(`detailMediaCard_${projectId}`) || document.querySelector('.detail-media-card');
         if (mediaCard && data) {
-            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-            
-            const videoElement = (isLocalhost || !data.youtubeId)
-                ? `<video src="${data.video}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 20px;"></video>`
-                : `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 20px;"></iframe>`;
+            const ytId = data.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(data.youtubeUrl || data.video || '') : null);
+            const rawVideo = data.video || data.youtubeUrl || '';
 
-            mediaCard.innerHTML = videoElement;
+            let playerHtml = '';
+            if (rawVideo.includes('<iframe')) {
+                playerHtml = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+            } else if (ytId) {
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 20px;"></iframe>`;
+            } else {
+                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 20px;"></video>`;
+            }
+            mediaCard.innerHTML = playerHtml;
         }
     };
+
+    window.initProjectDetailEvents = function() {};
+    window.openProjectDetailsOverlay = openProjectDetailsOverlay;
+    window.openProjectVideoModal = openProjectVideoModal;
 
     /* --- 8. Interactive Project Estimator Calculation --- */
     const estimatorForm = document.getElementById('estimatorForm');
