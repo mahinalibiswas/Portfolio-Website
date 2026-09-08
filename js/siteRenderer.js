@@ -274,21 +274,27 @@ function renderSiteData(customData) {
                 ytId = data.showreel.youtubeId;
             }
 
-            if (rawUrl.includes('<iframe')) {
-                const iframeStart = rawUrl.indexOf('<iframe');
-                let clean = rawUrl.substring(iframeStart).replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
-                if (!clean.includes('enablejsapi=1')) {
-                    clean = clean.replace('src="', 'src="https://').replace('https://https://', 'https://');
-                }
-                playerBox.innerHTML = clean;
-            } else if (ytId) {
-                const iframeSrc = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&enablejsapi=1&rel=0&modestbranding=1`;
+            if (ytId) {
+                const iframeSrc = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&enablejsapi=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${ytId}`;
                 const existingIframe = playerBox.querySelector('iframe');
                 if (!existingIframe || !existingIframe.src.includes(ytId)) {
                     playerBox.innerHTML = `
-                        <iframe id="directShowreelIframe" src="${iframeSrc}" title="Featured Motion & Video Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>
+                        <iframe id="directShowreelIframe" src="${iframeSrc}" title="Featured Motion & Video Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>
                     `;
                 }
+            } else if (rawUrl.includes('<iframe')) {
+                const iframeStart = rawUrl.indexOf('<iframe');
+                let clean = rawUrl.substring(iframeStart).replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+                clean = clean.replace(/src="([^"]+)"/, (match, srcVal) => {
+                    const delim = srcVal.includes('?') ? '&' : '?';
+                    let newSrc = srcVal;
+                    if (!newSrc.includes('enablejsapi=1')) newSrc += delim + 'enablejsapi=1';
+                    if (!newSrc.includes('autoplay=1')) newSrc += '&autoplay=1';
+                    if (!newSrc.includes('mute=1')) newSrc += '&mute=1';
+                    if (!newSrc.includes('playsinline=1')) newSrc += '&playsinline=1';
+                    return `src="${newSrc}" id="directShowreelIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"`;
+                });
+                playerBox.innerHTML = clean;
             } else {
                 let videoEl = document.getElementById('directShowreelVideo');
                 if (!videoEl) {

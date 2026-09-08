@@ -293,13 +293,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('mainPlayBtn')?.addEventListener('click', handleShowreelPlayClick);
 
     if ('IntersectionObserver' in window) {
-        const targetEl = showreelSection || document.getElementById('directShowreelVideo');
+        const targetEl = showreelSection || document.getElementById('showreelPlayerBox');
         if (targetEl) {
             const videoObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const video = document.getElementById('directShowreelVideo');
+                    const iframe = document.getElementById('directShowreelIframe') || document.querySelector('#showreelPlayerBox iframe');
                     const overlay = document.getElementById('showreelOverlay');
-                    if (!video) return;
 
                     if (entry.isIntersecting) {
                         // Automatically play video when scrolled into section
@@ -307,19 +307,36 @@ document.addEventListener('DOMContentLoaded', () => {
                             overlay.style.opacity = '0';
                             overlay.style.pointerEvents = 'none';
                         }
-                        if (!video.hasAttribute('data-user-unmuted')) {
-                            video.muted = true;
+                        if (video) {
+                            if (!video.hasAttribute('data-user-unmuted')) {
+                                video.muted = true;
+                            }
+                            const p = video.play();
+                            if (p !== undefined) {
+                                p.catch(err => {
+                                    console.log('Autoplay on scroll:', err);
+                                });
+                            }
                         }
-                        const p = video.play();
-                        if (p !== undefined) {
-                            p.catch(err => {
-                                console.log('Autoplay on scroll:', err);
-                            });
+                        if (iframe && iframe.contentWindow) {
+                            try {
+                                iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+                                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                            } catch(err) {
+                                console.log('Iframe play error:', err);
+                            }
                         }
                     } else {
                         // Automatically pause video when scrolled out of section
-                        if (!video.paused) {
+                        if (video && !video.paused) {
                             video.pause();
+                        }
+                        if (iframe && iframe.contentWindow) {
+                            try {
+                                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                            } catch(err) {
+                                console.log('Iframe pause error:', err);
+                            }
                         }
                     }
                 });
