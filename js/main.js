@@ -622,16 +622,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (body) {
                 body.innerHTML = `
-                    <div class="video-modal-inner-container">
-                        <div class="video-modal-top-bar">
-                            <button class="modal-back-to-projects-btn" id="modalBackToProjectsAction">
-                                <i class="fa-solid fa-arrow-left"></i> Back to Projects
-                            </button>
-                        </div>
-                        
-                        <div class="pure-video-lightbox">
-                            ${playerHtml}
-                        </div>
+                    <button class="modal-floating-back-btn" id="modalBackToProjectsAction">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Projects
+                    </button>
+                    <div class="pure-video-lightbox">
+                        ${playerHtml}
                     </div>
                 `;
             }
@@ -702,7 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delegated Global Event Listeners for statically AND dynamically rendered cards
     document.addEventListener('click', (e) => {
-        const backBtn = e.target.closest('#modalBackToProjectsAction, #modalTopCloseAction, .modal-back-to-projects-btn, .modal-top-close-btn');
+        const backBtn = e.target.closest('#modalBackToProjectsAction, #modalTopCloseAction, .modal-floating-back-btn, .modal-back-to-projects-btn');
         if (backBtn) {
             e.preventDefault();
             e.stopPropagation();
