@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const overlay = document.getElementById('showreelOverlay');
 
                     if (entry.isIntersecting) {
-                        // Automatically play video when scrolled into section
+                        // Automatically play video from the VERY BEGINNING (0:00) when scrolled into section
                         if (overlay) {
                             overlay.style.opacity = '0';
                             overlay.style.pointerEvents = 'none';
@@ -311,6 +311,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (!video.hasAttribute('data-user-unmuted')) {
                                 video.muted = true;
                             }
+                            try {
+                                video.currentTime = 0;
+                            } catch(e) {}
                             const p = video.play();
                             if (p !== undefined) {
                                 p.catch(err => {
@@ -321,19 +324,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (iframe && iframe.contentWindow) {
                             try {
                                 iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+                                iframe.contentWindow.postMessage('{"event":"command","func":"seekTo","args":[0, true]}', '*');
                                 iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                             } catch(err) {
                                 console.log('Iframe play error:', err);
                             }
                         }
                     } else {
-                        // Automatically pause video when scrolled out of section
-                        if (video && !video.paused) {
+                        // Automatically pause video & reset time to 0:00 when scrolled out of section
+                        if (video) {
                             video.pause();
+                            try {
+                                video.currentTime = 0;
+                            } catch(e) {}
                         }
                         if (iframe && iframe.contentWindow) {
                             try {
                                 iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                                iframe.contentWindow.postMessage('{"event":"command","func":"seekTo","args":[0, true]}', '*');
                             } catch(err) {
                                 console.log('Iframe pause error:', err);
                             }
