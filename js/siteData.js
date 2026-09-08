@@ -102,7 +102,7 @@ const DEFAULT_SITE_DATA = {
         titleTop: "Featured Motion &",
         titleGradient: "Video Reel",
         desc: "A compilation of YouTube edits, talking head videos, dynamic reels, motion graphics, and sound design passes by Mahin Ali Biswas.",
-        videoUrl: "assets/videos/main_showreel.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=deQijHls--0",
         youtubeUrl: "https://www.youtube.com/watch?v=deQijHls--0",
         youtubeId: "deQijHls--0"
     },

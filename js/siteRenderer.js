@@ -261,14 +261,53 @@ function renderSiteData(customData) {
         const showreelDesc = document.querySelector('#showreel .section-desc');
         if (showreelDesc) showreelDesc.textContent = data.showreel.desc || "";
 
-        const directShowreelVideo = document.getElementById('directShowreelVideo');
-        if (directShowreelVideo && data.showreel.videoUrl) {
-            const rawUrl = data.showreel.videoUrl.trim();
-            if (!rawUrl.includes('<iframe') && !rawUrl.includes('youtube.com') && !rawUrl.includes('youtu.be')) {
-                const currentSrc = directShowreelVideo.getAttribute('src') || directShowreelVideo.src || '';
-                if (!currentSrc.includes(rawUrl)) {
-                    directShowreelVideo.src = rawUrl;
-                    directShowreelVideo.load();
+        const playerBox = document.getElementById('showreelPlayerBox');
+        if (playerBox) {
+            const rawUrl = (data.showreel.videoUrl || data.showreel.youtubeUrl || "https://www.youtube.com/watch?v=deQijHls--0").trim();
+            const posterUrl = data.showreel.poster || data.showreel.showreelPoster || "assets/images/hero_showreel_cover.jpg";
+            
+            let ytId = null;
+            if (typeof extractYoutubeId === 'function') {
+                ytId = extractYoutubeId(rawUrl);
+            }
+            if (!ytId && data.showreel.youtubeId) {
+                ytId = data.showreel.youtubeId;
+            }
+
+            if (rawUrl.includes('<iframe')) {
+                const iframeStart = rawUrl.indexOf('<iframe');
+                let clean = rawUrl.substring(iframeStart).replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+                if (!clean.includes('enablejsapi=1')) {
+                    clean = clean.replace('src="', 'src="https://').replace('https://https://', 'https://');
+                }
+                playerBox.innerHTML = clean;
+            } else if (ytId) {
+                const iframeSrc = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&enablejsapi=1&rel=0&modestbranding=1`;
+                const existingIframe = playerBox.querySelector('iframe');
+                if (!existingIframe || !existingIframe.src.includes(ytId)) {
+                    playerBox.innerHTML = `
+                        <iframe id="directShowreelIframe" src="${iframeSrc}" title="Featured Motion & Video Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>
+                    `;
+                }
+            } else {
+                let videoEl = document.getElementById('directShowreelVideo');
+                if (!videoEl) {
+                    playerBox.innerHTML = `
+                        <video id="directShowreelVideo" src="${rawUrl}" class="showreel-video-element" controls autoplay loop muted playsinline poster="${posterUrl}"></video>
+                        <div class="showreel-controls-overlay" id="showreelOverlay" style="opacity:0; pointer-events:none;">
+                            <button class="big-play-btn" id="mainPlayBtn">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <div class="showreel-meta">
+                                <h3>Mahin Ali Biswas Official Video Showcase</h3>
+                                <p>Tools: Premiere Pro, After Effects, DaVinci Resolve, Audition</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (videoEl.src !== rawUrl && !videoEl.src.includes(rawUrl)) {
+                    videoEl.src = rawUrl;
+                    if (posterUrl) videoEl.poster = posterUrl;
+                    videoEl.load();
                 }
             }
         }
