@@ -1578,10 +1578,13 @@ function renderAdminProjectsList(projects) {
 }
 
 function openAddProjectModal() {
-    document.getElementById('projectModalTitle').textContent = 'Add New Video Project';
-    document.getElementById('projectEditForm').reset();
-    document.getElementById('editProjectId').value = '';
-    document.getElementById('projectEditModal').classList.add('active');
+    if (document.getElementById('projectModalTitle')) document.getElementById('projectModalTitle').textContent = 'Add New Video Project';
+    if (document.getElementById('projectEditForm')) document.getElementById('projectEditForm').reset();
+    if (document.getElementById('editProjectId')) document.getElementById('editProjectId').value = '';
+    const previewWrap = document.getElementById('editProjImagePreviewWrap');
+    if (previewWrap) previewWrap.style.display = 'none';
+    const modal = document.getElementById('projectEditModal');
+    if (modal) modal.classList.add('active');
 }
 
 function openEditProjectModal(projectId) {
@@ -1589,34 +1592,44 @@ function openEditProjectModal(projectId) {
     const proj = (data.projects || []).find(p => p.id === projectId);
 
     if (proj) {
-        document.getElementById('projectModalTitle').textContent = 'Edit Video Project';
-        document.getElementById('editProjectId').value = proj.id;
-        document.getElementById('editProjTitle').value = proj.title || '';
-        document.getElementById('editProjCategoryBadge').value = proj.categoryBadge || '';
-        document.getElementById('editProjCategory').value = proj.category || '';
-        document.getElementById('editProjImage').value = proj.image || '';
-        document.getElementById('editProjVideo').value = proj.video || '';
-        document.getElementById('editProjYoutubeId').value = proj.youtubeId || '';
-        document.getElementById('editProjDuration').value = proj.duration || '';
-        document.getElementById('editProjClient').value = proj.client || '';
-        document.getElementById('editProjDate').value = proj.date || '';
-        document.getElementById('editProjTools').value = (proj.tools || []).join(', ');
-        document.getElementById('editProjDesc').value = proj.desc || '';
+        if (document.getElementById('projectModalTitle')) document.getElementById('projectModalTitle').textContent = 'Edit Video Project';
+        if (document.getElementById('editProjectId')) document.getElementById('editProjectId').value = proj.id || '';
+        if (document.getElementById('editProjTitle')) document.getElementById('editProjTitle').value = proj.title || '';
+        if (document.getElementById('editProjCategoryBadge')) document.getElementById('editProjCategoryBadge').value = proj.categoryBadge || '';
+        if (document.getElementById('editProjCategory')) document.getElementById('editProjCategory').value = proj.category || '';
+        if (document.getElementById('editProjImage')) document.getElementById('editProjImage').value = proj.image || '';
+        if (document.getElementById('editProjVideo')) document.getElementById('editProjVideo').value = proj.video || '';
+        if (document.getElementById('editProjYoutubeId')) document.getElementById('editProjYoutubeId').value = proj.youtubeId || '';
+        if (document.getElementById('editProjDuration')) document.getElementById('editProjDuration').value = proj.duration || '';
+        if (document.getElementById('editProjClient')) document.getElementById('editProjClient').value = proj.client || '';
+        if (document.getElementById('editProjDate')) document.getElementById('editProjDate').value = proj.date || '';
+        if (document.getElementById('editProjTools')) document.getElementById('editProjTools').value = (proj.tools || []).join(', ');
+        if (document.getElementById('editProjDesc')) document.getElementById('editProjDesc').value = proj.desc || '';
 
         if (proj.image) {
             const previewImg = document.getElementById('editProjImagePreview');
             const previewWrap = document.getElementById('editProjImagePreviewWrap');
             if (previewImg) previewImg.src = proj.image;
             if (previewWrap) previewWrap.style.display = 'flex';
+        } else {
+            const previewWrap = document.getElementById('editProjImagePreviewWrap');
+            if (previewWrap) previewWrap.style.display = 'none';
         }
 
-        document.getElementById('projectEditModal').classList.add('active');
+        const modal = document.getElementById('projectEditModal');
+        if (modal) modal.classList.add('active');
     }
 }
 
 function closeProjectEditModal() {
-    document.getElementById('projectEditModal').classList.remove('active');
+    const modal = document.getElementById('projectEditModal');
+    if (modal) modal.classList.remove('active');
 }
+
+window.openAddProjectModal = openAddProjectModal;
+window.openEditProjectModal = openEditProjectModal;
+window.closeProjectEditModal = closeProjectEditModal;
+window.deleteProject = deleteProject;
 
 document.getElementById('projectEditForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1627,23 +1640,30 @@ document.getElementById('projectEditForm')?.addEventListener('submit', async (e)
     }
 
     const data = getSiteData();
-    const projectId = document.getElementById('editProjectId').value;
-    const toolsArr = document.getElementById('editProjTools').value.split(',').map(t => t.trim()).filter(Boolean);
+    const projectId = document.getElementById('editProjectId')?.value || '';
+    const toolsArr = (document.getElementById('editProjTools')?.value || '').split(',').map(t => t.trim()).filter(Boolean);
+
+    const videoVal = document.getElementById('editProjVideo')?.value || '';
+    const ytIdInput = document.getElementById('editProjYoutubeId')?.value || '';
+    let youtubeId = ytIdInput;
+    if (!youtubeId && typeof extractYoutubeId === 'function') {
+        youtubeId = extractYoutubeId(videoVal) || '';
+    }
 
     const projectObj = {
         id: projectId || 'project-' + Date.now(),
-        title: document.getElementById('editProjTitle').value,
-        categoryBadge: document.getElementById('editProjCategoryBadge').value,
-        category: document.getElementById('editProjCategory').value,
-        image: document.getElementById('editProjImage').value,
-        video: document.getElementById('editProjVideo').value,
-        youtubeId: document.getElementById('editProjYoutubeId').value,
-        youtubeUrl: document.getElementById('editProjYoutubeId').value ? `https://www.youtube.com/watch?v=${document.getElementById('editProjYoutubeId').value}` : '',
-        duration: document.getElementById('editProjDuration').value || '03:00',
-        client: document.getElementById('editProjClient').value || 'Client',
-        date: document.getElementById('editProjDate').value || '2026',
+        title: document.getElementById('editProjTitle')?.value || '',
+        categoryBadge: document.getElementById('editProjCategoryBadge')?.value || '',
+        category: document.getElementById('editProjCategory')?.value || '',
+        image: document.getElementById('editProjImage')?.value || '',
+        video: videoVal,
+        youtubeId: youtubeId,
+        youtubeUrl: youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '',
+        duration: document.getElementById('editProjDuration')?.value || '03:00',
+        client: document.getElementById('editProjClient')?.value || 'Client',
+        date: document.getElementById('editProjDate')?.value || '2026',
         tools: toolsArr.length > 0 ? toolsArr : ['Adobe Premiere Pro', 'After Effects'],
-        desc: document.getElementById('editProjDesc').value
+        desc: document.getElementById('editProjDesc')?.value || ''
     };
 
     if (projectId) {
