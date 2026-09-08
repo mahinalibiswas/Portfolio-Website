@@ -604,8 +604,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openProjectVideoModal(projectId) {
         const data = getProjectDataById(projectId);
-        const modal = document.getElementById('projectModal') || document.getElementById('directVideoModal');
-        const body = document.getElementById('projectModalBody') || modal?.querySelector('.video-responsive-wrapper');
+        const modal = document.getElementById('projectModal') || document.getElementById('videoModal');
+        const body = document.getElementById('projectModalBody') || modal?.querySelector('.modal-content') || modal?.querySelector('.video-responsive-wrapper');
 
         if (data && modal) {
             const ytId = data.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(data.youtubeUrl || data.video || '') : null);
@@ -621,7 +621,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (body) {
-                body.innerHTML = `<div class="pure-video-lightbox" style="width:100%; height:100%; aspect-ratio:16/9; max-height:75vh;">${playerHtml}</div>`;
+                body.innerHTML = `
+                    <div class="video-modal-inner-container">
+                        <div class="video-modal-top-bar">
+                            <button class="modal-back-to-projects-btn" id="modalBackToProjectsAction">
+                                <i class="fa-solid fa-arrow-left"></i> Back to Projects
+                            </button>
+                            <button class="modal-top-close-btn" id="modalTopCloseAction">
+                                <i class="fa-solid fa-xmark"></i> Close
+                            </button>
+                        </div>
+                        
+                        <div class="pure-video-lightbox">
+                            ${playerHtml}
+                        </div>
+
+                        <div class="video-modal-bottom-bar">
+                            <div class="video-modal-info">
+                                <h3 class="video-modal-title">${data.title}</h3>
+                                <p class="video-modal-sub"><i class="fa-regular fa-user"></i> Client: <strong>${data.client || 'Mahin Ali Biswas'}</strong> • ${data.category || 'Video Project'}</p>
+                            </div>
+                            ${data.youtubeUrl ? `
+                                <a href="${data.youtubeUrl}" target="_blank" class="btn-modal-youtube">
+                                    <i class="fa-brands fa-youtube"></i> Watch on YouTube
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
             }
             modal.classList.add('active');
         }
@@ -690,6 +717,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delegated Global Event Listeners for statically AND dynamically rendered cards
     document.addEventListener('click', (e) => {
+        const backBtn = e.target.closest('#modalBackToProjectsAction, #modalTopCloseAction, .modal-back-to-projects-btn, .modal-top-close-btn');
+        if (backBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const projectModal = document.getElementById('projectModal');
+            const videoModal = document.getElementById('videoModal');
+            if (projectModal) {
+                projectModal.classList.remove('active');
+                const body = document.getElementById('projectModalBody');
+                if (body) body.innerHTML = '';
+            }
+            if (videoModal) {
+                videoModal.classList.remove('active');
+                const wrapper = videoModal.querySelector('.video-responsive-wrapper');
+                if (wrapper) wrapper.innerHTML = '';
+            }
+            return;
+        }
+
         const moreBtn = e.target.closest('.card-desc-more-btn');
         if (moreBtn) {
             e.preventDefault();
