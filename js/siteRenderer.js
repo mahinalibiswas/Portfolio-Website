@@ -330,25 +330,25 @@ function renderSiteData(customData) {
                         <button class="card-glass-play-btn view-project-btn" data-id="${proj.id}" aria-label="Play Video">
                             <i class="fa-solid fa-play"></i>
                         </button>
-                        <span class="card-category-pill">${proj.categoryBadge || 'Video Project'}</span>
                     </div>
 
-                    <div class="card-text-block">
-                        <h3 class="card-project-title">${proj.title}</h3>
-                        <p class="card-project-desc">${proj.desc}</p>
-                        
-                        <div class="card-bottom-bar">
-                            <div class="card-author-info">
-                                <div class="card-author-avatar">
-                                    <img src="assets/images/mahin_profile.jpg" alt="${proj.client || 'Mahin Ali Biswas'}">
-                                </div>
-                                <div class="card-author-text">
-                                    <span class="author-name">${proj.client || 'Mahin Ali Biswas'}</span>
-                                    <span class="project-date">${proj.date || '2026'}</span>
-                                </div>
+                    <div class="card-body">
+                        <span class="card-category-pill">${proj.categoryBadge || 'Video Project'}</span>
+                        <h3 class="card-title">${proj.title}</h3>
+                        <p class="card-desc">${proj.desc}</p>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="card-author-info">
+                            <div class="card-author-avatar">
+                                <img src="assets/images/mahin_profile.jpg" alt="${proj.client || 'Mahin Ali Biswas'}">
                             </div>
-                            <button class="card-details-btn" data-id="${proj.id}">Details</button>
+                            <div class="card-author-text">
+                                <span class="author-name">${proj.client || 'Mahin Ali Biswas'}</span>
+                                <span class="project-date">${proj.date || '2026'}</span>
+                            </div>
                         </div>
+                        <button class="card-details-btn" data-id="${proj.id}">Details</button>
                     </div>
                 </div>
             `).join('');

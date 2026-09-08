@@ -1408,18 +1408,23 @@ button {
 }
 
 /* Bottom Compact Footer Row */
-.card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.card-footer, .card-bottom-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
     padding-top: 0.65rem;
+    margin-top: auto;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 0.5rem;
+    width: 100%;
 }
 
 .card-author-info {
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    flex: 1;
+    min-width: 0;
 }
 
 .card-author-avatar {
@@ -1440,6 +1445,7 @@ button {
 .card-author-text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .author-name {
@@ -1447,6 +1453,9 @@ button {
     font-weight: 600;
     color: #ffffff;
     line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .project-date {
@@ -1455,15 +1464,17 @@ button {
 }
 
 .card-details-btn {
-    padding: 0.35rem 1rem;
+    padding: 0.35rem 0.9rem;
     border-radius: var(--radius-full);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(163, 230, 53, 0.3);
+    background: rgba(163, 230, 53, 0.08);
     color: #ffffff;
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition-fast);
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
 .card-details-btn:hover {
