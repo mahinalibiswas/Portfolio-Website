@@ -627,25 +627,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button class="modal-back-to-projects-btn" id="modalBackToProjectsAction">
                                 <i class="fa-solid fa-arrow-left"></i> Back to Projects
                             </button>
-                            <button class="modal-top-close-btn" id="modalTopCloseAction">
-                                <i class="fa-solid fa-xmark"></i> Close
-                            </button>
                         </div>
                         
                         <div class="pure-video-lightbox">
                             ${playerHtml}
-                        </div>
-
-                        <div class="video-modal-bottom-bar">
-                            <div class="video-modal-info">
-                                <h3 class="video-modal-title">${data.title}</h3>
-                                <p class="video-modal-sub"><i class="fa-regular fa-user"></i> Client: <strong>${data.client || 'Mahin Ali Biswas'}</strong> • ${data.category || 'Video Project'}</p>
-                            </div>
-                            ${data.youtubeUrl ? `
-                                <a href="${data.youtubeUrl}" target="_blank" class="btn-modal-youtube">
-                                    <i class="fa-brands fa-youtube"></i> Watch on YouTube
-                                </a>
-                            ` : ''}
                         </div>
                     </div>
                 `;
