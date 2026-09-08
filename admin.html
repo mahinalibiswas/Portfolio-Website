@@ -252,20 +252,22 @@
                                     <!-- Dynamic CTA Buttons Cards Populated by JS -->
                                 </div>
 
-                                <div class="form-section-title full-width">
-                                    <h4>Key Statistics Counters (Hero Banner)</h4>
+                                <div class="form-section-title full-width" style="margin-top: 2rem;">
+                                    <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-chart-simple" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Key Statistics Counters (Hero Banner)</h4>
                                 </div>
-                                <div class="form-group">
-                                    <label>Videos Edited Count</label>
-                                    <input type="text" id="heroStatsEdited" placeholder="Enter videos edited count..." oninput="renderLiveHeroPreview()">
-                                </div>
-                                <div class="form-group">
-                                    <label>Happy Clients Count</label>
-                                    <input type="text" id="heroStatsClients" placeholder="Enter happy clients count..." oninput="renderLiveHeroPreview()">
-                                </div>
-                                <div class="form-group">
-                                    <label>On-Time Delivery %</label>
-                                    <input type="text" id="heroStatsDelivery" placeholder="Enter on-time delivery percentage..." oninput="renderLiveHeroPreview()">
+                                <div class="dynamic-cta-grid full-width" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; width: 100%; box-sizing: border-box;">
+                                    <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;"><i class="fa-solid fa-video" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> Videos Edited Count</label>
+                                        <input type="text" id="heroStatsEdited" placeholder="e.g. 100+" oninput="renderLiveHeroPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                    </div>
+                                    <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;"><i class="fa-solid fa-users" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> Happy Clients Count</label>
+                                        <input type="text" id="heroStatsClients" placeholder="e.g. 50+" oninput="renderLiveHeroPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                    </div>
+                                    <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;"><i class="fa-solid fa-clock" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> On-Time Delivery %</label>
+                                        <input type="text" id="heroStatsDelivery" placeholder="e.g. 100%" oninput="renderLiveHeroPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -328,80 +330,134 @@
                                 </div>
                                 <div id="adminAboutCtaButtonsList" class="dynamic-cta-grid full-width" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; width: 100%; box-sizing: border-box;"></div>
 
-                                <div class="form-section-title full-width">
-                                    <h4>4 Core Superpowers / Feature Cards</h4>
+                                <div class="form-section-title full-width" style="margin-top: 2rem;">
+                                    <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> 4 Core Superpowers / Feature Cards</h4>
                                 </div>
                                 
-                                <!-- Feature 1 -->
-                                <div class="form-group">
-                                    <label>Feature 1 Title</label>
-                                    <input type="text" id="featTitle0" oninput="renderLiveAboutPreview()">
-                                    <label style="margin-top: 0.5rem;">Feature 1 Icon</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <div id="featIconBadge0" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
-                                            <i class="fa-solid fa-bolt"></i>
+                                <div class="dynamic-cta-grid full-width" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; width: 100%; box-sizing: border-box;">
+                                    <!-- Superpower Card 1 -->
+                                    <div class="admin-card-row" style="padding: 1.4rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; padding-bottom: 0.7rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                            <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">
+                                                <i class="fa-solid fa-bolt" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Superpower #1
+                                            </h4>
                                         </div>
-                                        <input type="text" id="featIcon0" placeholder="e.g. fa-solid fa-bolt" oninput="document.getElementById('featIconBadge0').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1;">
-                                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon0', 'featIconBadge0', 'about')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
-                                            <i class="fa-solid fa-icons"></i> Pick
-                                        </button>
+                                        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Title</label>
+                                                <input type="text" id="featTitle0" placeholder="Enter feature title..." oninput="renderLiveAboutPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Icon</label>
+                                                <div style="display: flex; gap: 0.6rem; align-items: center;">
+                                                    <div id="featIconBadge0" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                                        <i class="fa-solid fa-bolt"></i>
+                                                    </div>
+                                                    <input type="text" id="featIcon0" placeholder="e.g. fa-solid fa-bolt" oninput="document.getElementById('featIconBadge0').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                                    <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon0', 'featIconBadge0', 'about')" style="height: 42px; padding: 0 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                                                        <i class="fa-solid fa-icons"></i> Pick
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Short Description</label>
+                                                <input type="text" id="featDesc0" placeholder="Enter short description..." oninput="renderLiveAboutPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <label style="margin-top: 0.5rem;">Feature 1 Description</label>
-                                    <input type="text" id="featDesc0" oninput="renderLiveAboutPreview()">
-                                </div>
 
-                                <!-- Feature 2 -->
-                                <div class="form-group">
-                                    <label>Feature 2 Title</label>
-                                    <input type="text" id="featTitle1" oninput="renderLiveAboutPreview()">
-                                    <label style="margin-top: 0.5rem;">Feature 2 Icon</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <div id="featIconBadge1" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
-                                            <i class="fa-solid fa-closed-captioning"></i>
+                                    <!-- Superpower Card 2 -->
+                                    <div class="admin-card-row" style="padding: 1.4rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; padding-bottom: 0.7rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                            <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">
+                                                <i class="fa-solid fa-closed-captioning" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Superpower #2
+                                            </h4>
                                         </div>
-                                        <input type="text" id="featIcon1" placeholder="e.g. fa-solid fa-closed-captioning" oninput="document.getElementById('featIconBadge1').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1;">
-                                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon1', 'featIconBadge1', 'about')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
-                                            <i class="fa-solid fa-icons"></i> Pick
-                                        </button>
+                                        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Title</label>
+                                                <input type="text" id="featTitle1" placeholder="Enter feature title..." oninput="renderLiveAboutPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Icon</label>
+                                                <div style="display: flex; gap: 0.6rem; align-items: center;">
+                                                    <div id="featIconBadge1" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                                        <i class="fa-solid fa-closed-captioning"></i>
+                                                    </div>
+                                                    <input type="text" id="featIcon1" placeholder="e.g. fa-solid fa-closed-captioning" oninput="document.getElementById('featIconBadge1').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                                    <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon1', 'featIconBadge1', 'about')" style="height: 42px; padding: 0 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                                                        <i class="fa-solid fa-icons"></i> Pick
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Short Description</label>
+                                                <input type="text" id="featDesc1" placeholder="Enter short description..." oninput="renderLiveAboutPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <label style="margin-top: 0.5rem;">Feature 2 Description</label>
-                                    <input type="text" id="featDesc1" oninput="renderLiveAboutPreview()">
-                                </div>
 
-                                <!-- Feature 3 -->
-                                <div class="form-group">
-                                    <label>Feature 3 Title</label>
-                                    <input type="text" id="featTitle2" oninput="renderLiveAboutPreview()">
-                                    <label style="margin-top: 0.5rem;">Feature 3 Icon</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <div id="featIconBadge2" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
-                                            <i class="fa-solid fa-sliders"></i>
+                                    <!-- Superpower Card 3 -->
+                                    <div class="admin-card-row" style="padding: 1.4rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; padding-bottom: 0.7rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                            <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">
+                                                <i class="fa-solid fa-sliders" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Superpower #3
+                                            </h4>
                                         </div>
-                                        <input type="text" id="featIcon2" placeholder="e.g. fa-solid fa-sliders" oninput="document.getElementById('featIconBadge2').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1;">
-                                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon2', 'featIconBadge2', 'about')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
-                                            <i class="fa-solid fa-icons"></i> Pick
-                                        </button>
+                                        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Title</label>
+                                                <input type="text" id="featTitle2" placeholder="Enter feature title..." oninput="renderLiveAboutPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Icon</label>
+                                                <div style="display: flex; gap: 0.6rem; align-items: center;">
+                                                    <div id="featIconBadge2" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                                        <i class="fa-solid fa-sliders"></i>
+                                                    </div>
+                                                    <input type="text" id="featIcon2" placeholder="e.g. fa-solid fa-sliders" oninput="document.getElementById('featIconBadge2').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                                    <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon2', 'featIconBadge2', 'about')" style="height: 42px; padding: 0 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                                                        <i class="fa-solid fa-icons"></i> Pick
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Short Description</label>
+                                                <input type="text" id="featDesc2" placeholder="Enter short description..." oninput="renderLiveAboutPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <label style="margin-top: 0.5rem;">Feature 3 Description</label>
-                                    <input type="text" id="featDesc2" oninput="renderLiveAboutPreview()">
-                                </div>
 
-                                <!-- Feature 4 -->
-                                <div class="form-group">
-                                    <label>Feature 4 Title</label>
-                                    <input type="text" id="featTitle3" oninput="renderLiveAboutPreview()">
-                                    <label style="margin-top: 0.5rem;">Feature 4 Icon</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <div id="featIconBadge3" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
-                                            <i class="fa-solid fa-compact-disc"></i>
+                                    <!-- Superpower Card 4 -->
+                                    <div class="admin-card-row" style="padding: 1.4rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; padding-bottom: 0.7rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                            <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">
+                                                <i class="fa-solid fa-compact-disc" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Superpower #4
+                                            </h4>
                                         </div>
-                                        <input type="text" id="featIcon3" placeholder="e.g. fa-solid fa-compact-disc" oninput="document.getElementById('featIconBadge3').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1;">
-                                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon3', 'featIconBadge3', 'about')" style="height: 42px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
-                                            <i class="fa-solid fa-icons"></i> Pick
-                                        </button>
+                                        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Title</label>
+                                                <input type="text" id="featTitle3" placeholder="Enter feature title..." oninput="renderLiveAboutPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Icon</label>
+                                                <div style="display: flex; gap: 0.6rem; align-items: center;">
+                                                    <div id="featIconBadge3" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                                                        <i class="fa-solid fa-compact-disc"></i>
+                                                    </div>
+                                                    <input type="text" id="featIcon3" placeholder="e.g. fa-solid fa-compact-disc" oninput="document.getElementById('featIconBadge3').innerHTML='<i class=\''+this.value+'\'></i>'; renderLiveAboutPreview();" style="flex: 1; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                                    <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('featIcon3', 'featIconBadge3', 'about')" style="height: 42px; padding: 0 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                                                        <i class="fa-solid fa-icons"></i> Pick
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Card Short Description</label>
+                                                <input type="text" id="featDesc3" placeholder="Enter short description..." oninput="renderLiveAboutPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <label style="margin-top: 0.5rem;">Feature 4 Description</label>
-                                    <input type="text" id="featDesc3" oninput="renderLiveAboutPreview()">
                                 </div>
                             </form>
                         </div>
@@ -528,30 +584,53 @@
                                 </button>
                             </div>
 
-                            <form id="contactForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveContactSection();">
-                                <div class="form-group">
-                                    <label>Contact Email Address</label>
-                                    <input type="email" id="contactEmail" placeholder="Enter your email address..." oninput="renderLiveContactPreview()">
-                                </div>
-                                <div class="form-group">
-                                    <label>WhatsApp Phone Number</label>
-                                    <input type="text" id="contactWhatsApp" placeholder="Enter your WhatsApp phone number..." oninput="renderLiveContactPreview()">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Location Text</label>
-                                    <input type="text" id="contactLocation" placeholder="Enter your location text..." oninput="renderLiveContactPreview()">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Behance Profile URL</label>
-                                    <input type="url" id="contactBehance" placeholder="Enter your Behance profile URL..." oninput="renderLiveContactPreview()">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>YouTube Channel URL</label>
-                                    <input type="url" id="contactYoutube" placeholder="Enter your YouTube channel URL..." oninput="renderLiveContactPreview()">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Facebook Profile URL</label>
-                                    <input type="url" id="contactFacebook" placeholder="Enter your Facebook profile URL..." oninput="renderLiveContactPreview()">
+                            <form id="contactForm" class="full-width" onsubmit="event.preventDefault(); saveContactSection();">
+                                <div class="dynamic-cta-grid full-width" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; width: 100%; box-sizing: border-box;">
+                                    <!-- Direct Contact Card -->
+                                    <div class="admin-card-row" style="padding: 1.5rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                            <h4 style="margin: 0; color: #ffffff; font-size: 0.98rem; font-weight: 700;">
+                                                <i class="fa-solid fa-address-card" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Direct Contact Details
+                                            </h4>
+                                        </div>
+                                        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;"><i class="fa-solid fa-envelope" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> Contact Email Address</label>
+                                                <input type="email" id="contactEmail" placeholder="Enter your email address..." oninput="renderLiveContactPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;"><i class="fa-brands fa-whatsapp" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> WhatsApp Phone Number</label>
+                                                <input type="text" id="contactWhatsApp" placeholder="Enter your WhatsApp phone number..." oninput="renderLiveContactPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;"><i class="fa-solid fa-location-dot" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> Location Text</label>
+                                                <input type="text" id="contactLocation" placeholder="Enter your location text..." oninput="renderLiveContactPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Social Media Links Card -->
+                                    <div class="admin-card-row" style="padding: 1.5rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                            <h4 style="margin: 0; color: #ffffff; font-size: 0.98rem; font-weight: 700;">
+                                                <i class="fa-solid fa-share-nodes" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Social Media Platforms
+                                            </h4>
+                                        </div>
+                                        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;"><i class="fa-brands fa-behance" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> Behance Profile URL</label>
+                                                <input type="url" id="contactBehance" placeholder="Enter your Behance profile URL..." oninput="renderLiveContactPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;"><i class="fa-brands fa-youtube" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> YouTube Channel URL</label>
+                                                <input type="url" id="contactYoutube" placeholder="Enter your YouTube channel URL..." oninput="renderLiveContactPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;"><i class="fa-brands fa-facebook-f" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> Facebook Profile URL</label>
+                                                <input type="url" id="contactFacebook" placeholder="Enter your Facebook profile URL..." oninput="renderLiveContactPreview()" style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
