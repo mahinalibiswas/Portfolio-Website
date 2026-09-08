@@ -263,7 +263,14 @@ function renderSiteData(customData) {
 
         const directShowreelVideo = document.getElementById('directShowreelVideo');
         if (directShowreelVideo && data.showreel.videoUrl) {
-            directShowreelVideo.src = data.showreel.videoUrl;
+            const rawUrl = data.showreel.videoUrl.trim();
+            if (!rawUrl.includes('<iframe') && !rawUrl.includes('youtube.com') && !rawUrl.includes('youtu.be')) {
+                const currentSrc = directShowreelVideo.getAttribute('src') || directShowreelVideo.src || '';
+                if (!currentSrc.includes(rawUrl)) {
+                    directShowreelVideo.src = rawUrl;
+                    directShowreelVideo.load();
+                }
+            }
         }
     }
 

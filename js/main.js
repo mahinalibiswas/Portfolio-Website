@@ -273,44 +273,60 @@ document.addEventListener('DOMContentLoaded', () => {
     // Showreel Section Autoplay & Auto-Pause on Scroll System (IntersectionObserver)
     const showreelSection = document.getElementById('showreel');
 
-    if (showreelOverlay) {
-        showreelOverlay.addEventListener('click', () => {
-            showreelOverlay.style.opacity = '0';
-            showreelOverlay.style.pointerEvents = 'none';
-            if (directShowreelVideo) {
-                directShowreelVideo.muted = false;
-                directShowreelVideo.setAttribute('data-user-unmuted', 'true');
-                directShowreelVideo.play().catch(e => console.log('Showreel play error:', e));
-            }
-        });
+    function handleShowreelPlayClick() {
+        const video = document.getElementById('directShowreelVideo');
+        const overlay = document.getElementById('showreelOverlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+        }
+        if (video) {
+            video.muted = false;
+            video.setAttribute('data-user-unmuted', 'true');
+            video.play().catch(e => console.log('Showreel play error:', e));
+        }
     }
 
-    if (directShowreelVideo && 'IntersectionObserver' in window) {
-        const targetEl = showreelSection || directShowreelVideo;
-        const videoObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Automatically play video when scrolled into section
-                    if (showreelOverlay) {
-                        showreelOverlay.style.opacity = '0';
-                        showreelOverlay.style.pointerEvents = 'none';
-                    }
-                    if (!directShowreelVideo.hasAttribute('data-user-unmuted')) {
-                        directShowreelVideo.muted = true;
-                    }
-                    directShowreelVideo.play().catch(err => {
-                        console.log('Autoplay on scroll:', err);
-                    });
-                } else {
-                    // Automatically pause video when scrolled out of section
-                    if (!directShowreelVideo.paused) {
-                        directShowreelVideo.pause();
-                    }
-                }
-            });
-        }, { threshold: 0.2 });
+    if (showreelOverlay) {
+        showreelOverlay.addEventListener('click', handleShowreelPlayClick);
+    }
+    document.getElementById('mainPlayBtn')?.addEventListener('click', handleShowreelPlayClick);
 
-        videoObserver.observe(targetEl);
+    if ('IntersectionObserver' in window) {
+        const targetEl = showreelSection || document.getElementById('directShowreelVideo');
+        if (targetEl) {
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = document.getElementById('directShowreelVideo');
+                    const overlay = document.getElementById('showreelOverlay');
+                    if (!video) return;
+
+                    if (entry.isIntersecting) {
+                        // Automatically play video when scrolled into section
+                        if (overlay) {
+                            overlay.style.opacity = '0';
+                            overlay.style.pointerEvents = 'none';
+                        }
+                        if (!video.hasAttribute('data-user-unmuted')) {
+                            video.muted = true;
+                        }
+                        const p = video.play();
+                        if (p !== undefined) {
+                            p.catch(err => {
+                                console.log('Autoplay on scroll:', err);
+                            });
+                        }
+                    } else {
+                        // Automatically pause video when scrolled out of section
+                        if (!video.paused) {
+                            video.pause();
+                        }
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            videoObserver.observe(targetEl);
+        }
     }
 
     /* --- 6. Portfolio Category Filter & "See All Projects" Expand/Collapse Engine --- */
