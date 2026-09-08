@@ -358,6 +358,16 @@ function renderAdminFormsWithData(data) {
         renderAdminCtaButtons(data.hero.ctaButtons || []);
     }
 
+    // 1.5 Load Showreel Section Data
+    if (data.showreel) {
+        if (document.getElementById('showreelSubtitle')) document.getElementById('showreelSubtitle').value = data.showreel.subtitle || '// HIGHLIGHT SHOWREEL';
+        if (document.getElementById('showreelTitleTop')) document.getElementById('showreelTitleTop').value = data.showreel.titleTop || 'Featured Motion &';
+        if (document.getElementById('showreelTitleGradient')) document.getElementById('showreelTitleGradient').value = data.showreel.titleGradient || 'Video Reel';
+        if (document.getElementById('showreelDesc')) document.getElementById('showreelDesc').value = data.showreel.desc || '';
+        if (document.getElementById('showreelVideoUrl')) document.getElementById('showreelVideoUrl').value = data.showreel.videoUrl || '';
+        if (document.getElementById('showreelPoster')) document.getElementById('showreelPoster').value = data.showreel.poster || data.showreel.showreelPoster || '';
+    }
+
     // 2. Load About Section Data
     if (data.about) {
         if (document.getElementById('aboutTagBadge')) document.getElementById('aboutTagBadge').value = data.about.tagBadge || '';
@@ -822,9 +832,48 @@ function renderLiveContactPreview() {
     `;
 }
 
+function renderLiveShowreelPreview() {
+    const canvas = document.getElementById('previewShowreelCanvas');
+    if (!canvas) return;
+
+    const sub = document.getElementById('showreelSubtitle')?.value || '// HIGHLIGHT SHOWREEL';
+    const titleTop = document.getElementById('showreelTitleTop')?.value || 'Featured Motion &';
+    const titleGrad = document.getElementById('showreelTitleGradient')?.value || 'Video Reel';
+    const desc = document.getElementById('showreelDesc')?.value || '';
+    const videoUrl = document.getElementById('showreelVideoUrl')?.value || '';
+    const poster = document.getElementById('showreelPoster')?.value || '';
+
+    let videoHtml = '';
+    if (videoUrl.includes('<iframe')) {
+        const iframeStart = videoUrl.indexOf('<iframe');
+        videoHtml = videoUrl.substring(iframeStart).replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+    } else {
+        const ytId = (typeof extractYoutubeId === 'function') ? extractYoutubeId(videoUrl) : null;
+        if (ytId) {
+            videoHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0" style="width:100%; height:100%; border:none; border-radius:14px;" allowfullscreen></iframe>`;
+        } else if (videoUrl) {
+            videoHtml = `<video src="${videoUrl}" poster="${poster}" style="width:100%; height:100%; object-fit:cover; border-radius:14px;" controls playsinline></video>`;
+        } else {
+            videoHtml = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#000; color:var(--text-dim); border-radius:14px; font-size:0.85rem;"><span>No Showreel Video URL Set</span></div>`;
+        }
+    }
+
+    canvas.innerHTML = `
+        <div style="width:100%; max-width:100%; box-sizing:border-box; background:var(--bg-dark); padding:1.5rem; border-radius:20px; border:1px solid var(--border-glow); text-align:center;">
+            <span style="font-size:0.75rem; font-weight:700; color:var(--accent-neon); letter-spacing:2px; display:block; margin-bottom:0.4rem;">${sub}</span>
+            <h2 style="font-size:1.8rem; font-weight:700; color:#fff; margin:0 0 0.6rem 0;">${titleTop} <span class="gradient-text">${titleGrad}</span></h2>
+            <p style="font-size:0.82rem; color:var(--text-dim); max-width:600px; margin:0 auto 1.2rem auto; line-height:1.4;">${desc}</p>
+            <div style="width:100%; max-width:720px; aspect-ratio:16/9; margin:0 auto; border-radius:16px; overflow:hidden; border:1px solid var(--border-glow); background:#000;">
+                ${videoHtml}
+            </div>
+        </div>
+    `;
+}
+
 function renderAllLivePreviews() {
     renderLiveNavPreview();
     renderLiveHeroPreview();
+    renderLiveShowreelPreview();
     renderLiveAboutPreview();
     renderLiveServicesPreview();
     renderLiveSoftwarePreview();
@@ -1519,6 +1568,71 @@ async function saveAboutSection() {
     if (typeof renderSiteData === 'function') renderSiteData();
     showToast('About Me section updated live across all devices!', 'success');
 }
+
+// Save Highlight Showreel
+async function saveShowreelSection() {
+    const saveBtn = document.querySelector('#tab-showreel .btn-save');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Live Cloud...';
+    }
+
+    const data = getSiteData();
+    const videoVal = document.getElementById('showreelVideoUrl')?.value || '';
+    const posterVal = document.getElementById('showreelPoster')?.value || '';
+    const ytId = (typeof extractYoutubeId === 'function') ? extractYoutubeId(videoVal) : '';
+
+    data.showreel = {
+        ...data.showreel,
+        subtitle: document.getElementById('showreelSubtitle')?.value || '// HIGHLIGHT SHOWREEL',
+        titleTop: document.getElementById('showreelTitleTop')?.value || 'Featured Motion &',
+        titleGradient: document.getElementById('showreelTitleGradient')?.value || 'Video Reel',
+        desc: document.getElementById('showreelDesc')?.value || '',
+        videoUrl: videoVal,
+        poster: posterVal,
+        youtubeId: ytId,
+        youtubeUrl: ytId ? `https://www.youtube.com/watch?v=${ytId}` : ''
+    };
+
+    await saveSiteData(data);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Showreel Changes';
+    }
+
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('Highlight Showreel section updated live across all devices!', 'success');
+}
+
+function handleShowreelPosterUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        document.getElementById('showreelPoster').value = dataUrl;
+        const previewImg = document.getElementById('showreelPosterPreview');
+        const previewWrap = document.getElementById('showreelPosterPreviewWrap');
+        if (previewImg) previewImg.src = dataUrl;
+        if (previewWrap) previewWrap.style.display = 'flex';
+        renderLiveShowreelPreview();
+        showToast('Showreel cover image uploaded from PC!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeShowreelPosterImage() {
+    document.getElementById('showreelPoster').value = '';
+    const previewWrap = document.getElementById('showreelPosterPreviewWrap');
+    if (previewWrap) previewWrap.style.display = 'none';
+    renderLiveShowreelPreview();
+    showToast('Showreel cover image removed', 'info');
+}
+
+window.saveShowreelSection = saveShowreelSection;
+window.handleShowreelPosterUpload = handleShowreelPosterUpload;
+window.removeShowreelPosterImage = removeShowreelPosterImage;
 
 // Save Contact
 async function saveContactSection() {

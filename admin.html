@@ -84,7 +84,11 @@
                     </button>
                     <button class="admin-tab-btn" data-tab="tab-hero">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>Hero & Showreel</span>
+                        <span>Hero Section</span>
+                    </button>
+                    <button class="admin-tab-btn" data-tab="tab-showreel">
+                        <i class="fa-solid fa-circle-play"></i>
+                        <span>Highlight Showreel</span>
                     </button>
                     <button class="admin-tab-btn" data-tab="tab-about">
                         <i class="fa-solid fa-user-astronaut"></i>
@@ -267,6 +271,75 @@
                                     <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
                                         <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.4rem;"><i class="fa-solid fa-clock" style="color: var(--accent-neon); margin-right: 0.3rem;"></i> On-Time Delivery %</label>
                                         <input type="text" id="heroStatsDelivery" placeholder="e.g. 100%" oninput="renderLiveHeroPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 1.5: HIGHLIGHT SHOWREEL -->
+                <section class="admin-tab-content" id="tab-showreel">
+                    <div class="admin-split-layout">
+                        <!-- Top Sticky Live Preview Pane -->
+                        <div class="admin-preview-pane">
+                            <div class="admin-preview-header">
+                                <h4><i class="fa-solid fa-eye" style="color: var(--accent-neon);"></i> Highlight Showreel Live Preview</h4>
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span class="live-status-pill"><i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> LIVE PREVIEW</span>
+                                    <button type="button" class="btn-preview-toggle" onclick="toggleLivePreviewCollapse(this)" title="Minimize Live Preview"><i class="fa-solid fa-chevron-up"></i></button>
+                                </div>
+                            </div>
+                            <div class="admin-preview-canvas" id="previewShowreelCanvas">
+                                <!-- Dynamically rendered by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Bottom Form Options Panel -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Highlight Showreel Section Controls</h3>
+                                    <p>Customize section title, subtitle tag, description paragraph, video URL/embed, and poster cover image.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveShowreelSection()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Showreel Changes
+                                </button>
+                            </div>
+
+                            <form id="showreelForm" class="admin-form-grid" onsubmit="event.preventDefault(); saveShowreelSection();">
+                                <div class="form-group full-width">
+                                    <label>Section Subtitle Tag</label>
+                                    <input type="text" id="showreelSubtitle" placeholder="e.g. // HIGHLIGHT SHOWREEL" oninput="renderLiveShowreelPreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Title First Part</label>
+                                    <input type="text" id="showreelTitleTop" placeholder="e.g. Featured Motion &" oninput="renderLiveShowreelPreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Title Highlight Part (Gradient Text)</label>
+                                    <input type="text" id="showreelTitleGradient" placeholder="e.g. Video Reel" oninput="renderLiveShowreelPreview()">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Section Description Paragraph</label>
+                                    <textarea id="showreelDesc" rows="3" placeholder="Enter section description paragraph..." oninput="renderLiveShowreelPreview()"></textarea>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Showreel Video URL / YouTube Embed Code / Video Link</label>
+                                    <textarea id="showreelVideoUrl" rows="3" placeholder="Paste YouTube video URL, Embed Code (<iframe...>), or MP4 file path..." oninput="renderLiveShowreelPreview()"></textarea>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Showreel Poster / Cover Image</label>
+                                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                                        <input type="file" id="showreelPosterFileInput" accept="image/*" style="display: none;" onchange="handleShowreelPosterUpload(event)">
+                                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('showreelPosterFileInput').click()">
+                                            <i class="fa-solid fa-upload"></i> Choose Cover Image from PC
+                                        </button>
+                                        <input type="text" id="showreelPoster" placeholder="Enter image URL or upload from PC..." style="flex: 1; min-width: 250px;" oninput="renderLiveShowreelPreview()">
+                                        <div id="showreelPosterPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                                            <img id="showreelPosterPreview" src="" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;">
+                                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer;" onclick="removeShowreelPosterImage()"><i class="fa-solid fa-xmark"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
