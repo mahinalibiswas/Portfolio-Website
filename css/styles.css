@@ -2821,15 +2821,14 @@ button {
 
 /* Crop YouTube web header (AI badge, title, avatar) & bottom web clutter cleanly */
 .reel-media-layer iframe {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: calc(100% + 40px);
-    height: calc(100% + 240px);
-    transform: translate(-50%, -50%);
-    border: none;
-    background: #000000;
-    pointer-events: auto;
+    position: absolute !important;
+    top: -82px !important;
+    left: -4% !important;
+    width: 108% !important;
+    height: calc(100% + 165px) !important;
+    border: none !important;
+    background: #000000 !important;
+    pointer-events: auto !important;
 }
 
 /* Outside Floating Close Button (Screen corner, never touches video) */

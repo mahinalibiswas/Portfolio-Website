@@ -776,18 +776,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <iframe id="reelIframe"
                         src="https://www.youtube-nocookie.com/embed/${extractedYt}?autoplay=1&mute=0&loop=1&playlist=${extractedYt}&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0"
                         title="${short.title || 'Reel'}"
-                        style="width: 100%; height: 100%; border: none;"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
                 `;
             } else if (isEmbedCode) {
-                let cleanIframe = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
-                if (!cleanIframe.includes('style=')) {
-                    cleanIframe = cleanIframe.replace('<iframe', '<iframe style="width: 100%; height: 100%; border: none; object-fit: cover;"');
-                } else {
-                    cleanIframe = cleanIframe.replace(/style="([^"]*)"/, 'style="width: 100%; height: 100%; border: none; object-fit: cover; $1"');
-                }
+                let cleanIframe = rawVideo.replace(/width="[^"]*"/g, '').replace(/height="[^"]*"/g, '');
+                cleanIframe = cleanIframe.replace(/style="[^"]*"/g, '');
+                cleanIframe = cleanIframe.replace('<iframe', '<iframe id="reelIframe"');
                 if (!cleanIframe.includes('allow=')) {
                     cleanIframe = cleanIframe.replace('<iframe', '<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen');
                 }
@@ -797,7 +793,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <iframe id="reelIframe"
                         src="https://www.youtube-nocookie.com/embed/${short.youtubeId}?autoplay=1&mute=0&loop=1&playlist=${short.youtubeId}&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0"
                         title="${short.title || 'Reel'}"
-                        style="width: 100%; height: 100%; border: none;"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
