@@ -2972,59 +2972,73 @@ button {
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
-.reel-desc-text {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.82);
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+/* Smooth Transition Animation between Reels */
+.reel-slide-out-up {
+    animation: reelSlideOutUp 0.26s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.reel-audio-bar {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.74rem;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.25rem 0.65rem;
-    border-radius: 999px;
-    max-width: 100%;
+.reel-slide-in-up {
+    animation: reelSlideInUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.reel-audio-bar i {
-    color: var(--accent-neon);
-    font-size: 0.76rem;
+.reel-slide-out-down {
+    animation: reelSlideOutDown 0.26s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.reel-audio-marquee {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.reel-slide-in-down {
+    animation: reelSlideInDown 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Bottom Progress Bar */
-.reel-bottom-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.2);
-    z-index: 30;
+@keyframes reelSlideOutUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+        filter: blur(0);
+    }
+    to {
+        transform: translateY(-45px) scale(0.95);
+        opacity: 0;
+        filter: blur(4px);
+    }
 }
 
-.reel-progress-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #00f0ff, #a3e635);
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
-    transition: width 0.2s linear;
+@keyframes reelSlideInUp {
+    from {
+        transform: translateY(45px) scale(0.95);
+        opacity: 0;
+        filter: blur(4px);
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+@keyframes reelSlideOutDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+        filter: blur(0);
+    }
+    to {
+        transform: translateY(45px) scale(0.95);
+        opacity: 0;
+        filter: blur(4px);
+    }
+}
+
+@keyframes reelSlideInDown {
+    from {
+        transform: translateY(-45px) scale(0.95);
+        opacity: 0;
+        filter: blur(4px);
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        filter: blur(0);
+    }
 }
 
 /* Outside Desktop Nav Arrows */

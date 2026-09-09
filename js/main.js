@@ -679,6 +679,55 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modal) modal.classList.add('active');
     }
 
+    let isReelChanging = false;
+
+    function transitionReel(direction) {
+        if (isReelChanging) return;
+        if (!currentReelsData || !currentReelsData.length) currentReelsData = getShortsList();
+        if (!currentReelsData.length) return;
+
+        isReelChanging = true;
+        const mediaLayer = document.getElementById('reelMediaLayer');
+        const bottomBox = document.querySelector('.reel-overlay-bottom');
+
+        let nextIndex = direction === 'next' ? currentReelIndex + 1 : currentReelIndex - 1;
+        if (nextIndex >= currentReelsData.length) nextIndex = 0;
+        if (nextIndex < 0) nextIndex = currentReelsData.length - 1;
+
+        const outClass = direction === 'next' ? 'reel-slide-out-up' : 'reel-slide-out-down';
+        const inClass = direction === 'next' ? 'reel-slide-in-up' : 'reel-slide-in-down';
+
+        if (mediaLayer) {
+            mediaLayer.classList.remove('reel-slide-out-up', 'reel-slide-in-up', 'reel-slide-out-down', 'reel-slide-in-down');
+            mediaLayer.classList.add(outClass);
+        }
+        if (bottomBox) {
+            bottomBox.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+            bottomBox.style.opacity = '0';
+            bottomBox.style.transform = direction === 'next' ? 'translateY(-10px)' : 'translateY(10px)';
+        }
+
+        setTimeout(() => {
+            showReelAtIndex(nextIndex);
+            if (mediaLayer) {
+                mediaLayer.classList.remove(outClass);
+                mediaLayer.classList.add(inClass);
+            }
+            if (bottomBox) {
+                bottomBox.style.transform = direction === 'next' ? 'translateY(10px)' : 'translateY(-10px)';
+                setTimeout(() => {
+                    bottomBox.style.opacity = '1';
+                    bottomBox.style.transform = 'translateY(0)';
+                }, 40);
+            }
+
+            setTimeout(() => {
+                if (mediaLayer) mediaLayer.classList.remove(inClass);
+                isReelChanging = false;
+            }, 320);
+        }, 220);
+    }
+
     function showReelAtIndex(index) {
         if (!currentReelsData || !currentReelsData.length) currentReelsData = getShortsList();
         if (!currentReelsData.length) return;
@@ -690,15 +739,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const short = currentReelsData[currentReelIndex];
         const mediaLayer = document.getElementById('reelMediaLayer');
         const titleElem = document.getElementById('reelTitleText');
-        const descElem = document.getElementById('reelDescText');
         const clientTag = document.getElementById('reelClientTag');
         const platformTag = document.getElementById('reelPlatformTag');
-        const audioTrack = document.getElementById('reelAudioTrack');
 
         if (titleElem) titleElem.textContent = short.title || 'Reel Video';
-        if (descElem) descElem.textContent = short.desc || '';
         if (clientTag) clientTag.textContent = `• ${short.client || 'Client'}`;
-        if (audioTrack) audioTrack.textContent = `Original Audio • Mahin Video Edit • ${short.duration || '0:50'}`;
 
         // Platform tag styling
         if (platformTag) {
@@ -742,17 +787,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
         }
-
-        // Animated bottom progress bar
-        const progressFill = document.getElementById('reelProgressFill');
-        if (progressFill) {
-            progressFill.style.transition = 'none';
-            progressFill.style.width = '0%';
-            setTimeout(() => {
-                progressFill.style.transition = 'width 30s linear';
-                progressFill.style.width = '100%';
-            }, 80);
-        }
     }
 
     function closeReelModal() {
@@ -762,12 +796,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const mediaLayer = document.getElementById('reelMediaLayer');
             if (mediaLayer) mediaLayer.innerHTML = '';
         }
+        isReelChanging = false;
         window.lenis?.start();
     }
 
     window.openReelModal = openReelModal;
     window.closeReelModal = closeReelModal;
     window.showReelAtIndex = showReelAtIndex;
+    window.transitionReel = transitionReel;
 
     function openProjectVideoModal(projectId) {
         const data = getProjectDataById(projectId);
@@ -878,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reelPrev) {
             e.preventDefault();
             e.stopPropagation();
-            showReelAtIndex(currentReelIndex - 1);
+            transitionReel('prev');
             return;
         }
 
@@ -886,20 +922,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reelNext) {
             e.preventDefault();
             e.stopPropagation();
-            showReelAtIndex(currentReelIndex + 1);
-            return;
-        }
-
-        const reelSound = e.target.closest('#reelSoundBtn');
-        if (reelSound) {
-            e.preventDefault();
-            e.stopPropagation();
-            const vid = document.querySelector('#reelMediaLayer video');
-            const icon = reelSound.querySelector('i');
-            if (vid) {
-                vid.muted = !vid.muted;
-                if (icon) icon.className = vid.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
-            }
+            transitionReel('next');
             return;
         }
 
@@ -990,10 +1013,54 @@ document.addEventListener('DOMContentLoaded', () => {
         const reelModal = document.getElementById('reelModal');
         if (reelModal && reelModal.classList.contains('active')) {
             if (e.key === 'Escape') closeReelModal();
-            else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') showReelAtIndex(currentReelIndex - 1);
-            else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') showReelAtIndex(currentReelIndex + 1);
+            else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') transitionReel('prev');
+            else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') transitionReel('next');
         }
     });
+
+    // Mouse Wheel Scrolling & Touch Swipe for Reel Modal
+    const reelModalElement = document.getElementById('reelModal');
+    if (reelModalElement) {
+        let lastReelWheel = 0;
+        reelModalElement.addEventListener('wheel', (e) => {
+            if (!reelModalElement.classList.contains('active')) return;
+            e.preventDefault();
+            const now = Date.now();
+            if (now - lastReelWheel < 450) return; // Debounce for smooth single-reel glide
+
+            if (e.deltaY > 20) {
+                lastReelWheel = now;
+                transitionReel('next');
+            } else if (e.deltaY < -20) {
+                lastReelWheel = now;
+                transitionReel('prev');
+            }
+        }, { passive: false });
+
+        let touchStartY = 0;
+        let touchStartX = 0;
+        reelModalElement.addEventListener('touchstart', (e) => {
+            if (!reelModalElement.classList.contains('active')) return;
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+
+        reelModalElement.addEventListener('touchend', (e) => {
+            if (!reelModalElement.classList.contains('active')) return;
+            const touchEndY = e.changedTouches[0].clientY;
+            const touchEndX = e.changedTouches[0].clientX;
+            const deltaY = touchStartY - touchEndY;
+            const deltaX = touchStartX - touchEndX;
+
+            if (Math.abs(deltaY) > 35 && Math.abs(deltaY) > Math.abs(deltaX)) {
+                if (deltaY > 0) {
+                    transitionReel('next'); // Swiped up -> Next Reel
+                } else {
+                    transitionReel('prev'); // Swiped down -> Previous Reel
+                }
+            }
+        }, { passive: true });
+    }
 
     closeProjectModal?.addEventListener('click', () => {
         const modal = document.getElementById('projectModal') || document.getElementById('directVideoModal');
