@@ -454,6 +454,11 @@ async function saveSiteData(data) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
         console.error("Error saving site data to localStorage", e);
+        if (e.name === 'QuotaExceededError' || e.code === 22 || e.number === -2147024882) {
+            if (typeof showToast === 'function') {
+                showToast('Storage Limit Exceeded! Large video/image files cannot be stored in browser storage. Please use YouTube/Cloud links.', 'error');
+            }
+        }
     }
 
     // Live Cloud Backend Realtime Sync across all devices worldwide
