@@ -786,11 +786,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaLayer) {
             if (isDirectVideo) {
                 mediaLayer.innerHTML = `
-                    <video id="reelVideo" src="${rawVideo}" autoplay playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
+                    <video id="reelVideo" src="${rawVideo}" autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
                 const v = document.getElementById('reelVideo');
                 if (v) {
+                    v.play().catch(e => console.log('Autoplay handled:', e));
                     v.addEventListener('click', () => {
+                        if (v.muted) v.muted = false;
                         if (v.paused) v.play();
                         else v.pause();
                     });
@@ -837,11 +839,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             } else if (rawVideo) {
                 mediaLayer.innerHTML = `
-                    <video id="reelVideo" src="${rawVideo}" autoplay playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
+                    <video id="reelVideo" src="${rawVideo}" autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
                 const v = document.getElementById('reelVideo');
                 if (v) {
+                    v.play().catch(e => console.log('Autoplay handled:', e));
                     v.addEventListener('click', () => {
+                        if (v.muted) v.muted = false;
                         if (v.paused) v.play();
                         else v.pause();
                     });
