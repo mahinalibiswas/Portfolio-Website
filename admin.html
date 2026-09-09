@@ -98,6 +98,10 @@
                         <i class="fa-solid fa-film"></i>
                         <span>Video Projects (<span id="tabProjectsCount">6</span>)</span>
                     </button>
+                    <button class="admin-tab-btn" data-tab="tab-shorts">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <span>Short Video &amp; Reels (<span id="tabShortsCount">6</span>)</span>
+                    </button>
                     <button class="admin-tab-btn" data-tab="tab-services">
                         <i class="fa-solid fa-layer-group"></i>
                         <span>Services Offered</span>
@@ -555,6 +559,56 @@
                         </div>
                     </div>
                 </section>
+ 
+                <!-- TAB 3.5: SHORT VIDEO & REELS MANAGER -->
+                <section class="admin-tab-content" id="tab-shorts">
+                    <div class="admin-split-layout">
+                        <!-- Top Header Settings Panel -->
+                        <div class="panel-card" style="margin-bottom: 1.5rem;">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Short Video Section Header</h3>
+                                    <p>Customize the title and description of the Short Video / Reels carousel.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveShortsHeader()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Header
+                                </button>
+                            </div>
+
+                            <form id="shortsHeaderForm" onsubmit="event.preventDefault(); saveShortsHeader();" class="admin-form-grid">
+                                <div class="form-group">
+                                    <label>Section Title (First Part)</label>
+                                    <input type="text" id="shortsTitleTop" placeholder="e.g. Short">
+                                </div>
+                                <div class="form-group">
+                                    <label>Section Title (Gradient Part)</label>
+                                    <input type="text" id="shortsTitleGradient" placeholder="e.g. Video">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Section Subtitle / Description</label>
+                                    <textarea id="shortsDesc" rows="2" placeholder="Enter section description..."></textarea>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Reels & Shorts Items Manager Card -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Vertical Reels &amp; Shorts Manager (<span id="tabShortsCountHeader">6</span>)</h3>
+                                    <p>Add, edit, or delete 9:16 vertical video edits for Instagram Reels, YouTube Shorts, and TikTok.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="openAddShortModal()">
+                                    <i class="fa-solid fa-plus"></i> Add New Short / Reel
+                                </button>
+                            </div>
+
+                            <div class="admin-shorts-list" id="adminShortsList">
+                                <!-- Dynamically populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- TAB 4: SERVICES OFFERED -->
                 <section class="admin-tab-content" id="tab-services">
@@ -840,6 +894,87 @@
                 <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
                     <button type="button" class="btn btn-hero-secondary" onclick="closeProjectEditModal()">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Short / Reel Edit / Add Modal -->
+    <div class="modal-backdrop" id="shortEditModal">
+        <div class="modal-content admin-project-modal-card">
+            <button class="modal-close" onclick="closeShortEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="shortModalTitle">Add New Short Video / Reel</h3>
+            
+            <form id="shortEditForm" class="admin-form-grid" style="margin-top: 1.5rem;">
+                <input type="hidden" id="editShortId">
+                
+                <div class="form-group full-width">
+                    <label>Reel / Short Title *</label>
+                    <input type="text" id="editShortTitle" placeholder="e.g. Viral Reels & TikToks" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Platform *</label>
+                    <select id="editShortPlatform" onchange="onShortPlatformChange(this.value)" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;" required>
+                        <option value="instagram">Instagram Reels</option>
+                        <option value="youtube">YouTube Shorts</option>
+                        <option value="tiktok">TikTok</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Platform Badge Label *</label>
+                    <input type="text" id="editShortPlatformLabel" placeholder="e.g. Reels, Shorts, TikTok" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Vertical 9:16 Cover Image *</label>
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                        <input type="file" id="editShortImageFileInput" accept="image/*" style="display: none;" onchange="handleShortImageUpload(event)">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editShortImageFileInput').click()">
+                            <i class="fa-solid fa-upload"></i> Choose Cover Image from PC
+                        </button>
+                        <input type="text" id="editShortImage" placeholder="Enter image URL or upload from PC..." style="flex: 1; min-width: 250px;" required>
+                        <div id="editShortImagePreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            <img id="editShortImagePreview" src="" style="width: 28px; height: 42px; object-fit: cover; border-radius: 4px;">
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer;" onclick="removeShortImage()"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>YouTube Embed Code / Video URL *</label>
+                    <textarea id="editShortVideo" rows="2" placeholder="Paste YouTube Watch / Shorts URL or Embed Code (<iframe...</iframe>)" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>YouTube Video ID (e.g. kJQP7kiw5Fk)</label>
+                    <input type="text" id="editShortYoutubeId" placeholder="e.g. kJQP7kiw5Fk">
+                </div>
+
+                <div class="form-group">
+                    <label>Duration (e.g. 0:58)</label>
+                    <input type="text" id="editShortDuration" placeholder="e.g. 0:58">
+                </div>
+
+                <div class="form-group">
+                    <label>Client Name</label>
+                    <input type="text" id="editShortClient" placeholder="e.g. Social Media Client">
+                </div>
+
+                <div class="form-group">
+                    <label>Year / Date</label>
+                    <input type="text" id="editShortDate" placeholder="2026">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Short Video Description</label>
+                    <textarea id="editShortDesc" rows="3" placeholder="Enter short video description..."></textarea>
+                </div>
+
+                <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
+                    <button type="button" class="btn btn-hero-secondary" onclick="closeShortEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Reel / Short</button>
                 </div>
             </form>
         </div>

@@ -362,6 +362,21 @@ function renderSiteData(customData) {
     }
 
     // 4.5 Render Shorts & Reels Section
+    const shortsHeader = data.shortsHeader || (typeof DEFAULT_SITE_DATA !== 'undefined' ? DEFAULT_SITE_DATA.shortsHeader : null);
+    if (shortsHeader) {
+        const shortsSec = document.getElementById('shorts');
+        if (shortsSec) {
+            const titleEl = shortsSec.querySelector('.section-title');
+            if (titleEl) {
+                titleEl.innerHTML = `${shortsHeader.titleTop || 'Short'} <span class="gradient-text">${shortsHeader.titleGradient || 'Video'}</span>`;
+            }
+            const descEl = shortsSec.querySelector('.section-desc');
+            if (descEl && shortsHeader.desc) {
+                descEl.textContent = shortsHeader.desc;
+            }
+        }
+    }
+
     const shortsData = data.shorts || (typeof DEFAULT_SITE_DATA !== 'undefined' ? DEFAULT_SITE_DATA.shorts : null);
     if (shortsData && Array.isArray(shortsData) && shortsData.length > 0) {
         const shortsTrack = document.getElementById('shortsTrack');

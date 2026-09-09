@@ -389,6 +389,14 @@ function renderAdminFormsWithData(data) {
     // 3. Render Projects List
     renderAdminProjectsList(data.projects || []);
 
+    // 3.5 Load Shorts & Reels Section Data
+    if (data.shortsHeader) {
+        if (document.getElementById('shortsTitleTop')) document.getElementById('shortsTitleTop').value = data.shortsHeader.titleTop || 'Short';
+        if (document.getElementById('shortsTitleGradient')) document.getElementById('shortsTitleGradient').value = data.shortsHeader.titleGradient || 'Video';
+        if (document.getElementById('shortsDesc')) document.getElementById('shortsDesc').value = data.shortsHeader.desc || '';
+    }
+    renderAdminShortsList(data.shorts || []);
+
     // 4. Render Services List Form Cards
     renderAdminServicesList(data.services || []);
 
@@ -1815,6 +1823,249 @@ function deleteProject(projectId) {
         showToast('Project deleted live across all devices!', 'info');
     });
 }
+
+/* --- 5.5 Short Video & Reels Manager --- */
+async function saveShortsHeader() {
+    const data = getSiteData();
+    data.shortsHeader = {
+        titleTop: document.getElementById('shortsTitleTop')?.value.trim() || 'Short',
+        titleGradient: document.getElementById('shortsTitleGradient')?.value.trim() || 'Video',
+        desc: document.getElementById('shortsDesc')?.value.trim() || ''
+    };
+    await saveSiteData(data);
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast('Short Video section header saved live!', 'success');
+}
+
+function renderAdminShortsList(shorts) {
+    const listContainer = document.getElementById('adminShortsList');
+    const countBadge = document.getElementById('tabShortsCount');
+    const countHeader = document.getElementById('tabShortsCountHeader');
+    const count = (shorts || []).length;
+    if (countBadge) countBadge.textContent = count;
+    if (countHeader) countHeader.textContent = count;
+
+    if (!listContainer) return;
+
+    if (!shorts || shorts.length === 0) {
+        listContainer.innerHTML = `
+            <div style="grid-column: 1 / -1; padding: 2.5rem; text-align: center; color: var(--text-dim); background: rgba(2,8,23,0.4); border-radius: 14px; border: 1px dashed var(--border-glow);">
+                <i class="fa-solid fa-mobile-screen-button" style="font-size: 2.2rem; margin-bottom: 0.8rem; color: var(--accent-neon); display: block;"></i>
+                <h4 style="color: #ffffff; margin-bottom: 0.4rem;">No Short Videos Yet</h4>
+                <p style="font-size: 0.85rem; margin-bottom: 1rem;">Add your first viral reel, TikTok, or YouTube Short to display in the carousel.</p>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openAddShortModal()">
+                    <i class="fa-solid fa-plus"></i> Add New Short / Reel
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    listContainer.innerHTML = shorts.map(short => {
+        const platformClass = (short.platform || 'instagram').toLowerCase();
+        let defaultIcon = 'fa-brands fa-instagram';
+        if (platformClass === 'youtube') defaultIcon = 'fa-brands fa-youtube';
+        if (platformClass === 'tiktok') defaultIcon = 'fa-brands fa-tiktok';
+        const icon = short.platformIcon || defaultIcon;
+        const label = short.platformLabel || (platformClass === 'youtube' ? 'Shorts' : platformClass === 'tiktok' ? 'TikTok' : 'Reels');
+
+        return `
+        <div class="admin-short-item">
+            <img src="${short.image || 'assets/images/project_reels_shorts.jpg'}" alt="${short.title || 'Short'}" class="admin-short-thumb" onerror="this.onerror=null; this.src='assets/images/project_reels_shorts.jpg';">
+            <div class="admin-short-info">
+                <h4>${short.title || 'Untitled Reel'}</h4>
+                <div class="admin-short-meta-row">
+                    <span class="admin-short-badge ${platformClass}">
+                        <i class="${icon}"></i> ${label}
+                    </span>
+                    <span class="admin-short-meta"><i class="fa-regular fa-clock"></i> ${short.duration || '0:50'}</span>
+                    <span class="admin-short-meta">• ${short.client || 'Client'}</span>
+                </div>
+                <div style="font-size: 0.76rem; color: var(--accent-neon); display: flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-circle-play" style="font-size: 0.72rem;"></i> YouTube ID: ${short.youtubeId || 'Custom URL'}
+                </div>
+            </div>
+            <div class="admin-short-actions">
+                <button class="action-btn edit-btn" onclick="openEditShortModal('${short.id}')" title="Edit Reel">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="action-btn delete-btn" onclick="deleteShort('${short.id}')" title="Delete Reel">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+function onShortPlatformChange(platform) {
+    const labelInput = document.getElementById('editShortPlatformLabel');
+    if (labelInput) {
+        if (platform === 'youtube') labelInput.value = 'Shorts';
+        else if (platform === 'tiktok') labelInput.value = 'TikTok';
+        else labelInput.value = 'Reels';
+    }
+}
+
+function openAddShortModal() {
+    if (document.getElementById('shortModalTitle')) document.getElementById('shortModalTitle').textContent = 'Add New Short Video / Reel';
+    if (document.getElementById('shortEditForm')) document.getElementById('shortEditForm').reset();
+    if (document.getElementById('editShortId')) document.getElementById('editShortId').value = '';
+    if (document.getElementById('editShortPlatform')) document.getElementById('editShortPlatform').value = 'instagram';
+    if (document.getElementById('editShortPlatformLabel')) document.getElementById('editShortPlatformLabel').value = 'Reels';
+    const previewWrap = document.getElementById('editShortImagePreviewWrap');
+    if (previewWrap) previewWrap.style.display = 'none';
+    const modal = document.getElementById('shortEditModal');
+    if (modal) modal.classList.add('active');
+}
+
+function openEditShortModal(shortId) {
+    const data = getSiteData();
+    const short = (data.shorts || []).find(s => s.id === shortId);
+
+    if (short) {
+        if (document.getElementById('shortModalTitle')) document.getElementById('shortModalTitle').textContent = 'Edit Short Video / Reel';
+        if (document.getElementById('editShortId')) document.getElementById('editShortId').value = short.id || '';
+        if (document.getElementById('editShortTitle')) document.getElementById('editShortTitle').value = short.title || '';
+        if (document.getElementById('editShortPlatform')) document.getElementById('editShortPlatform').value = short.platform || 'instagram';
+        if (document.getElementById('editShortPlatformLabel')) document.getElementById('editShortPlatformLabel').value = short.platformLabel || 'Reels';
+        if (document.getElementById('editShortImage')) document.getElementById('editShortImage').value = short.image || '';
+        if (document.getElementById('editShortVideo')) document.getElementById('editShortVideo').value = short.video || short.youtubeUrl || '';
+        if (document.getElementById('editShortYoutubeId')) document.getElementById('editShortYoutubeId').value = short.youtubeId || '';
+        if (document.getElementById('editShortDuration')) document.getElementById('editShortDuration').value = short.duration || '';
+        if (document.getElementById('editShortClient')) document.getElementById('editShortClient').value = short.client || '';
+        if (document.getElementById('editShortDate')) document.getElementById('editShortDate').value = short.date || '2026';
+        if (document.getElementById('editShortDesc')) document.getElementById('editShortDesc').value = short.desc || '';
+
+        if (short.image) {
+            const previewImg = document.getElementById('editShortImagePreview');
+            const previewWrap = document.getElementById('editShortImagePreviewWrap');
+            if (previewImg) previewImg.src = short.image;
+            if (previewWrap) previewWrap.style.display = 'flex';
+        } else {
+            const previewWrap = document.getElementById('editShortImagePreviewWrap');
+            if (previewWrap) previewWrap.style.display = 'none';
+        }
+
+        const modal = document.getElementById('shortEditModal');
+        if (modal) modal.classList.add('active');
+    }
+}
+
+function closeShortEditModal() {
+    const modal = document.getElementById('shortEditModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function handleShortImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        document.getElementById('editShortImage').value = dataUrl;
+        const previewImg = document.getElementById('editShortImagePreview');
+        const previewWrap = document.getElementById('editShortImagePreviewWrap');
+        if (previewImg) previewImg.src = dataUrl;
+        if (previewWrap) previewWrap.style.display = 'flex';
+        showToast('Vertical cover image uploaded from PC!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeShortImage() {
+    document.getElementById('editShortImage').value = '';
+    const previewWrap = document.getElementById('editShortImagePreviewWrap');
+    if (previewWrap) previewWrap.style.display = 'none';
+    showToast('Cover image removed', 'info');
+}
+
+document.getElementById('shortEditForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const saveBtn = document.querySelector('#shortEditModal button[type="submit"]');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    }
+
+    const data = getSiteData();
+    if (!data.shorts) data.shorts = [];
+
+    const shortId = document.getElementById('editShortId')?.value || '';
+    const videoVal = document.getElementById('editShortVideo')?.value.trim() || '';
+    const platformVal = document.getElementById('editShortPlatform')?.value || 'instagram';
+    const platformLabelVal = document.getElementById('editShortPlatformLabel')?.value.trim() || (platformVal === 'youtube' ? 'Shorts' : platformVal === 'tiktok' ? 'TikTok' : 'Reels');
+
+    let defaultIcon = 'fa-brands fa-instagram';
+    if (platformVal === 'youtube') defaultIcon = 'fa-brands fa-youtube';
+    if (platformVal === 'tiktok') defaultIcon = 'fa-brands fa-tiktok';
+
+    let youtubeId = document.getElementById('editShortYoutubeId')?.value.trim() || '';
+    if (!youtubeId && typeof extractYoutubeId === 'function') {
+        youtubeId = extractYoutubeId(videoVal) || '';
+    }
+
+    const shortObj = {
+        id: shortId || 'short-' + Date.now(),
+        title: document.getElementById('editShortTitle')?.value.trim() || 'Untitled Reel',
+        platform: platformVal,
+        platformLabel: platformLabelVal,
+        platformIcon: defaultIcon,
+        image: document.getElementById('editShortImage')?.value.trim() || 'assets/images/project_reels_shorts.jpg',
+        video: videoVal || (youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : 'assets/videos/hero_teaser.mp4'),
+        youtubeId: youtubeId,
+        youtubeUrl: youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '',
+        duration: document.getElementById('editShortDuration')?.value.trim() || '0:50',
+        client: document.getElementById('editShortClient')?.value.trim() || 'Client',
+        date: document.getElementById('editShortDate')?.value.trim() || '2026',
+        desc: document.getElementById('editShortDesc')?.value.trim() || ''
+    };
+
+    if (shortId) {
+        const idx = data.shorts.findIndex(s => s.id === shortId);
+        if (idx !== -1) data.shorts[idx] = shortObj;
+        else data.shorts.unshift(shortObj);
+    } else {
+        data.shorts.unshift(shortObj);
+    }
+
+    await saveSiteData(data);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = 'Save Reel / Short';
+    }
+
+    closeShortEditModal();
+    renderAdminShortsList(data.shorts);
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast(shortId ? 'Short video updated live across all devices!' : 'New short video added live across all devices!', 'success');
+});
+
+function deleteShort(shortId) {
+    const data = getSiteData();
+    const short = (data.shorts || []).find(s => s.id === shortId);
+    const title = short && short.title ? `"${short.title}"` : 'this reel';
+
+    openDeleteConfirmModal(`Are you sure you want to delete ${title}?`, async () => {
+        data.shorts = (data.shorts || []).filter(s => s.id !== shortId);
+        await saveSiteData(data);
+        renderAdminShortsList(data.shorts);
+        if (typeof renderSiteData === 'function') renderSiteData();
+        showToast('Short video deleted live across all devices!', 'info');
+    });
+}
+
+window.saveShortsHeader = saveShortsHeader;
+window.renderAdminShortsList = renderAdminShortsList;
+window.onShortPlatformChange = onShortPlatformChange;
+window.openAddShortModal = openAddShortModal;
+window.openEditShortModal = openEditShortModal;
+window.closeShortEditModal = closeShortEditModal;
+window.handleShortImageUpload = handleShortImageUpload;
+window.removeShortImage = removeShortImage;
+window.deleteShort = deleteShort;
 
 /* --- 6. Services & Software Form Card Lists --- */
 function renderAdminServicesList(services) {

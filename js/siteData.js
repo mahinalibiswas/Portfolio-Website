@@ -201,7 +201,12 @@ const DEFAULT_SITE_DATA = {
         }
     ],
 
-    // 4.5 Shorts & Reels Section
+    // 4.5 Shorts & Reels Section Header & Items
+    shortsHeader: {
+        titleTop: "Short",
+        titleGradient: "Video",
+        desc: "Viral Instagram Reels, TikToks, YouTube Shorts — high-energy vertical edits with animated subtitles, pop-up graphics, and trending audio sync."
+    },
     shorts: [
         {
             id: "short-1",
@@ -427,6 +432,7 @@ function getSiteData() {
                 about: { ...DEFAULT_SITE_DATA.about, ...(parsed.about || {}) },
                 showreel: { ...DEFAULT_SITE_DATA.showreel, ...(parsed.showreel || {}) },
                 contact: { ...DEFAULT_SITE_DATA.contact, ...(parsed.contact || {}) },
+                shortsHeader: { ...DEFAULT_SITE_DATA.shortsHeader, ...(parsed.shortsHeader || {}) },
                 shorts: (parsed.shorts && parsed.shorts.length) ? parsed.shorts : DEFAULT_SITE_DATA.shorts
             };
 
