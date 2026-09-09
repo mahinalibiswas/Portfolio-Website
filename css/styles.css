@@ -1514,8 +1514,17 @@ button {
 }
 
 .project-date {
-    font-size: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 600;
     color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    padding: 0.22rem 0.65rem;
+    border-radius: 9999px;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
 }
 
 /* Long Video Project Cards - Details button hidden as requested */

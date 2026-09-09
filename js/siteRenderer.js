@@ -376,9 +376,9 @@ function renderSiteData(customData) {
                             </div>
                             <div class="card-author-text">
                                 <span class="author-name">${proj.client || 'Mahin Ali Biswas'}</span>
-                                <span class="project-date">${proj.date || '2026'}</span>
                             </div>
                         </div>
+                        <span class="project-date">${proj.date || '2026'}</span>
                     </div>
                 </div>
             `).join('');
