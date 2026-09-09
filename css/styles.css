@@ -1518,6 +1518,11 @@ button {
     color: var(--text-dim);
 }
 
+/* Long Video Project Cards - Details button hidden as requested */
+.work-card .card-details-btn {
+    display: none !important;
+}
+
 .card-details-btn {
     padding: 0.35rem 0.9rem;
     border-radius: var(--radius-full);

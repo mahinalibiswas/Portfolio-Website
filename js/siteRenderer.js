@@ -379,7 +379,6 @@ function renderSiteData(customData) {
                                 <span class="project-date">${proj.date || '2026'}</span>
                             </div>
                         </div>
-                        <button class="card-details-btn" data-id="${proj.id}">Details</button>
                     </div>
                 </div>
             `).join('');
