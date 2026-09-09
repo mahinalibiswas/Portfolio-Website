@@ -6,6 +6,9 @@
 function extractYoutubeId(url) {
     if (!url) return null;
     let str = url.trim();
+    if (str.startsWith('data:video') || str.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(str)) {
+        return null;
+    }
 
     if (str.includes('<iframe')) {
         const srcMatch = str.match(/src=["']([^"']+)["']/);

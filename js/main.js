@@ -219,10 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const directShowreelVideo = document.getElementById('directShowreelVideo');
 
     function extractYoutubeId(url) {
-        if (!url) return null;
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const match = url.match(regExp);
-        return (match && match[2].length === 11) ? match[2] : (url.length === 11 ? url : null);
+        if (!url || typeof url !== 'string') return null;
+        const str = url.trim();
+        if (str.startsWith('data:video') || str.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(str)) {
+            return null;
+        }
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = str.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : (str.length === 11 && !str.includes('/') && !str.includes('.') ? str : null);
     }
 
     function openDirectVideoModal(videoSrc) {
@@ -765,9 +769,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render Media Layer
         if (mediaLayer) {
-            const ytId = short.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(short.youtubeUrl || short.video || '') : null);
+            const isDirectVideo = short.video && (short.video.startsWith('data:video') || short.video.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(short.video));
+            const ytId = (!isDirectVideo && short.youtubeId) ? short.youtubeId : (typeof extractYoutubeId === 'function' ? extractYoutubeId(short.youtubeUrl || short.video || '') : null);
             
-            if (ytId) {
+            if (isDirectVideo) {
+                mediaLayer.innerHTML = `
+                    <video id="reelVideo" src="${short.video}" autoplay playsinline loop controls style="width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
+                `;
+            } else if (ytId) {
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
                         src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&mute=0&loop=1&playlist=${ytId}&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0"
@@ -810,11 +819,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const body = document.getElementById('projectModalBody') || modal?.querySelector('.modal-content') || modal?.querySelector('.video-responsive-wrapper');
 
         if (data && modal) {
-            const ytId = data.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(data.youtubeUrl || data.video || '') : null);
             const rawVideo = data.video || data.youtubeUrl || '';
+            const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
+            const ytId = (!isDirectVideo && data.youtubeId) ? data.youtubeId : (typeof extractYoutubeId === 'function' ? extractYoutubeId(data.youtubeUrl || data.video || '') : null);
             
             let playerHtml = '';
-            if (rawVideo.includes('<iframe')) {
+            if (isDirectVideo) {
+                playerHtml = `<video src="${rawVideo}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`;
+            } else if (rawVideo.includes('<iframe')) {
                 playerHtml = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
             } else if (ytId) {
                 playerHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>`;

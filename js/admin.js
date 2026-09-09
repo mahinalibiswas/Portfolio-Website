@@ -10,6 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
     initLivePreviewState();
 });
 
+/* --- YouTube & Video Helper --- */
+function extractYoutubeId(url) {
+    if (!url || typeof url !== 'string') return null;
+    const str = url.trim();
+    if (str.startsWith('data:video') || str.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(str)) {
+        return null;
+    }
+    if (str.includes('<iframe')) {
+        const srcMatch = str.match(/src=["']([^"']+)["']/);
+        if (srcMatch && srcMatch[1]) {
+            return extractYoutubeId(srcMatch[1]);
+        }
+    }
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = str.match(regExp);
+    return (match && match[2] && match[2].length === 11) ? match[2] : (str.length === 11 && !str.includes('/') && !str.includes('.') ? str : null);
+}
+window.extractYoutubeId = extractYoutubeId;
+
 /* --- 1. Authentication Security Gate --- */
 function initAuthGate() {
     const authOverlay = document.getElementById('adminAuthOverlay');
@@ -364,8 +383,28 @@ function renderAdminFormsWithData(data) {
         if (document.getElementById('showreelTitleTop')) document.getElementById('showreelTitleTop').value = data.showreel.titleTop || 'Featured Motion &';
         if (document.getElementById('showreelTitleGradient')) document.getElementById('showreelTitleGradient').value = data.showreel.titleGradient || 'Video Reel';
         if (document.getElementById('showreelDesc')) document.getElementById('showreelDesc').value = data.showreel.desc || '';
-        if (document.getElementById('showreelVideoUrl')) document.getElementById('showreelVideoUrl').value = data.showreel.videoUrl || '';
-        if (document.getElementById('showreelPoster')) document.getElementById('showreelPoster').value = data.showreel.poster || data.showreel.showreelPoster || '';
+        const srVid = data.showreel.videoUrl || '';
+        if (document.getElementById('showreelVideoUrl')) document.getElementById('showreelVideoUrl').value = srVid;
+        const srPost = data.showreel.poster || data.showreel.showreelPoster || '';
+        if (document.getElementById('showreelPoster')) document.getElementById('showreelPoster').value = srPost;
+
+        const srVideoWrap = document.getElementById('showreelVideoPreviewWrap');
+        const srVideoName = document.getElementById('showreelVideoFileName');
+        if (srVid && (srVid.startsWith('data:video') || srVid.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(srVid))) {
+            if (srVideoWrap) srVideoWrap.style.display = 'flex';
+            if (srVideoName) srVideoName.textContent = srVid.startsWith('data:video') ? 'Uploaded Video File' : srVid.split('/').pop();
+        } else {
+            if (srVideoWrap) srVideoWrap.style.display = 'none';
+        }
+
+        const srPostWrap = document.getElementById('showreelPosterPreviewWrap');
+        const srPostImg = document.getElementById('showreelPosterPreview');
+        if (srPost && srPostWrap && srPostImg) {
+            srPostImg.src = srPost;
+            srPostWrap.style.display = 'flex';
+        } else if (srPostWrap) {
+            srPostWrap.style.display = 'none';
+        }
     }
 
     // 2. Load About Section Data
@@ -1244,6 +1283,130 @@ function removeProjImage() {
     showToast('Project thumbnail image removed', 'info');
 }
 
+/* --- Universal Direct PC Video Upload Handler --- */
+function processUploadedVideoFile(file, inputId, previewWrapId, fileNameId, onComplete) {
+    if (!file) return;
+
+    if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov|ogg|mkv)$/i.test(file.name)) {
+        showToast('Please select a valid video file (.mp4, .webm, .mov)', 'error');
+        return;
+    }
+
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    const wrap = document.getElementById(previewWrapId);
+    const nameEl = document.getElementById(fileNameId);
+    const input = document.getElementById(inputId);
+
+    // If file is within safe cloud persistence limit (<= 15MB)
+    if (file.size <= 15 * 1024 * 1024) {
+        showToast(`Reading video file "${file.name}" (${sizeMB} MB)...`, 'info');
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            if (input) input.value = dataUrl;
+            if (nameEl) nameEl.textContent = `${file.name} (${sizeMB} MB)`;
+            if (wrap) wrap.style.display = 'flex';
+            showToast(`Video "${file.name}" uploaded successfully from PC!`, 'success');
+            if (typeof onComplete === 'function') onComplete(dataUrl, file.name);
+        };
+        reader.onerror = function() {
+            showToast('Error reading video file. Please try again.', 'error');
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // Large file (> 15MB)
+        const localBlobUrl = URL.createObjectURL(file);
+        if (input) input.value = `assets/videos/${file.name}`;
+        if (nameEl) nameEl.textContent = `${file.name} (${sizeMB} MB - Local File)`;
+        if (wrap) wrap.style.display = 'flex';
+        showToast(`Video (${sizeMB} MB) detected! Set to "assets/videos/${file.name}". Copy this video into your project "assets/videos/" folder for optimal site speed.`, 'info');
+        if (typeof onComplete === 'function') onComplete(localBlobUrl, file.name);
+    }
+}
+
+function handleShowreelVideoUpload(event) {
+    const file = event.target.files[0];
+    processUploadedVideoFile(file, 'showreelVideoUrl', 'showreelVideoPreviewWrap', 'showreelVideoFileName', () => {
+        if (typeof renderLiveShowreelPreview === 'function') renderLiveShowreelPreview();
+    });
+}
+
+function removeShowreelVideo() {
+    const input = document.getElementById('showreelVideoUrl');
+    if (input) input.value = '';
+    const wrap = document.getElementById('showreelVideoPreviewWrap');
+    if (wrap) wrap.style.display = 'none';
+    if (typeof renderLiveShowreelPreview === 'function') renderLiveShowreelPreview();
+    showToast('Showreel video removed', 'info');
+}
+
+function handleShowreelPosterUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        document.getElementById('showreelPoster').value = dataUrl;
+        const previewImg = document.getElementById('showreelPosterPreview');
+        const previewWrap = document.getElementById('showreelPosterPreviewWrap');
+        if (previewImg) previewImg.src = dataUrl;
+        if (previewWrap) previewWrap.style.display = 'flex';
+        if (typeof renderLiveShowreelPreview === 'function') renderLiveShowreelPreview();
+        showToast('Showreel poster image uploaded from PC!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeShowreelPosterImage() {
+    document.getElementById('showreelPoster').value = '';
+    const previewWrap = document.getElementById('showreelPosterPreviewWrap');
+    if (previewWrap) previewWrap.style.display = 'none';
+    if (typeof renderLiveShowreelPreview === 'function') renderLiveShowreelPreview();
+    showToast('Showreel poster image removed', 'info');
+}
+
+function handleProjVideoUpload(event) {
+    const file = event.target.files[0];
+    processUploadedVideoFile(file, 'editProjVideo', 'editProjVideoPreviewWrap', 'editProjVideoFileName', () => {
+        const ytInput = document.getElementById('editProjYoutubeId');
+        if (ytInput) ytInput.value = '';
+    });
+}
+
+function removeProjVideo() {
+    const input = document.getElementById('editProjVideo');
+    if (input) input.value = '';
+    const wrap = document.getElementById('editProjVideoPreviewWrap');
+    if (wrap) wrap.style.display = 'none';
+    showToast('Project video removed', 'info');
+}
+
+function handleShortVideoUpload(event) {
+    const file = event.target.files[0];
+    processUploadedVideoFile(file, 'editShortVideo', 'editShortVideoPreviewWrap', 'editShortVideoFileName', () => {
+        const ytInput = document.getElementById('editShortYoutubeId');
+        if (ytInput) ytInput.value = '';
+    });
+}
+
+function removeShortVideo() {
+    const input = document.getElementById('editShortVideo');
+    if (input) input.value = '';
+    const wrap = document.getElementById('editShortVideoPreviewWrap');
+    if (wrap) wrap.style.display = 'none';
+    showToast('Short video removed', 'info');
+}
+
+window.handleShowreelVideoUpload = handleShowreelVideoUpload;
+window.removeShowreelVideo = removeShowreelVideo;
+window.handleShowreelPosterUpload = handleShowreelPosterUpload;
+window.removeShowreelPosterImage = removeShowreelPosterImage;
+window.handleProjVideoUpload = handleProjVideoUpload;
+window.removeProjVideo = removeProjVideo;
+window.handleShortVideoUpload = handleShortVideoUpload;
+window.removeShortVideo = removeShortVideo;
+
 function handleCtaIconUpload(event, btnId) {
     const file = event.target.files[0];
     if (!file) return;
@@ -1705,6 +1868,8 @@ function openAddProjectModal() {
     if (document.getElementById('editProjectId')) document.getElementById('editProjectId').value = '';
     const previewWrap = document.getElementById('editProjImagePreviewWrap');
     if (previewWrap) previewWrap.style.display = 'none';
+    const videoWrap = document.getElementById('editProjVideoPreviewWrap');
+    if (videoWrap) videoWrap.style.display = 'none';
     const modal = document.getElementById('projectEditModal');
     if (modal) modal.classList.add('active');
 }
@@ -1736,6 +1901,15 @@ function openEditProjectModal(projectId) {
         } else {
             const previewWrap = document.getElementById('editProjImagePreviewWrap');
             if (previewWrap) previewWrap.style.display = 'none';
+        }
+
+        const videoWrap = document.getElementById('editProjVideoPreviewWrap');
+        const videoName = document.getElementById('editProjVideoFileName');
+        if (proj.video && (proj.video.startsWith('data:video') || proj.video.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(proj.video))) {
+            if (videoWrap) videoWrap.style.display = 'flex';
+            if (videoName) videoName.textContent = proj.video.startsWith('data:video') ? 'Uploaded Video File' : proj.video.split('/').pop();
+        } else {
+            if (videoWrap) videoWrap.style.display = 'none';
         }
 
         const modal = document.getElementById('projectEditModal');
@@ -1915,6 +2089,8 @@ function openAddShortModal() {
     if (document.getElementById('editShortPlatformLabel')) document.getElementById('editShortPlatformLabel').value = 'Reels';
     const previewWrap = document.getElementById('editShortImagePreviewWrap');
     if (previewWrap) previewWrap.style.display = 'none';
+    const videoWrap = document.getElementById('editShortVideoPreviewWrap');
+    if (videoWrap) videoWrap.style.display = 'none';
     const modal = document.getElementById('shortEditModal');
     if (modal) modal.classList.add('active');
 }
@@ -1945,6 +2121,15 @@ function openEditShortModal(shortId) {
         } else {
             const previewWrap = document.getElementById('editShortImagePreviewWrap');
             if (previewWrap) previewWrap.style.display = 'none';
+        }
+
+        const videoWrap = document.getElementById('editShortVideoPreviewWrap');
+        const videoName = document.getElementById('editShortVideoFileName');
+        if (short.video && (short.video.startsWith('data:video') || short.video.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(short.video))) {
+            if (videoWrap) videoWrap.style.display = 'flex';
+            if (videoName) videoName.textContent = short.video.startsWith('data:video') ? 'Uploaded Vertical Video' : short.video.split('/').pop();
+        } else {
+            if (videoWrap) videoWrap.style.display = 'none';
         }
 
         const modal = document.getElementById('shortEditModal');
