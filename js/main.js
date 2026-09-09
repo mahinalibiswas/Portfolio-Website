@@ -748,32 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const short = currentReelsData[currentReelIndex];
         const mediaLayer = document.getElementById('reelMediaLayer');
-        const titleElem = document.getElementById('reelTitleText');
-        const clientTag = document.getElementById('reelClientTag');
-        const platformTag = document.getElementById('reelPlatformTag');
-
-        if (titleElem) titleElem.textContent = short.title || 'Reel Video';
-        if (clientTag) clientTag.textContent = `• ${short.client || 'Client'}`;
-
-        // Platform tag styling
-        if (platformTag) {
-            const p = (short.platform || 'instagram').toLowerCase();
-            let icon = short.platformIcon || 'fa-brands fa-instagram';
-            let label = short.platformLabel || 'Reels';
-            let color = '#e1306c';
-            if (p.includes('youtube')) {
-                icon = 'fa-brands fa-youtube';
-                label = 'Shorts';
-                color = '#ff0000';
-            } else if (p.includes('tiktok')) {
-                icon = 'fa-brands fa-tiktok';
-                label = 'TikTok';
-                color = '#00f0ff';
-            }
-            platformTag.innerHTML = `<i class="${icon}" style="color:${color};"></i> <span>${label}</span>`;
-        }
-
-        // Render Media Layer & Mode Detection
+        // Render Media Layer (100% Clean & Immersive Showcase)
         const playerFrame = document.getElementById('reelPlayerFrame');
         const rawVideo = (short.video || short.youtubeUrl || '').trim();
         const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));

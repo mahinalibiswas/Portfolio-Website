@@ -2797,7 +2797,7 @@ button {
     }
 }
 
-/* Media Layer (Crops out unwanted iframe chrome cleanly) */
+/* Media Layer (Ultra-Clean & Seamless 9:16) */
 .reel-media-layer {
     position: absolute;
     inset: 0;
@@ -2816,202 +2816,52 @@ button {
     height: 100%;
     border: none;
     object-fit: cover;
-    background: #000;
+    background: #000000;
 }
 
+/* Crop YouTube web header (AI badge, title, avatar) & bottom web clutter cleanly */
 .reel-media-layer iframe {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 100%;
-    height: 100%;
-    transform: translate(-50%, -50%) scale(1.025);
+    width: calc(100% + 30px);
+    height: calc(100% + 150px);
+    transform: translate(-50%, -50%);
     border: none;
-    background: #000;
+    background: #000000;
     pointer-events: auto;
 }
 
-/* Overlay Layer (IG / Shorts floating HUD) */
-.reel-overlay-layer {
+/* Floating Ultra-Clean Close Button */
+.reel-close-floating-btn {
     position: absolute;
-    inset: 0;
-    z-index: 10;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1.25rem 1rem 0.8rem 1rem;
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.6) 0%,
-        rgba(0, 0, 0, 0) 18%,
-        rgba(0, 0, 0, 0) 55%,
-        rgba(0, 0, 0, 0.85) 85%,
-        rgba(0, 0, 0, 0.96) 100%
-    );
-}
-
-/* Clean & Luxury Minimal Overlay Layer */
-.reel-overlay-layer {
-    position: absolute;
-    inset: 0;
-    z-index: 10;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1.25rem 1.15rem 1.15rem 1.15rem;
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.45) 0%,
-        transparent 16%,
-        transparent 60%,
-        rgba(0, 0, 0, 0.75) 85%,
-        rgba(0, 0, 0, 0.94) 100%
-    );
-    transition: opacity 0.3s ease;
-}
-
-/* Media Layer: iframe scaled smoothly to hide YouTube's desktop web chrome */
-.reel-media-layer iframe {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: calc(100% + 120px);
-    transform: translate(-50%, -50%) scale(1.06);
-    border: none;
-    background: #000;
-    pointer-events: auto;
-}
-
-.reel-media-layer video {
-    width: 100%;
-    height: 100%;
-    border: none;
-    object-fit: cover;
-    background: #000;
-}
-
-/* Top Bar */
-.reel-overlay-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    pointer-events: auto;
-    gap: 0.8rem;
-    margin-top: 0.3rem;
-}
-
-.reel-platform-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.35rem 0.85rem;
-    background: rgba(15, 23, 42, 0.78);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.02em;
-}
-
-.reel-platform-tag i {
-    font-size: 0.92rem;
-}
-
-.reel-top-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-.reel-icon-btn {
-    width: 38px;
-    height: 38px;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: rgba(15, 23, 42, 0.82);
+    background: rgba(15, 23, 42, 0.7);
     backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border: 1.5px solid rgba(255, 255, 255, 0.22);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 0.95rem;
-    transition: var(--transition-fast);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    font-size: 1rem;
+    z-index: 20;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    outline: none;
 }
 
-.reel-close-btn {
-    border-color: rgba(163, 230, 53, 0.45);
-}
-
-.reel-icon-btn:hover {
-    background: var(--accent-neon);
-    color: #020817;
-    border-color: var(--accent-neon);
-    box-shadow: 0 0 20px rgba(163, 230, 53, 0.7);
-    transform: scale(1.1);
-}
-
-.reel-close-btn:hover {
+.reel-close-floating-btn:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
     transform: scale(1.1) rotate(90deg);
-}
-
-/* Bottom Info */
-.reel-overlay-bottom {
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 0.4rem;
-}
-
-.reel-creator-header {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-}
-
-.reel-creator-img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1.5px solid var(--accent-neon);
-    object-fit: cover;
-}
-
-.reel-creator-handle {
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.02em;
-}
-
-.reel-creator-badge {
-    color: var(--accent-neon);
-    font-size: 0.85rem;
-}
-
-.reel-client-tag {
-    font-size: 0.76rem;
-    color: rgba(255, 255, 255, 0.7);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.reel-title-text {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1.25;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
 }
 
 /* Smooth Transition Animation between Reels */
