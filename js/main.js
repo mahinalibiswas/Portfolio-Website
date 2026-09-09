@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let playerHtml = '';
             if (isDirectVideo) {
-                playerHtml = `<video src="${rawVideo}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`;
+                playerHtml = `<video src="${rawVideo}" controls autoplay muted playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`;
             } else if (extractedYt) {
                 playerHtml = `<iframe src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>`;
             } else if (isEmbedCode) {
@@ -907,7 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (data.youtubeId && (!rawVideo || rawVideo === data.youtubeUrl)) {
                 playerHtml = `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>`;
             } else {
-                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`;
+                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay muted playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`;
             }
 
             if (body) {
@@ -1090,7 +1090,11 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             e.stopPropagation();
             const projectId = playBtn.getAttribute('data-id');
-            openProjectVideoModal(projectId);
+            if (projectId === 'project-2') {
+                openReelModal('short-1');
+            } else {
+                openProjectVideoModal(projectId);
+            }
             return;
         }
     });
