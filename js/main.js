@@ -888,61 +888,61 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextBtn = document.getElementById('shortsNextBtn');
         const dotsContainer = document.getElementById('shortsDots');
 
-        if (!track || !prevBtn || !nextBtn || !dotsContainer) return;
+        if (!track || !prevBtn || !nextBtn) return;
 
-        const cards = Array.from(track.querySelectorAll('.short-card'));
-        if (!cards.length) return;
-
-        function cardWidth() {
-            if (!cards[0]) return 320;
+        function getStep() {
+            const firstCard = track.querySelector('.short-card');
+            if (!firstCard) return 338;
             const style = window.getComputedStyle(track);
             const gap = parseFloat(style.gap) || 28;
-            return cards[0].getBoundingClientRect().width + gap;
-        }
-
-        function visibleCount() {
-            return Math.max(1, Math.round(track.clientWidth / cardWidth()));
-        }
-
-        function totalPages() {
-            return Math.ceil(cards.length / visibleCount());
-        }
-
-        function currentPage() {
-            return Math.round(track.scrollLeft / (cardWidth() * visibleCount()));
-        }
-
-        function buildDots() {
-            dotsContainer.innerHTML = '';
-            for (let i = 0; i < totalPages(); i++) {
-                const dot = document.createElement('button');
-                dot.className = 'shorts-dot' + (i === 0 ? ' active' : '');
-                dot.setAttribute('aria-label', 'Page ' + (i + 1));
-                dot.addEventListener('click', () => goToPage(i));
-                dotsContainer.appendChild(dot);
-            }
-        }
-
-        function goToPage(page) {
-            track.scrollLeft = page * cardWidth() * visibleCount();
+            return firstCard.offsetWidth + gap;
         }
 
         function updateUI() {
-            const page = currentPage();
-            dotsContainer.querySelectorAll('.shorts-dot').forEach((d, i) => {
-                d.classList.toggle('active', i === page);
-            });
-            prevBtn.disabled = page === 0;
-            nextBtn.disabled = page >= totalPages() - 1;
+            const maxScroll = track.scrollWidth - track.clientWidth - 5;
+            prevBtn.disabled = track.scrollLeft <= 5;
+            nextBtn.disabled = track.scrollLeft >= maxScroll;
+
+            if (dotsContainer) {
+                const cards = track.querySelectorAll('.short-card');
+                const step = getStep();
+                const activeIndex = Math.min(cards.length - 1, Math.max(0, Math.round(track.scrollLeft / step)));
+                dotsContainer.querySelectorAll('.shorts-dot').forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx === activeIndex);
+                });
+            }
         }
 
-        if (!prevBtn.dataset.bound) {
-            prevBtn.addEventListener('click', () => goToPage(Math.max(0, currentPage() - 1)));
-            nextBtn.addEventListener('click', () => goToPage(Math.min(totalPages() - 1, currentPage() + 1)));
-            track.addEventListener('scroll', updateUI, { passive: true });
-            window.addEventListener('resize', () => { buildDots(); updateUI(); });
-            prevBtn.dataset.bound = 'true';
+        function buildDots() {
+            if (!dotsContainer) return;
+            const cards = track.querySelectorAll('.short-card');
+            dotsContainer.innerHTML = '';
+            cards.forEach((card, idx) => {
+                const dot = document.createElement('button');
+                dot.className = 'shorts-dot' + (idx === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Go to short ${idx + 1}`);
+                dot.addEventListener('click', () => {
+                    track.scrollTo({ left: idx * getStep(), behavior: 'smooth' });
+                });
+                dotsContainer.appendChild(dot);
+            });
         }
+
+        prevBtn.onclick = function(e) {
+            e.preventDefault();
+            track.scrollBy({ left: -getStep(), behavior: 'smooth' });
+        };
+
+        nextBtn.onclick = function(e) {
+            e.preventDefault();
+            track.scrollBy({ left: getStep(), behavior: 'smooth' });
+        };
+
+        track.onscroll = updateUI;
+        window.onresize = function() {
+            buildDots();
+            updateUI();
+        };
 
         buildDots();
         updateUI();
