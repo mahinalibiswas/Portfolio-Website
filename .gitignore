@@ -1,5 +1,8 @@
 assets/videos/*.mp4
 !assets/videos/short_color_grading.mp4
+!assets/videos/short_2_raw_edit.mp4
+!assets/videos/short_3_before_after.mp4
+!assets/videos/short_4_client_edit.mp4
 assets/videos/hero_teaser.mp4
 assets/videos/main_showreel.mp4
 assets/videos/showreel.mp4

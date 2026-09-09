@@ -226,77 +226,82 @@ const DEFAULT_SITE_DATA = {
         },
         {
             id: "short-2",
-            title: "YouTube Shorts Edit",
+            title: "Raw Footage to Professional Edit",
+            author: "Mahin Ali Biswas",
             platform: "youtube",
             platformLabel: "Shorts",
             platformIcon: "fa-brands fa-youtube",
             duration: "0:45",
             client: "Mahin Ali Biswas",
             image: "assets/images/project_youtube_doc.jpg",
-            video: "assets/videos/main_showreel.mp4",
-            youtubeId: "M7lc1UVf-VE",
-            youtubeUrl: "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+            video: "assets/videos/short_2_raw_edit.mp4",
+            youtubeId: "",
+            youtubeUrl: "",
             date: "2026",
-            desc: "High-retention vertical YouTube Shorts cut with fast-paced storytelling and sound effects."
+            desc: "Raw footage transformed into high-retention professional video with motion graphics."
         },
         {
             id: "short-3",
-            title: "TikTok Ad Promo",
+            title: "Professional Video Editing Showcase",
+            author: "Mahin Ali Biswas",
             platform: "tiktok",
             platformLabel: "TikTok",
             platformIcon: "fa-brands fa-tiktok",
             duration: "0:30",
-            client: "E-Commerce Brand",
+            client: "Mahin Ali Biswas",
             image: "assets/images/project_commercial_ad.jpg",
-            video: "assets/videos/hero_teaser.mp4",
-            youtubeId: "ScMzIvxBSi4",
-            youtubeUrl: "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+            video: "assets/videos/short_3_before_after.mp4",
+            youtubeId: "",
+            youtubeUrl: "",
             date: "2026",
-            desc: "High-converting short-form TikTok ad with product callouts and energetic music sync."
+            desc: "Dynamic before and after vertical video showcase with sound design and kinetic captions."
         },
         {
             id: "short-4",
-            title: "Animated Logo Short",
+            title: "Motion Graphics & Client Edit",
+            author: "Mahin Ali Biswas",
             platform: "instagram",
             platformLabel: "Reels",
             platformIcon: "fa-brands fa-instagram",
-            duration: "0:15",
-            client: "Tech Brand",
+            duration: "0:19",
+            client: "Mahin Ali Biswas",
             image: "assets/images/project_motion_logo.jpg",
-            video: "assets/videos/hero_teaser.mp4",
-            youtubeId: "2g811Ko7K8U",
-            youtubeUrl: "https://www.youtube.com/watch?v=2g811Ko7K8U",
+            video: "assets/videos/short_4_client_edit.mp4",
+            youtubeId: "",
+            youtubeUrl: "",
             date: "2026",
-            desc: "Sleek 15-second logo motion reveal formatted for 9:16 vertical feeds."
+            desc: "Sleek client video edit formatted for 9:16 vertical feeds."
         },
         {
             id: "short-5",
-            title: "Corporate Short Clip",
+            title: "High-Retention Commercial Edit",
+            author: "Mahin Ali Biswas",
             platform: "youtube",
             platformLabel: "Shorts",
             platformIcon: "fa-brands fa-youtube",
-            duration: "1:00",
-            client: "Corporate Agency",
+            duration: "0:58",
+            client: "Mahin Ali Biswas",
             image: "assets/images/project_talking_head.jpg",
-            video: "assets/videos/main_showreel.mp4",
-            youtubeId: "aqz-KE-bpKQ",
-            youtubeUrl: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
-            date: "2025",
-            desc: "Bite-sized talking head snippet with auto-captions and audio enhancement."
+            video: "assets/videos/short_color_grading.mp4",
+            youtubeId: "",
+            youtubeUrl: "",
+            date: "2026",
+            desc: "High-retention commercial video edit."
         },
         {
             id: "short-6",
-            title: "Cinematic Color Short",
+            title: "Raw to Cinematic Showcase",
+            author: "Mahin Ali Biswas",
             platform: "tiktok",
             platformLabel: "TikTok",
             platformIcon: "fa-brands fa-tiktok",
-            duration: "0:52",
-            client: "Film Director",
+            duration: "0:45",
+            client: "Mahin Ali Biswas",
             image: "assets/images/project_color_pass.jpg",
-            video: "assets/videos/main_showreel.mp4",
-            youtubeId: "L_LUpnjgPso",
-            youtubeUrl: "https://www.youtube.com/watch?v=L_LUpnjgPso",
-            date: "2025",
+            video: "assets/videos/short_2_raw_edit.mp4",
+            youtubeId: "",
+            youtubeUrl: "",
+            date: "2026",
             desc: "Before/after color grading reel showcasing cinematic film LUTs on vertical video."
         }
     ],
@@ -439,9 +444,39 @@ function getSiteData() {
 
             if (merged.shorts && merged.shorts.length) {
                 merged.shorts.forEach(s => {
-                    if (s.id === 'short-1' || s.title === 'Viral Reels & TikToks' || s.title === 'Professional Video Color Grading') {
+                    if (s.id === 'short-1' || s.id === 1 || s.title === 'Viral Reels & TikToks' || s.title === 'Professional Video Color Grading') {
                         s.title = 'Professional Video Color Grading';
                         s.video = 'assets/videos/short_color_grading.mp4';
+                        s.youtubeId = '';
+                        s.youtubeUrl = '';
+                        s.author = 'Mahin Ali Biswas';
+                    } else if (s.id === 'short-2' || s.id === 2 || s.title === 'YouTube Shorts Edit' || s.title === 'Raw Footage to Professional Edit') {
+                        s.title = 'Raw Footage to Professional Edit';
+                        s.video = 'assets/videos/short_2_raw_edit.mp4';
+                        s.youtubeId = '';
+                        s.youtubeUrl = '';
+                        s.author = 'Mahin Ali Biswas';
+                    } else if (s.id === 'short-3' || s.id === 3 || s.title === 'TikTok Ad Promo' || s.title === 'Professional Video Editing Showcase') {
+                        s.title = 'Professional Video Editing Showcase';
+                        s.video = 'assets/videos/short_3_before_after.mp4';
+                        s.youtubeId = '';
+                        s.youtubeUrl = '';
+                        s.author = 'Mahin Ali Biswas';
+                    } else if (s.id === 'short-4' || s.id === 4 || s.title === 'Animated Logo Short' || s.title === 'Motion Graphics & Client Edit') {
+                        s.title = 'Motion Graphics & Client Edit';
+                        s.video = 'assets/videos/short_4_client_edit.mp4';
+                        s.youtubeId = '';
+                        s.youtubeUrl = '';
+                        s.author = 'Mahin Ali Biswas';
+                    } else if (s.id === 'short-5' || s.id === 5 || s.title === 'Corporate Short Clip' || s.title === 'High-Retention Commercial Edit') {
+                        s.title = 'High-Retention Commercial Edit';
+                        s.video = 'assets/videos/short_color_grading.mp4';
+                        s.youtubeId = '';
+                        s.youtubeUrl = '';
+                        s.author = 'Mahin Ali Biswas';
+                    } else if (s.id === 'short-6' || s.id === 6 || s.title === 'Cinematic Color Short' || s.title === 'Raw to Cinematic Showcase') {
+                        s.title = 'Raw to Cinematic Showcase';
+                        s.video = 'assets/videos/short_2_raw_edit.mp4';
                         s.youtubeId = '';
                         s.youtubeUrl = '';
                         s.author = 'Mahin Ali Biswas';
