@@ -749,9 +749,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const short = currentReelsData[currentReelIndex];
         const mediaLayer = document.getElementById('reelMediaLayer');
         const bottomTitle = document.getElementById('reelBottomTitle');
-        if (bottomTitle) bottomTitle.textContent = short.title || 'Professional Video Color Grading';
+        const realTitle = (short.title && short.title !== 'Viral Reels & TikToks') ? short.title : 'Professional Video Color Grading';
+        if (bottomTitle) bottomTitle.textContent = realTitle;
         const bottomChannel = document.getElementById('reelBottomChannel');
         if (bottomChannel) bottomChannel.textContent = short.author || 'Mahin Ali Biswas';
+        const bottomAvatar = document.querySelector('.reel-bottom-avatar');
+        if (bottomAvatar) bottomAvatar.src = 'assets/images/mahin_profile.jpg';
 
         // Render Media Layer (100% Clean & Immersive Showcase)
         const playerFrame = document.getElementById('reelPlayerFrame');

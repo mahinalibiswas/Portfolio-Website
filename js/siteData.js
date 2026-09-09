@@ -210,13 +210,14 @@ const DEFAULT_SITE_DATA = {
     shorts: [
         {
             id: "short-1",
-            title: "Viral Reels & TikToks",
+            title: "Professional Video Color Grading",
+            author: "Mahin Ali Biswas",
             platform: "instagram",
             platformLabel: "Reels",
             platformIcon: "fa-brands fa-instagram",
             duration: "0:58",
-            client: "Social Media Client",
-            image: "assets/images/project_reels_shorts.jpg",
+            client: "Mahin Ali Biswas",
+            image: "assets/images/mahin_profile.jpg",
             video: "assets/videos/hero_teaser.mp4",
             youtubeId: "kJQP7kiw5Fk",
             youtubeUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
@@ -435,6 +436,17 @@ function getSiteData() {
                 shortsHeader: { ...DEFAULT_SITE_DATA.shortsHeader, ...(parsed.shortsHeader || {}) },
                 shorts: (parsed.shorts && parsed.shorts.length) ? parsed.shorts : DEFAULT_SITE_DATA.shorts
             };
+
+            if (merged.shorts && merged.shorts.length) {
+                merged.shorts.forEach(s => {
+                    if (s.title === 'Viral Reels & TikToks' || !s.title) {
+                        s.title = 'Professional Video Color Grading';
+                    }
+                    if (!s.author || s.author === 'Social Media Client') {
+                        s.author = 'Mahin Ali Biswas';
+                    }
+                });
+            }
 
             return merged;
         }
