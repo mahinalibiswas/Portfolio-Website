@@ -218,11 +218,11 @@ const DEFAULT_SITE_DATA = {
             duration: "0:58",
             client: "Mahin Ali Biswas",
             image: "assets/images/mahin_profile.jpg",
-            video: "assets/videos/hero_teaser.mp4",
-            youtubeId: "kJQP7kiw5Fk",
-            youtubeUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
+            video: "assets/videos/short_color_grading.mp4",
+            youtubeId: "",
+            youtubeUrl: "",
             date: "2026",
-            desc: "Dynamic vertical video edit featuring pop-up emojis, animated Bangla/English motion subtitles, zoom cuts, audio sound effects, and fast-hook intro pacing."
+            desc: "Professional video color grading before and after showcase."
         },
         {
             id: "short-2",
@@ -439,8 +439,12 @@ function getSiteData() {
 
             if (merged.shorts && merged.shorts.length) {
                 merged.shorts.forEach(s => {
-                    if (s.title === 'Viral Reels & TikToks' || !s.title) {
+                    if (s.id === 'short-1' || s.title === 'Viral Reels & TikToks' || s.title === 'Professional Video Color Grading') {
                         s.title = 'Professional Video Color Grading';
+                        s.video = 'assets/videos/short_color_grading.mp4';
+                        s.youtubeId = '';
+                        s.youtubeUrl = '';
+                        s.author = 'Mahin Ali Biswas';
                     }
                     if (!s.author || s.author === 'Social Media Client') {
                         s.author = 'Mahin Ali Biswas';
