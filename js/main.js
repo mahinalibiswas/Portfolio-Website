@@ -748,6 +748,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const short = currentReelsData[currentReelIndex];
         const mediaLayer = document.getElementById('reelMediaLayer');
+        const ytTitle = document.getElementById('reelYtTitle');
+        if (ytTitle) ytTitle.textContent = short.title || 'Viral Reels & TikToks';
+
         // Render Media Layer (100% Clean & Immersive Showcase)
         const playerFrame = document.getElementById('reelPlayerFrame');
         const rawVideo = (short.video || short.youtubeUrl || '').trim();
@@ -976,6 +979,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (e.target.id === 'reelModal') {
             closeReelModal();
+            return;
+        }
+
+        // Like & Share actions on Reel Overlay
+        const reelLike = e.target.closest('#reelLikeBtn');
+        if (reelLike) {
+            e.preventDefault();
+            e.stopPropagation();
+            const countEl = document.getElementById('reelLikeCount');
+            const isLiked = reelLike.classList.toggle('liked');
+            if (countEl) countEl.textContent = isLiked ? '1' : 'Like';
+            if (typeof showToast === 'function') showToast(isLiked ? 'Added to Liked videos' : 'Removed from Liked videos');
+            return;
+        }
+
+        const reelShare = e.target.closest('#reelShareBtn');
+        if (reelShare) {
+            e.preventDefault();
+            e.stopPropagation();
+            const short = (currentReelsData && currentReelsData[currentReelIndex]) ? currentReelsData[currentReelIndex] : null;
+            const url = short ? (short.youtubeUrl || short.video || window.location.href) : window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    if (typeof showToast === 'function') showToast('Reel link copied to clipboard!');
+                });
+            } else if (typeof showToast === 'function') {
+                showToast('Reel link ready to share!');
+            }
             return;
         }
 
