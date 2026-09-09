@@ -982,6 +982,11 @@
 
     <!-- Dedicated Vertical Reel Player Modal (Instagram / Shorts / TikTok style) -->
     <div class="modal-backdrop reel-modal-backdrop" id="reelModal">
+        <!-- Outside Close Button (Screen corner, never touches video) -->
+        <button class="reel-outside-close" id="closeReelModal" aria-label="Close Reel" title="Close (Esc)">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
         <div class="reel-modal-container">
             <!-- Outside Prev / Next for Desktop -->
             <button class="reel-outside-nav reel-outside-prev" id="reelOutsidePrev" aria-label="Previous Reel" title="Previous Reel (Up Arrow)">
@@ -993,25 +998,9 @@
 
             <!-- Vertical Phone / Reel Player Frame (9:16) -->
             <div class="reel-player-frame" id="reelPlayerFrame">
-                <!-- Floating Minimal Close Button -->
-                <button class="reel-close-floating-btn" id="closeReelModal" aria-label="Close Reel" title="Close Reel">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-
                 <!-- Media Layer (Video / Iframe) -->
                 <div class="reel-media-layer" id="reelMediaLayer">
                     <!-- Injected dynamically via JS -->
-                </div>
-
-                <!-- Bottom Info HUD (Clean, Premium & Positioned at Bottom Part) -->
-                <div class="reel-bottom-hud" id="reelBottomHud">
-                    <div class="reel-hud-creator">
-                        <img src="assets/images/hero_avatar.jpg" alt="Mahin Ali Biswas" class="reel-hud-avatar" onerror="this.src='assets/images/hero_showreel_cover.jpg'">
-                        <span class="reel-hud-handle">@mahinalibiswas</span>
-                        <span class="reel-hud-badge" title="Verified Editor"><i class="fa-solid fa-circle-check"></i></span>
-                        <span class="reel-hud-client" id="reelHudClient">• Client Project</span>
-                    </div>
-                    <h3 class="reel-hud-title" id="reelHudTitle">Viral Reels &amp; TikToks</h3>
                 </div>
             </div>
         </div>

@@ -748,11 +748,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const short = currentReelsData[currentReelIndex];
         const mediaLayer = document.getElementById('reelMediaLayer');
-        const hudTitle = document.getElementById('reelHudTitle');
-        const hudClient = document.getElementById('reelHudClient');
-        if (hudTitle) hudTitle.textContent = short.title || 'Reel Video';
-        if (hudClient) hudClient.textContent = `• ${short.client || 'Client Project'}`;
-
         // Render Media Layer (100% Clean & Immersive Showcase)
         const playerFrame = document.getElementById('reelPlayerFrame');
         const rawVideo = (short.video || short.youtubeUrl || '').trim();
