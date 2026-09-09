@@ -463,6 +463,8 @@ function getSiteData() {
     } catch (e) {
         console.error("Error reading site data from localStorage", e);
     }
+
+    return JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
 }
 
 /* ==========================================================================

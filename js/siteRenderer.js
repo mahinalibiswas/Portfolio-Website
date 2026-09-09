@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderSiteData(customData) {
     if (typeof getSiteData !== 'function' && !customData) return;
-    const data = customData || getSiteData();
+    const data = customData || (typeof getSiteData === 'function' ? getSiteData() : null) || (typeof DEFAULT_SITE_DATA !== 'undefined' ? DEFAULT_SITE_DATA : null);
+    if (!data) return;
 
     // 0. Render Navigation Bar
     if (data.navigation) {
