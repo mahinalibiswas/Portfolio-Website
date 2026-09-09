@@ -2093,7 +2093,7 @@ function renderAdminShortsList(shorts) {
         const label = short.platformLabel || (platformClass === 'youtube' ? 'Shorts' : platformClass === 'tiktok' ? 'TikTok' : 'Reels');
 
         return `
-        <div class="admin-short-item" draggable="true" data-id="${short.id}" data-index="${idx}">
+        <div class="admin-short-item" data-id="${short.id}" data-index="${idx}">
             <div class="admin-drag-handle" title="Drag to reorder card">
                 <i class="fa-solid fa-grip-vertical"></i>
             </div>
@@ -2137,66 +2137,65 @@ function renderAdminShortsList(shorts) {
     initShortsDragAndDrop();
 }
 
+let shortsSortableInstance = null;
+
+function updateShortsBadgesAndButtons() {
+    const listContainer = document.getElementById('adminShortsList');
+    if (!listContainer) return;
+    const items = listContainer.querySelectorAll('.admin-short-item');
+    const total = items.length;
+
+    items.forEach((item, index) => {
+        item.setAttribute('data-index', index);
+        const badge = item.querySelector('.short-order-badge');
+        if (badge) {
+            badge.textContent = `#${index + 1}`;
+            badge.title = `Position #${index + 1}`;
+        }
+        const upBtn = item.querySelector('.order-btn:first-child');
+        const downBtn = item.querySelector('.order-btn:last-child');
+        if (upBtn) upBtn.disabled = (index === 0);
+        if (downBtn) downBtn.disabled = (index === total - 1);
+    });
+}
+
 function initShortsDragAndDrop() {
     const listContainer = document.getElementById('adminShortsList');
     if (!listContainer) return;
 
-    const items = listContainer.querySelectorAll('.admin-short-item');
-    let draggedItem = null;
+    if (shortsSortableInstance) {
+        try {
+            shortsSortableInstance.destroy();
+        } catch (e) {}
+        shortsSortableInstance = null;
+    }
 
-    items.forEach(item => {
-        item.addEventListener('dragstart', (e) => {
-            draggedItem = item;
-            item.classList.add('is-dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', item.getAttribute('data-id') || '');
-        });
+    if (typeof Sortable !== 'undefined') {
+        shortsSortableInstance = new Sortable(listContainer, {
+            animation: 280,
+            easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+            handle: '.admin-drag-handle, .admin-short-thumb, .admin-short-info',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            filter: '.admin-short-actions, button, input, textarea, a',
+            preventOnFilter: false,
+            fallbackTolerance: 3,
+            onEnd: async function (evt) {
+                if (evt.oldIndex === evt.newIndex) return;
 
-        item.addEventListener('dragend', () => {
-            if (draggedItem) {
-                draggedItem.classList.remove('is-dragging');
-                draggedItem = null;
+                const data = getSiteData();
+                if (!data.shorts || !Array.isArray(data.shorts)) return;
+
+                const [movedItem] = data.shorts.splice(evt.oldIndex, 1);
+                data.shorts.splice(evt.newIndex, 0, movedItem);
+
+                await saveSiteData(data);
+                updateShortsBadgesAndButtons();
+                showToast(`Reordered! Card placed at position #${evt.newIndex + 1}`, 'success');
             }
-            items.forEach(it => it.classList.remove('drag-over-target'));
         });
-
-        item.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            if (draggedItem && draggedItem !== item) {
-                item.classList.add('drag-over-target');
-            }
-        });
-
-        item.addEventListener('dragleave', () => {
-            item.classList.remove('drag-over-target');
-        });
-
-        item.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            item.classList.remove('drag-over-target');
-            if (!draggedItem || draggedItem === item) return;
-
-            const fromId = draggedItem.getAttribute('data-id');
-            const toId = item.getAttribute('data-id');
-            if (!fromId || !toId || fromId === toId) return;
-
-            const data = getSiteData();
-            if (!data.shorts || !Array.isArray(data.shorts)) return;
-
-            const fromIndex = data.shorts.findIndex(s => s.id === fromId);
-            const toIndex = data.shorts.findIndex(s => s.id === toId);
-
-            if (fromIndex === -1 || toIndex === -1) return;
-
-            const [movedItem] = data.shorts.splice(fromIndex, 1);
-            data.shorts.splice(toIndex, 0, movedItem);
-
-            await saveSiteData(data);
-            renderAdminShortsList(data.shorts);
-            showToast(`Card placed at position #${toIndex + 1}!`, 'success');
-        });
-    });
+    }
 }
 
 async function moveShortOrder(shortId, direction) {

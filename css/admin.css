@@ -505,24 +505,32 @@
     cursor: grab;
     user-select: none;
     position: relative;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 
 .admin-short-item:active {
     cursor: grabbing;
 }
 
-.admin-short-item.is-dragging {
-    opacity: 0.35;
-    border: 2px dashed var(--accent-neon);
+/* SortableJS Live Shifting & Ghost Styles */
+.sortable-ghost {
+    opacity: 0.25 !important;
+    background: rgba(163, 230, 53, 0.05) !important;
+    border: 2px dashed var(--accent-neon) !important;
     transform: scale(0.98);
 }
 
-.admin-short-item.drag-over-target {
+.sortable-chosen {
     border-color: var(--accent-neon) !important;
-    background: rgba(163, 230, 53, 0.08) !important;
     box-shadow: 0 0 25px rgba(163, 230, 53, 0.25) !important;
-    transform: translateY(-4px);
+}
+
+.sortable-drag {
+    opacity: 0.95 !important;
+    cursor: grabbing !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 30px rgba(163, 230, 53, 0.35) !important;
+    border-color: var(--accent-neon) !important;
+    background: rgba(15, 23, 42, 0.98) !important;
 }
 
 .admin-drag-handle {
