@@ -2819,10 +2819,9 @@ button {
 
 .reel-media-layer iframe {
     position: absolute;
-    top: -80px;
-    left: 0;
+    inset: 0;
     width: 100%;
-    height: calc(100% + 160px);
+    height: 100%;
     border: none;
     background: #000;
     pointer-events: auto;
