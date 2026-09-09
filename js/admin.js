@@ -2084,7 +2084,7 @@ function renderAdminShortsList(shorts) {
         return;
     }
 
-    listContainer.innerHTML = shorts.map(short => {
+    listContainer.innerHTML = shorts.map((short, idx) => {
         const platformClass = (short.platform || 'instagram').toLowerCase();
         let defaultIcon = 'fa-brands fa-instagram';
         if (platformClass === 'youtube') defaultIcon = 'fa-brands fa-youtube';
@@ -2093,10 +2093,16 @@ function renderAdminShortsList(shorts) {
         const label = short.platformLabel || (platformClass === 'youtube' ? 'Shorts' : platformClass === 'tiktok' ? 'TikTok' : 'Reels');
 
         return `
-        <div class="admin-short-item">
+        <div class="admin-short-item" draggable="true" data-id="${short.id}" data-index="${idx}">
+            <div class="admin-drag-handle" title="Drag to reorder card">
+                <i class="fa-solid fa-grip-vertical"></i>
+            </div>
             <img src="${short.image || 'assets/images/project_reels_shorts.jpg'}" alt="${short.title || 'Short'}" class="admin-short-thumb" onerror="this.onerror=null; this.src='assets/images/project_reels_shorts.jpg';">
             <div class="admin-short-info">
-                <h4>${short.title || 'Untitled Reel'}</h4>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                    <span class="short-order-badge" title="Position #${idx + 1}">#${idx + 1}</span>
+                    <h4 style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${short.title || 'Untitled Reel'}</h4>
+                </div>
                 <div class="admin-short-meta-row">
                     <span class="admin-short-badge ${platformClass}">
                         <i class="${icon}"></i> ${label}
@@ -2105,10 +2111,18 @@ function renderAdminShortsList(shorts) {
                     <span class="admin-short-meta">• ${short.client || 'Client'}</span>
                 </div>
                 <div style="font-size: 0.76rem; color: var(--accent-neon); display: flex; align-items: center; gap: 0.35rem;">
-                    <i class="fa-solid fa-circle-play" style="font-size: 0.72rem;"></i> YouTube ID: ${short.youtubeId || 'Custom URL'}
+                    <i class="fa-solid fa-circle-play" style="font-size: 0.72rem;"></i> ${short.youtubeId ? `YouTube ID: ${short.youtubeId}` : (short.video ? (short.video.includes('/') ? short.video.split('/').pop() : 'Direct Video') : 'Custom Video')}
                 </div>
             </div>
             <div class="admin-short-actions">
+                <div class="order-btn-group" title="Reorder position">
+                    <button type="button" class="order-btn" onclick="moveShortOrder('${short.id}', -1)" title="Move earlier / towards 1st" ${idx === 0 ? 'disabled' : ''}>
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </button>
+                    <button type="button" class="order-btn" onclick="moveShortOrder('${short.id}', 1)" title="Move later" ${idx === shorts.length - 1 ? 'disabled' : ''}>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
                 <button class="action-btn edit-btn" onclick="openEditShortModal('${short.id}')" title="Edit Reel">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
@@ -2119,7 +2133,91 @@ function renderAdminShortsList(shorts) {
         </div>
         `;
     }).join('');
+
+    initShortsDragAndDrop();
 }
+
+function initShortsDragAndDrop() {
+    const listContainer = document.getElementById('adminShortsList');
+    if (!listContainer) return;
+
+    const items = listContainer.querySelectorAll('.admin-short-item');
+    let draggedItem = null;
+
+    items.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            draggedItem = item;
+            item.classList.add('is-dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', item.getAttribute('data-id') || '');
+        });
+
+        item.addEventListener('dragend', () => {
+            if (draggedItem) {
+                draggedItem.classList.remove('is-dragging');
+                draggedItem = null;
+            }
+            items.forEach(it => it.classList.remove('drag-over-target'));
+        });
+
+        item.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (draggedItem && draggedItem !== item) {
+                item.classList.add('drag-over-target');
+            }
+        });
+
+        item.addEventListener('dragleave', () => {
+            item.classList.remove('drag-over-target');
+        });
+
+        item.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            item.classList.remove('drag-over-target');
+            if (!draggedItem || draggedItem === item) return;
+
+            const fromId = draggedItem.getAttribute('data-id');
+            const toId = item.getAttribute('data-id');
+            if (!fromId || !toId || fromId === toId) return;
+
+            const data = getSiteData();
+            if (!data.shorts || !Array.isArray(data.shorts)) return;
+
+            const fromIndex = data.shorts.findIndex(s => s.id === fromId);
+            const toIndex = data.shorts.findIndex(s => s.id === toId);
+
+            if (fromIndex === -1 || toIndex === -1) return;
+
+            const [movedItem] = data.shorts.splice(fromIndex, 1);
+            data.shorts.splice(toIndex, 0, movedItem);
+
+            await saveSiteData(data);
+            renderAdminShortsList(data.shorts);
+            showToast(`Card placed at position #${toIndex + 1}!`, 'success');
+        });
+    });
+}
+
+async function moveShortOrder(shortId, direction) {
+    const data = getSiteData();
+    if (!data.shorts || !Array.isArray(data.shorts)) return;
+
+    const currentIndex = data.shorts.findIndex(s => s.id === shortId);
+    if (currentIndex === -1) return;
+
+    const targetIndex = currentIndex + direction;
+    if (targetIndex < 0 || targetIndex >= data.shorts.length) return;
+
+    const [movedItem] = data.shorts.splice(currentIndex, 1);
+    data.shorts.splice(targetIndex, 0, movedItem);
+
+    await saveSiteData(data);
+    renderAdminShortsList(data.shorts);
+    showToast(`Card moved to position #${targetIndex + 1}!`, 'success');
+}
+window.moveShortOrder = moveShortOrder;
+window.initShortsDragAndDrop = initShortsDragAndDrop;
 
 function onShortPlatformChange(platform) {
     const labelInput = document.getElementById('editShortPlatformLabel');

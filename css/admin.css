@@ -495,8 +495,97 @@
 
 .admin-short-actions {
     display: flex;
-    gap: 0.5rem;
+    align-items: center;
+    gap: 0.6rem;
     flex-shrink: 0;
+}
+
+/* Drag & Drop Reorder Styling */
+.admin-short-item {
+    cursor: grab;
+    user-select: none;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.admin-short-item:active {
+    cursor: grabbing;
+}
+
+.admin-short-item.is-dragging {
+    opacity: 0.35;
+    border: 2px dashed var(--accent-neon);
+    transform: scale(0.98);
+}
+
+.admin-short-item.drag-over-target {
+    border-color: var(--accent-neon) !important;
+    background: rgba(163, 230, 53, 0.08) !important;
+    box-shadow: 0 0 25px rgba(163, 230, 53, 0.25) !important;
+    transform: translateY(-4px);
+}
+
+.admin-drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 1.15rem;
+    padding: 0.4rem 0.2rem;
+    cursor: grab;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.admin-short-item:hover .admin-drag-handle {
+    color: var(--accent-neon);
+    transform: scale(1.15);
+}
+
+.short-order-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(163, 230, 53, 0.15);
+    color: var(--accent-neon);
+    border: 1px solid rgba(163, 230, 53, 0.35);
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 0.12rem 0.48rem;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.order-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+}
+
+.order-btn-group .order-btn {
+    width: 28px;
+    height: 22px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-dim);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.order-btn-group .order-btn:hover:not(:disabled) {
+    background: var(--accent-neon);
+    color: #020817;
+    border-color: var(--accent-neon);
+}
+
+.order-btn-group .order-btn:disabled {
+    opacity: 0.22;
+    cursor: not-allowed;
 }
 
 /* --- Services & Software Admin Cards --- */
