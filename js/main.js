@@ -922,7 +922,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contactForm.reset();
     });
 
-    /* --- 11. Shorts & Reels Carousel --- */
+    /* --- 11. Shorts & Reels Carousel with Butter-Smooth Inertia --- */
     window.initShortsCarousel = function() {
         const track = document.getElementById('shortsTrack');
         const prevBtn = document.getElementById('shortsPrevBtn');
@@ -931,12 +931,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!track || !prevBtn || !nextBtn) return;
 
+        let scrollAnimationId = null;
+
         function getStep() {
             const firstCard = track.querySelector('.short-card');
             if (!firstCard) return 338;
             const style = window.getComputedStyle(track);
             const gap = parseFloat(style.gap) || 28;
             return firstCard.offsetWidth + gap;
+        }
+
+        // Custom silky easeOutQuart animation for buttery slide
+        function smoothScrollTrack(delta, duration = 500) {
+            cancelAnimationFrame(scrollAnimationId);
+            const start = track.scrollLeft;
+            const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+            const target = Math.max(0, Math.min(maxScroll, start + delta));
+            const change = target - start;
+            if (Math.abs(change) < 1) return;
+
+            const startTime = performance.now();
+
+            function easeOutQuart(t) {
+                return 1 - (--t) * t * t * t;
+            }
+
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = easeOutQuart(progress);
+
+                track.scrollLeft = start + change * ease;
+
+                if (progress < 1) {
+                    scrollAnimationId = requestAnimationFrame(step);
+                } else {
+                    updateUI();
+                }
+            }
+
+            scrollAnimationId = requestAnimationFrame(step);
         }
 
         function updateUI() {
@@ -963,7 +997,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 dot.className = 'shorts-dot' + (idx === 0 ? ' active' : '');
                 dot.setAttribute('aria-label', `Go to short ${idx + 1}`);
                 dot.addEventListener('click', () => {
-                    track.scrollTo({ left: idx * getStep(), behavior: 'smooth' });
+                    const target = idx * getStep();
+                    smoothScrollTrack(target - track.scrollLeft, 550);
                 });
                 dotsContainer.appendChild(dot);
             });
@@ -971,12 +1006,77 @@ document.addEventListener('DOMContentLoaded', () => {
 
         prevBtn.onclick = function(e) {
             e.preventDefault();
-            track.scrollBy({ left: -getStep(), behavior: 'smooth' });
+            smoothScrollTrack(-getStep(), 500);
         };
 
         nextBtn.onclick = function(e) {
             e.preventDefault();
-            track.scrollBy({ left: getStep(), behavior: 'smooth' });
+            smoothScrollTrack(getStep(), 500);
+        };
+
+        // Smooth Mouse Drag with Inertial Momentum
+        let isDown = false;
+        let startX = 0;
+        let startScrollLeft = 0;
+        let velocity = 0;
+        let lastMoveX = 0;
+        let lastMoveTime = 0;
+        let momentumId = null;
+
+        track.onmousedown = function(e) {
+            if (e.target.closest('button, a')) return;
+            isDown = true;
+            track.classList.add('active-drag');
+            startX = e.pageX - track.offsetLeft;
+            startScrollLeft = track.scrollLeft;
+            lastMoveX = e.pageX;
+            lastMoveTime = performance.now();
+            velocity = 0;
+            cancelAnimationFrame(scrollAnimationId);
+            cancelAnimationFrame(momentumId);
+        };
+
+        window.addEventListener('mouseup', () => {
+            if (!isDown) return;
+            isDown = false;
+            track.classList.remove('active-drag');
+            if (Math.abs(velocity) > 0.15) {
+                let vel = velocity * 13;
+                function momentum() {
+                    if (Math.abs(vel) > 0.5) {
+                        track.scrollLeft -= vel;
+                        vel *= 0.93;
+                        momentumId = requestAnimationFrame(momentum);
+                    } else {
+                        updateUI();
+                    }
+                }
+                momentumId = requestAnimationFrame(momentum);
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - track.offsetLeft;
+            const walk = (x - startX) * 1.15;
+            track.scrollLeft = startScrollLeft - walk;
+
+            const now = performance.now();
+            const dt = now - lastMoveTime;
+            if (dt > 10) {
+                velocity = (e.pageX - lastMoveX) / dt;
+                lastMoveX = e.pageX;
+                lastMoveTime = now;
+            }
+        });
+
+        // Smooth wheel scroll over track
+        track.onwheel = function(e) {
+            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                e.preventDefault();
+                smoothScrollTrack(e.deltaY * 1.2, 350);
+            }
         };
 
         track.onscroll = updateUI;

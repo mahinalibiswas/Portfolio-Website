@@ -2508,17 +2508,25 @@ button {
     margin-top: 3rem;
 }
 
-/* Scrollable track */
+/* Scrollable track with silky smooth drag & glide */
 .shorts-track-container {
     display: flex;
     gap: 1.8rem;
     overflow-x: auto;
     scrollbar-width: none;
-    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     padding: 1.8rem 0.5rem;
     flex: 1;
     min-width: 0;
+    cursor: grab;
+}
+
+.shorts-track-container.active-drag {
+    cursor: grabbing;
+}
+
+.shorts-track-container.active-drag .short-card {
+    pointer-events: none;
 }
 
 .shorts-track-container::-webkit-scrollbar {
