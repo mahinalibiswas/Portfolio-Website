@@ -947,32 +947,69 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let playerHtml = '';
             if (isDirectVideo) {
-                playerHtml = `<video src="${rawVideo}" controls autoplay muted playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`;
+                playerHtml = `<video src="${rawVideo}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 20px;"></video>`;
             } else if (extractedYt) {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 20px;"></iframe>`;
             } else if (isEmbedCode) {
                 let clean = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
                 if (!clean.includes('style=')) {
-                    clean = clean.replace('<iframe', '<iframe style="width: 100%; height: 100%; border: none; border-radius: 16px;"');
+                    clean = clean.replace('<iframe', '<iframe style="width: 100%; height: 100%; border: none; border-radius: 20px;"');
                 }
                 playerHtml = clean;
             } else if (data.youtubeId && (!rawVideo || rawVideo === data.youtubeUrl)) {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 20px;"></iframe>`;
             } else {
-                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay muted playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 16px;"></video>`;
+                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 20px;"></video>`;
             }
 
             if (body) {
+                const categoryName = data.category || data.categoryBadge || 'Featured Project';
+                const clientName = data.client || 'Mahin Ali Biswas';
+                const projectYear = data.date ? (data.date.includes('2025') ? '2025' : '2026') : '2026';
+
                 body.innerHTML = `
                     <div class="modal-video-header-row">
                         <button class="modal-floating-back-btn" id="modalBackToProjectsAction">
                             <i class="fa-solid fa-arrow-left"></i> Back to Projects
                         </button>
+                        <div class="modal-video-header-meta">
+                            <span class="modal-video-badge"><i class="fa-solid fa-circle-play"></i> ${categoryName}</span>
+                            <span class="modal-video-title-tag">${data.title || 'Video Project'}</span>
+                        </div>
                     </div>
                     <div class="pure-video-lightbox">
                         ${playerHtml}
                     </div>
+                    <div class="modal-video-footer-strip">
+                        <div class="video-footer-meta-item">
+                            <i class="fa-regular fa-user" style="color: var(--accent-neon);"></i>
+                            <span>Client: <strong>${clientName}</strong></span>
+                        </div>
+                        <div class="video-footer-meta-item">
+                            <i class="fa-regular fa-calendar"></i>
+                            <span>${projectYear}</span>
+                        </div>
+                        <div class="video-footer-meta-item video-footer-sound-badge">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Audio Active</span>
+                        </div>
+                    </div>
                 `;
+
+                // Unmute and play with sound
+                const vid = body.querySelector('video');
+                if (vid) {
+                    vid.muted = false;
+                    vid.volume = 1;
+                    const p = vid.play();
+                    if (p !== undefined) {
+                        p.catch(() => {
+                            // Fallback if browser policy blocks unmuted autoplay
+                            vid.muted = true;
+                            vid.play();
+                        });
+                    }
+                }
             }
             modal.classList.add('active');
         }
