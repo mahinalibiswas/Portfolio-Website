@@ -1407,6 +1407,32 @@ window.removeProjVideo = removeProjVideo;
 window.handleShortVideoUpload = handleShortVideoUpload;
 window.removeShortVideo = removeShortVideo;
 
+function onShortVideoInputChange() {
+    const val = document.getElementById('editShortVideo')?.value.trim() || '';
+    const ytField = document.getElementById('editShortYoutubeId');
+    if (!ytField) return;
+    const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
+    if (extracted) {
+        ytField.value = extracted;
+    } else if (val.includes('<iframe') || val.startsWith('data:video') || val.startsWith('blob:') || /\.(mp4|webm)($|\?)/i.test(val)) {
+        ytField.value = '';
+    }
+}
+window.onShortVideoInputChange = onShortVideoInputChange;
+
+function onProjVideoInputChange() {
+    const val = document.getElementById('editProjVideo')?.value.trim() || '';
+    const ytField = document.getElementById('editProjYoutubeId');
+    if (!ytField) return;
+    const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
+    if (extracted) {
+        ytField.value = extracted;
+    } else if (val.includes('<iframe') || val.startsWith('data:video') || val.startsWith('blob:') || /\.(mp4|webm)($|\?)/i.test(val)) {
+        ytField.value = '';
+    }
+}
+window.onProjVideoInputChange = onProjVideoInputChange;
+
 function handleCtaIconUpload(event, btnId) {
     const file = event.target.files[0];
     if (!file) return;
@@ -1939,11 +1965,18 @@ document.getElementById('projectEditForm')?.addEventListener('submit', async (e)
     const projectId = document.getElementById('editProjectId')?.value || '';
     const toolsArr = (document.getElementById('editProjTools')?.value || '').split(',').map(t => t.trim()).filter(Boolean);
 
-    const videoVal = document.getElementById('editProjVideo')?.value || '';
-    const ytIdInput = document.getElementById('editProjYoutubeId')?.value || '';
-    let youtubeId = ytIdInput;
-    if (!youtubeId && typeof extractYoutubeId === 'function') {
-        youtubeId = extractYoutubeId(videoVal) || '';
+    const videoVal = document.getElementById('editProjVideo')?.value.trim() || '';
+    const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(videoVal) : null;
+    const manualYtId = document.getElementById('editProjYoutubeId')?.value.trim() || '';
+    const isDirectVideo = videoVal.startsWith('data:video') || videoVal.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(videoVal);
+
+    let youtubeId = '';
+    if (isDirectVideo) {
+        youtubeId = '';
+    } else if (extractedYt) {
+        youtubeId = extractedYt;
+    } else if (!videoVal.includes('<iframe') && manualYtId) {
+        youtubeId = manualYtId;
     }
 
     const projectObj = {
@@ -2186,9 +2219,17 @@ document.getElementById('shortEditForm')?.addEventListener('submit', async (e) =
     if (platformVal === 'youtube') defaultIcon = 'fa-brands fa-youtube';
     if (platformVal === 'tiktok') defaultIcon = 'fa-brands fa-tiktok';
 
-    let youtubeId = document.getElementById('editShortYoutubeId')?.value.trim() || '';
-    if (!youtubeId && typeof extractYoutubeId === 'function') {
-        youtubeId = extractYoutubeId(videoVal) || '';
+    let youtubeId = '';
+    const isDirectVideo = videoVal.startsWith('data:video') || videoVal.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(videoVal);
+    const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(videoVal) : null;
+    const manualYtId = document.getElementById('editShortYoutubeId')?.value.trim() || '';
+
+    if (isDirectVideo) {
+        youtubeId = '';
+    } else if (extractedYt) {
+        youtubeId = extractedYt;
+    } else if (!videoVal.includes('<iframe') && manualYtId) {
+        youtubeId = manualYtId;
     }
 
     const shortObj = {

@@ -879,7 +879,7 @@
                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editProjVideoFileInput').click()">
                             <i class="fa-solid fa-file-video" style="color: var(--accent-neon);"></i> Upload Video
                         </button>
-                        <input type="text" id="editProjVideo" placeholder="Paste YouTube Embed / Watch URL, direct link, or upload from PC..." style="flex: 1; min-width: 250px;" required>
+                        <input type="text" id="editProjVideo" placeholder="Paste YouTube Embed / Watch URL, direct link, or upload from PC..." style="flex: 1; min-width: 250px;" oninput="onProjVideoInputChange()" required>
                         <div id="editProjVideoPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(163, 230, 53, 0.1); border: 1px solid var(--accent-neon); padding: 0.3rem 0.6rem; border-radius: 6px;">
                             <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 0.85rem;"></i>
                             <span id="editProjVideoFileName" style="color: #ffffff; font-size: 0.8rem; font-weight: 600; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">video.mp4</span>
@@ -971,7 +971,7 @@
                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editShortVideoFileInput').click()">
                             <i class="fa-solid fa-file-video" style="color: var(--accent-neon);"></i> Upload Video
                         </button>
-                        <input type="text" id="editShortVideo" placeholder="Paste YouTube link / Embed code / Direct MP4 URL..." style="flex: 1; min-width: 250px;" required>
+                        <input type="text" id="editShortVideo" placeholder="Paste YouTube link / Embed code / Direct MP4 URL..." style="flex: 1; min-width: 250px;" oninput="onShortVideoInputChange()" required>
                         <div id="editShortVideoPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(163, 230, 53, 0.1); border: 1px solid var(--accent-neon); padding: 0.3rem 0.6rem; border-radius: 6px;">
                             <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 0.85rem;"></i>
                             <span id="editShortVideoFileName" style="color: #ffffff; font-size: 0.8rem; font-weight: 600; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">reel.mp4</span>
