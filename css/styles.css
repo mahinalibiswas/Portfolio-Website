@@ -2794,27 +2794,13 @@ button {
     }
 }
 
-/* Notch pill for phone aesthetic */
-.reel-notch-pill {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 4px;
-    z-index: 30;
-    pointer-events: none;
-}
-
-/* Media Layer */
+/* Media Layer (Crops out unwanted iframe chrome cleanly) */
 .reel-media-layer {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    background: #050811;
+    background: #000000;
     z-index: 1;
     overflow: hidden;
     display: flex;
@@ -2822,13 +2808,23 @@ button {
     justify-content: center;
 }
 
-.reel-media-layer video,
-.reel-media-layer iframe {
+.reel-media-layer video {
     width: 100%;
     height: 100%;
     border: none;
     object-fit: cover;
     background: #000;
+}
+
+.reel-media-layer iframe {
+    position: absolute;
+    top: -80px;
+    left: 0;
+    width: 100%;
+    height: calc(100% + 160px);
+    border: none;
+    background: #000;
+    pointer-events: auto;
 }
 
 /* Overlay Layer (IG / Shorts floating HUD) */
