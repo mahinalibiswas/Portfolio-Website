@@ -770,13 +770,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEmbedCode = rawVideo.includes('<iframe');
         const isYoutubeOrEmbed = (extractedYt || isEmbedCode || (short.youtubeId && (!rawVideo || rawVideo === short.youtubeUrl))) && !isDirectVideo;
 
+        const bottomInfo = document.getElementById('reelBottomInfo');
         if (playerFrame) {
             if (isYoutubeOrEmbed) {
                 playerFrame.classList.add('is-youtube-mode');
                 playerFrame.classList.remove('is-direct-mode');
+                if (bottomInfo) bottomInfo.style.display = 'none';
             } else {
                 playerFrame.classList.add('is-direct-mode');
                 playerFrame.classList.remove('is-youtube-mode');
+                if (bottomInfo) bottomInfo.style.display = 'flex';
             }
         }
 
