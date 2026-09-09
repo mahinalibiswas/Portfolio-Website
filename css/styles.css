@@ -2491,42 +2491,48 @@ button {
 /* Scrollable track */
 .shorts-track-container {
     display: flex;
-    gap: 1.4rem;
-    overflow-x: hidden;
+    gap: 1.8rem;
+    overflow-x: auto;
+    scrollbar-width: none;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    padding: 1.5rem 0.5rem;
+    padding: 1.8rem 0.5rem;
     flex: 1;
     min-width: 0;
 }
 
-/* 9:16 vertical card */
+.shorts-track-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* 9:16 vertical card - spacious, modern reel card */
 .short-card {
-    flex: 0 0 calc(20% - 1.12rem);
-    min-width: 0;
-    border-radius: 20px;
+    flex: 0 0 310px;
+    width: 310px;
+    min-width: 290px;
+    border-radius: 22px;
     overflow: hidden;
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
     cursor: pointer;
 }
 
 .short-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 50px rgba(168, 85, 247, 0.25), 0 8px 30px rgba(0, 0, 0, 0.6);
-    border-color: rgba(168, 85, 247, 0.4);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 55px rgba(168, 85, 247, 0.28), 0 10px 35px rgba(0, 0, 0, 0.65);
+    border-color: rgba(168, 85, 247, 0.5);
 }
 
-/* 9:16 aspect ratio media frame */
+/* Vertical media frame - spacious, comfortable aspect ratio */
 .short-media-frame {
     position: relative;
-    aspect-ratio: 9 / 16;
+    aspect-ratio: 9 / 15;
     width: 100%;
     overflow: hidden;
-    background: #0a0519;
+    background: #070314;
 }
 
 .short-card-img {
@@ -2689,18 +2695,20 @@ button {
 
 /* Responsive */
 @media (max-width: 1200px) {
-    .short-card { flex: 0 0 calc(25% - 1.05rem); }
+    .short-card { flex: 0 0 290px; width: 290px; }
 }
 
 @media (max-width: 900px) {
-    .short-card { flex: 0 0 calc(33.33% - 0.95rem); }
+    .short-card { flex: 0 0 270px; width: 270px; }
+    .shorts-track-container { gap: 1.4rem; }
 }
 
 @media (max-width: 640px) {
-    .short-card { flex: 0 0 calc(50% - 0.7rem); }
+    .short-card { flex: 0 0 240px; width: 240px; }
     .shorts-nav-btn { width: 38px; height: 38px; font-size: 0.85rem; }
+    .shorts-track-container { gap: 1.2rem; }
 }
 
 @media (max-width: 420px) {
-    .short-card { flex: 0 0 calc(80% - 0.7rem); }
+    .short-card { flex: 0 0 85%; width: 85%; }
 }

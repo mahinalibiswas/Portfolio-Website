@@ -893,10 +893,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const cards = Array.from(track.querySelectorAll('.short-card'));
         if (!cards.length) return;
 
-        const GAP = 22; // matches CSS gap 1.4rem ≈ 22px
-
         function cardWidth() {
-            return (cards[0] ? cards[0].getBoundingClientRect().width : 260) + GAP;
+            if (!cards[0]) return 320;
+            const style = window.getComputedStyle(track);
+            const gap = parseFloat(style.gap) || 28;
+            return cards[0].getBoundingClientRect().width + gap;
         }
 
         function visibleCount() {
