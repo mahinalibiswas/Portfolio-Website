@@ -2106,18 +2106,49 @@ async function saveContactSection() {
 function renderAdminProjectsList(projects) {
     const listContainer = document.getElementById('adminProjectsList');
     const countBadge = document.getElementById('tabProjectsCount');
-    if (countBadge) countBadge.textContent = projects.length;
+    const countHeader = document.getElementById('tabProjectsCountHeader');
+    const count = (projects || []).length;
+    if (countBadge) countBadge.textContent = count;
+    if (countHeader) countHeader.textContent = count;
 
     if (!listContainer) return;
 
-    listContainer.innerHTML = projects.map(proj => `
-        <div class="admin-project-item">
-            <img src="${proj.image}" alt="${proj.title}" class="admin-project-thumb">
+    if (!projects || projects.length === 0) {
+        listContainer.innerHTML = `
+            <div style="grid-column: 1 / -1; padding: 2.5rem; text-align: center; color: var(--text-dim); background: rgba(2,8,23,0.4); border-radius: 14px; border: 1px dashed var(--border-glow);">
+                <i class="fa-solid fa-film" style="font-size: 2.2rem; margin-bottom: 0.8rem; color: var(--accent-neon); display: block;"></i>
+                <h4 style="color: #ffffff; margin-bottom: 0.4rem;">No Video Projects Yet</h4>
+                <p style="font-size: 0.85rem; margin-bottom: 1rem;">Add your first portfolio video project to display on your website.</p>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openAddProjectModal()">
+                    <i class="fa-solid fa-plus"></i> Add New Video Project
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    listContainer.innerHTML = projects.map((proj, idx) => `
+        <div class="admin-project-item" data-id="${proj.id}" data-index="${idx}">
+            <div class="admin-drag-handle" title="Drag to reorder card">
+                <i class="fa-solid fa-grip-vertical"></i>
+            </div>
+            <img src="${proj.image}" alt="${proj.title}" class="admin-project-thumb" onerror="this.onerror=null; this.src='assets/images/project_cinematic_vfx.jpg';">
             <div class="admin-project-info">
-                <h4>${proj.title}</h4>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                    <span class="project-order-badge" title="Position #${idx + 1}">#${idx + 1}</span>
+                    <h4 style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;" title="${proj.title}">${proj.title}</h4>
+                </div>
                 <span>${proj.categoryBadge || 'Video Project'}</span>
             </div>
             <div class="admin-project-actions">
+                <div class="order-btn-group" title="Reorder position">
+                    <button type="button" class="order-btn" onclick="moveProjectOrder('${proj.id}', -1)" title="Move up / earlier" ${idx === 0 ? 'disabled' : ''}>
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </button>
+                    <button type="button" class="order-btn" onclick="moveProjectOrder('${proj.id}', 1)" title="Move down / later" ${idx === projects.length - 1 ? 'disabled' : ''}>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
                 <button class="action-btn edit-btn" onclick="openEditProjectModal('${proj.id}')" title="Edit Project">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
@@ -2127,7 +2158,92 @@ function renderAdminProjectsList(projects) {
             </div>
         </div>
     `).join('');
+
+    initProjectsDragAndDrop();
 }
+
+let projectsSortableInstance = null;
+
+function updateProjectsBadgesAndButtons() {
+    const listContainer = document.getElementById('adminProjectsList');
+    if (!listContainer) return;
+    const items = listContainer.querySelectorAll('.admin-project-item');
+    const total = items.length;
+
+    items.forEach((item, index) => {
+        item.setAttribute('data-index', index);
+        const badge = item.querySelector('.project-order-badge');
+        if (badge) {
+            badge.textContent = `#${index + 1}`;
+            badge.title = `Position #${index + 1}`;
+        }
+        const upBtn = item.querySelector('.order-btn:first-child');
+        const downBtn = item.querySelector('.order-btn:last-child');
+        if (upBtn) upBtn.disabled = (index === 0);
+        if (downBtn) downBtn.disabled = (index === total - 1);
+    });
+}
+
+function initProjectsDragAndDrop() {
+    const listContainer = document.getElementById('adminProjectsList');
+    if (!listContainer) return;
+
+    if (projectsSortableInstance) {
+        try {
+            projectsSortableInstance.destroy();
+        } catch (e) {}
+        projectsSortableInstance = null;
+    }
+
+    if (typeof Sortable !== 'undefined') {
+        projectsSortableInstance = new Sortable(listContainer, {
+            animation: 280,
+            easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+            handle: '.admin-drag-handle, .admin-project-thumb, .admin-project-info',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            filter: '.admin-project-actions, button, input, textarea, a',
+            preventOnFilter: false,
+            fallbackTolerance: 3,
+            onEnd: async function (evt) {
+                if (evt.oldIndex === evt.newIndex) return;
+
+                const data = getSiteData();
+                if (!data.projects || !Array.isArray(data.projects)) return;
+
+                const [movedItem] = data.projects.splice(evt.oldIndex, 1);
+                data.projects.splice(evt.newIndex, 0, movedItem);
+
+                await saveSiteData(data);
+                updateProjectsBadgesAndButtons();
+                if (typeof renderSiteData === 'function') renderSiteData();
+                showToast(`Reordered! Project placed at position #${evt.newIndex + 1}`, 'success');
+            }
+        });
+    }
+}
+
+async function moveProjectOrder(projectId, direction) {
+    const data = getSiteData();
+    if (!data.projects || !Array.isArray(data.projects)) return;
+
+    const currentIndex = data.projects.findIndex(p => p.id === projectId);
+    if (currentIndex === -1) return;
+
+    const targetIndex = currentIndex + direction;
+    if (targetIndex < 0 || targetIndex >= data.projects.length) return;
+
+    const [movedItem] = data.projects.splice(currentIndex, 1);
+    data.projects.splice(targetIndex, 0, movedItem);
+
+    await saveSiteData(data);
+    renderAdminProjectsList(data.projects);
+    if (typeof renderSiteData === 'function') renderSiteData();
+    showToast(`Project moved to position #${targetIndex + 1}!`, 'success');
+}
+window.moveProjectOrder = moveProjectOrder;
+window.initProjectsDragAndDrop = initProjectsDragAndDrop;
 
 function openAddProjectModal() {
     if (document.getElementById('projectModalTitle')) document.getElementById('projectModalTitle').textContent = 'Add New Video Project';

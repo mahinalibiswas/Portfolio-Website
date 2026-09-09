@@ -331,11 +331,18 @@
     background: rgba(2, 8, 23, 0.6);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 1.2rem;
+    padding: 1.1rem;
     display: flex;
-    gap: 1.2rem;
+    gap: 1rem;
     align-items: center;
     transition: var(--transition-fast);
+    cursor: grab;
+    user-select: none;
+    position: relative;
+}
+
+.admin-project-item:active {
+    cursor: grabbing;
 }
 
 .admin-project-item:hover {
@@ -370,7 +377,9 @@
 
 .admin-project-actions {
     display: flex;
+    align-items: center;
     gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .action-btn {
@@ -544,12 +553,14 @@
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.admin-short-item:hover .admin-drag-handle {
+.admin-short-item:hover .admin-drag-handle,
+.admin-project-item:hover .admin-drag-handle {
     color: var(--accent-neon);
     transform: scale(1.15);
 }
 
-.short-order-badge {
+.short-order-badge,
+.project-order-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
