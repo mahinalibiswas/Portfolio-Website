@@ -120,10 +120,20 @@ function renderSiteData(customData) {
                             </button>
                         </div>
                     `;
+                    if (rawInput.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                        resolveMediaUrl(rawInput).then(resolved => {
+                            const vidEl = document.getElementById('heroMainVideo');
+                            if (vidEl && resolved) vidEl.src = resolved;
+                        });
+                    }
                     const bigPlayBtn = document.getElementById('heroBigPlayBtn');
                     if (bigPlayBtn) {
-                        bigPlayBtn.addEventListener('click', () => {
-                            if (typeof openDirectVideoModal === 'function') openDirectVideoModal(rawInput);
+                        bigPlayBtn.addEventListener('click', async () => {
+                            let playUrl = rawInput;
+                            if (playUrl.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                                playUrl = await resolveMediaUrl(playUrl);
+                            }
+                            if (typeof openDirectVideoModal === 'function') openDirectVideoModal(playUrl);
                         });
                     }
                 }
@@ -313,10 +323,26 @@ function renderSiteData(customData) {
                             </div>
                         </div>
                     `;
-                } else if (videoEl.src !== rawUrl && !videoEl.src.includes(rawUrl)) {
-                    videoEl.src = rawUrl;
-                    if (posterUrl) videoEl.poster = posterUrl;
-                    videoEl.load();
+                    if (rawUrl.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                        resolveMediaUrl(rawUrl).then(resolved => {
+                            const v = document.getElementById('directShowreelVideo');
+                            if (v && resolved) { v.src = resolved; v.load(); }
+                        });
+                    }
+                } else {
+                    if (rawUrl.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                        resolveMediaUrl(rawUrl).then(resolved => {
+                            if (videoEl.src !== resolved) {
+                                videoEl.src = resolved;
+                                if (posterUrl) videoEl.poster = posterUrl;
+                                videoEl.load();
+                            }
+                        });
+                    } else if (videoEl.src !== rawUrl && !videoEl.src.includes(rawUrl)) {
+                        videoEl.src = rawUrl;
+                        if (posterUrl) videoEl.poster = posterUrl;
+                        videoEl.load();
+                    }
                 }
             }
         }

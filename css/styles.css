@@ -2826,10 +2826,11 @@ button {
 
 .reel-media-layer iframe {
     position: absolute !important;
-    top: -105px !important;
+    inset: 0 !important;
+    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: calc(100% + 105px) !important;
+    height: 100% !important;
     border: none !important;
     background: #000000 !important;
     pointer-events: auto !important;
@@ -2838,7 +2839,7 @@ button {
 /* Video Title & Channel Info at Bottom (Zero Gradient, 100% Transparent) */
 .reel-bottom-info {
     position: absolute;
-    bottom: 1.25rem;
+    bottom: 1.35rem;
     left: 1.25rem;
     right: 1.25rem;
     z-index: 15;
@@ -2848,7 +2849,12 @@ button {
     gap: 0.75rem;
     background: transparent !important;
     padding: 0;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease, bottom 0.25s ease;
+}
+
+/* Prevent overlap with YouTube embed bottom controls when playing YouTube */
+.reel-player-frame.is-youtube-mode .reel-bottom-info {
+    bottom: 3.5rem;
 }
 
 .reel-bottom-avatar {

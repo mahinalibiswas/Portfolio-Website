@@ -1283,8 +1283,8 @@ function removeProjImage() {
     showToast('Project thumbnail image removed', 'info');
 }
 
-/* --- Universal Direct PC Video Upload Handler --- */
-function processUploadedVideoFile(file, inputId, previewWrapId, fileNameId, onComplete) {
+/* --- Universal Direct PC Video Upload Handler (IndexedDB Storage for Large Files) --- */
+async function processUploadedVideoFile(file, inputId, previewWrapId, fileNameId, onComplete) {
     if (!file) return;
 
     if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov|ogg|mkv)$/i.test(file.name)) {
@@ -1297,31 +1297,31 @@ function processUploadedVideoFile(file, inputId, previewWrapId, fileNameId, onCo
     const nameEl = document.getElementById(fileNameId);
     const input = document.getElementById(inputId);
 
-    // If file is within safe cloud persistence limit (<= 15MB)
-    if (file.size <= 15 * 1024 * 1024) {
-        showToast(`Reading video file "${file.name}" (${sizeMB} MB)...`, 'info');
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const dataUrl = e.target.result;
-            if (input) input.value = dataUrl;
-            if (nameEl) nameEl.textContent = `${file.name} (${sizeMB} MB)`;
+    showToast(`Storing video "${file.name}" (${sizeMB} MB)...`, 'info');
+
+    const storageKey = 'vid_' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9]/g, '_');
+    const localBlobUrl = URL.createObjectURL(file);
+
+    try {
+        if (typeof saveMediaBlob === 'function') {
+            await saveMediaBlob(storageKey, file);
+            if (input) input.value = `idb:${storageKey}`;
+            if (nameEl) nameEl.textContent = `${file.name} (${sizeMB} MB - Direct File)`;
             if (wrap) wrap.style.display = 'flex';
-            showToast(`Video "${file.name}" uploaded successfully from PC!`, 'success');
-            if (typeof onComplete === 'function') onComplete(dataUrl, file.name);
-        };
-        reader.onerror = function() {
-            showToast('Error reading video file. Please try again.', 'error');
-        };
-        reader.readAsDataURL(file);
-    } else {
-        // Large file (> 15MB)
-        const localBlobUrl = URL.createObjectURL(file);
-        if (input) input.value = `assets/videos/${file.name}`;
-        if (nameEl) nameEl.textContent = `${file.name} (${sizeMB} MB - Local File)`;
-        if (wrap) wrap.style.display = 'flex';
-        showToast(`Video (${sizeMB} MB) detected! Set to "assets/videos/${file.name}". Copy this video into your project "assets/videos/" folder for optimal site speed.`, 'info');
-        if (typeof onComplete === 'function') onComplete(localBlobUrl, file.name);
+            showToast(`Video "${file.name}" uploaded successfully! Click Save Changes to make it live.`, 'success');
+            if (typeof onComplete === 'function') onComplete(localBlobUrl, file.name);
+            return;
+        }
+    } catch (err) {
+        console.warn("IndexedDB save error, using fallback:", err);
     }
+
+    // Fallback
+    if (input) input.value = `assets/videos/${file.name}`;
+    if (nameEl) nameEl.textContent = `${file.name} (${sizeMB} MB - Local File)`;
+    if (wrap) wrap.style.display = 'flex';
+    showToast(`Video set to "assets/videos/${file.name}".`, 'info');
+    if (typeof onComplete === 'function') onComplete(localBlobUrl, file.name);
 }
 
 function handleShowreelVideoUpload(event) {
@@ -1414,7 +1414,7 @@ function onShortVideoInputChange() {
     const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
     if (extracted) {
         ytField.value = extracted;
-    } else if (val.includes('<iframe') || val.startsWith('data:video') || val.startsWith('blob:') || /\.(mp4|webm)($|\?)/i.test(val)) {
+    } else if (val.includes('<iframe') || val.startsWith('data:video') || val.startsWith('blob:') || val.startsWith('idb:') || /\.(mp4|webm)($|\?)/i.test(val)) {
         ytField.value = '';
     }
 }
@@ -1427,7 +1427,7 @@ function onProjVideoInputChange() {
     const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
     if (extracted) {
         ytField.value = extracted;
-    } else if (val.includes('<iframe') || val.startsWith('data:video') || val.startsWith('blob:') || /\.(mp4|webm)($|\?)/i.test(val)) {
+    } else if (val.includes('<iframe') || val.startsWith('data:video') || val.startsWith('blob:') || val.startsWith('idb:') || /\.(mp4|webm)($|\?)/i.test(val)) {
         ytField.value = '';
     }
 }
@@ -1931,9 +1931,9 @@ function openEditProjectModal(projectId) {
 
         const videoWrap = document.getElementById('editProjVideoPreviewWrap');
         const videoName = document.getElementById('editProjVideoFileName');
-        if (proj.video && (proj.video.startsWith('data:video') || proj.video.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(proj.video))) {
+        if (proj.video && (proj.video.startsWith('data:video') || proj.video.startsWith('blob:') || proj.video.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(proj.video))) {
             if (videoWrap) videoWrap.style.display = 'flex';
-            if (videoName) videoName.textContent = proj.video.startsWith('data:video') ? 'Uploaded Video File' : proj.video.split('/').pop();
+            if (videoName) videoName.textContent = proj.video.startsWith('idb:') ? 'Uploaded Direct Video File' : (proj.video.startsWith('data:video') ? 'Uploaded Video File' : proj.video.split('/').pop());
         } else {
             if (videoWrap) videoWrap.style.display = 'none';
         }
@@ -1968,7 +1968,7 @@ document.getElementById('projectEditForm')?.addEventListener('submit', async (e)
     const videoVal = document.getElementById('editProjVideo')?.value.trim() || '';
     const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(videoVal) : null;
     const manualYtId = document.getElementById('editProjYoutubeId')?.value.trim() || '';
-    const isDirectVideo = videoVal.startsWith('data:video') || videoVal.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(videoVal);
+    const isDirectVideo = videoVal.startsWith('data:video') || videoVal.startsWith('blob:') || videoVal.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(videoVal);
 
     let youtubeId = '';
     if (isDirectVideo) {
@@ -2158,9 +2158,9 @@ function openEditShortModal(shortId) {
 
         const videoWrap = document.getElementById('editShortVideoPreviewWrap');
         const videoName = document.getElementById('editShortVideoFileName');
-        if (short.video && (short.video.startsWith('data:video') || short.video.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(short.video))) {
+        if (short.video && (short.video.startsWith('data:video') || short.video.startsWith('blob:') || short.video.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(short.video))) {
             if (videoWrap) videoWrap.style.display = 'flex';
-            if (videoName) videoName.textContent = short.video.startsWith('data:video') ? 'Uploaded Vertical Video' : short.video.split('/').pop();
+            if (videoName) videoName.textContent = short.video.startsWith('idb:') ? 'Uploaded Direct Video File' : (short.video.startsWith('data:video') ? 'Uploaded Vertical Video' : short.video.split('/').pop());
         } else {
             if (videoWrap) videoWrap.style.display = 'none';
         }
@@ -2220,7 +2220,7 @@ document.getElementById('shortEditForm')?.addEventListener('submit', async (e) =
     if (platformVal === 'tiktok') defaultIcon = 'fa-brands fa-tiktok';
 
     let youtubeId = '';
-    const isDirectVideo = videoVal.startsWith('data:video') || videoVal.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(videoVal);
+    const isDirectVideo = videoVal.startsWith('data:video') || videoVal.startsWith('blob:') || videoVal.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(videoVal);
     const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(videoVal) : null;
     const manualYtId = document.getElementById('editShortYoutubeId')?.value.trim() || '';
 

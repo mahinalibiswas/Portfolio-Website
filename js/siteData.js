@@ -441,8 +441,98 @@ function getSiteData() {
     } catch (e) {
         console.error("Error reading site data from localStorage", e);
     }
-    return JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
 }
+
+/* ==========================================================================
+   IndexedDB Media Storage Engine (Supports Large Direct Videos up to 1GB)
+   ========================================================================== */
+const MEDIA_DB_NAME = 'MahinPortfolioMediaDB';
+const MEDIA_DB_VERSION = 1;
+const MEDIA_STORE_NAME = 'mediaFiles';
+
+function openMediaDB() {
+    return new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+            return reject(new Error("IndexedDB not supported"));
+        }
+        const request = indexedDB.open(MEDIA_DB_NAME, MEDIA_DB_VERSION);
+        request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(MEDIA_STORE_NAME)) {
+                db.createObjectStore(MEDIA_STORE_NAME);
+            }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function saveMediaBlob(key, blob) {
+    try {
+        const db = await openMediaDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(MEDIA_STORE_NAME, 'readwrite');
+            const store = tx.objectStore(MEDIA_STORE_NAME);
+            store.put(blob, key);
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => reject(tx.error);
+        });
+    } catch (err) {
+        console.error("Error saving media to IndexedDB:", err);
+        return false;
+    }
+}
+
+async function getMediaBlob(key) {
+    try {
+        const db = await openMediaDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(MEDIA_STORE_NAME, 'readonly');
+            const store = tx.objectStore(MEDIA_STORE_NAME);
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result || null);
+            request.onerror = () => reject(request.error);
+        });
+    } catch (err) {
+        console.error("Error getting media from IndexedDB:", err);
+        return null;
+    }
+}
+
+async function removeMediaBlob(key) {
+    try {
+        const db = await openMediaDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(MEDIA_STORE_NAME, 'readwrite');
+            const store = tx.objectStore(MEDIA_STORE_NAME);
+            store.delete(key);
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => reject(tx.error);
+        });
+    } catch (err) {
+        console.error("Error removing media from IndexedDB:", err);
+        return false;
+    }
+}
+
+async function resolveMediaUrl(urlOrKey) {
+    if (!urlOrKey) return '';
+    if (typeof urlOrKey === 'string' && urlOrKey.startsWith('idb:')) {
+        const key = urlOrKey.replace('idb:', '');
+        const blob = await getMediaBlob(key);
+        if (blob) {
+            return URL.createObjectURL(blob);
+        }
+    }
+    return urlOrKey;
+}
+
+window.openMediaDB = openMediaDB;
+window.saveMediaBlob = saveMediaBlob;
+window.getMediaBlob = getMediaBlob;
+window.removeMediaBlob = removeMediaBlob;
+window.resolveMediaUrl = resolveMediaUrl;
+
 
 const CLOUD_DB_URL = '/api/syncData';
 

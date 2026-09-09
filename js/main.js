@@ -738,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 220);
     }
 
-    function showReelAtIndex(index) {
+    async function showReelAtIndex(index) {
         if (!currentReelsData || !currentReelsData.length) currentReelsData = getShortsList();
         if (!currentReelsData.length) return;
 
@@ -755,8 +755,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render Media Layer (100% Clean & Immersive Showcase)
         const playerFrame = document.getElementById('reelPlayerFrame');
-        const rawVideo = (short.video || short.youtubeUrl || '').trim();
-        const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
+        let rawVideo = (short.video || short.youtubeUrl || '').trim();
+
+        if (rawVideo.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+            const resolved = await resolveMediaUrl(rawVideo);
+            if (resolved) rawVideo = resolved;
+        }
+
+        const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || rawVideo.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
         const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : null;
         const isEmbedCode = rawVideo.includes('<iframe');
         const isYoutubeOrEmbed = (extractedYt || isEmbedCode || (short.youtubeId && (!rawVideo || rawVideo === short.youtubeUrl))) && !isDirectVideo;
@@ -848,14 +854,18 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showReelAtIndex = showReelAtIndex;
     window.transitionReel = transitionReel;
 
-    function openProjectVideoModal(projectId) {
+    async function openProjectVideoModal(projectId) {
         const data = getProjectDataById(projectId);
         const modal = document.getElementById('projectModal') || document.getElementById('videoModal');
         const body = document.getElementById('projectModalBody') || modal?.querySelector('.modal-content') || modal?.querySelector('.video-responsive-wrapper');
 
         if (data && modal) {
-            const rawVideo = (data.video || data.youtubeUrl || '').trim();
-            const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
+            let rawVideo = (data.video || data.youtubeUrl || '').trim();
+            if (rawVideo.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                const resolved = await resolveMediaUrl(rawVideo);
+                if (resolved) rawVideo = resolved;
+            }
+            const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || rawVideo.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
             const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : null;
             const isEmbedCode = rawVideo.includes('<iframe');
             
