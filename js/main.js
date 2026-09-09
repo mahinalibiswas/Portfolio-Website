@@ -781,13 +781,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     </iframe>
                 `;
             } else if (isEmbedCode) {
-                let cleanIframe = rawVideo.replace(/width="[^"]*"/g, '').replace(/height="[^"]*"/g, '');
-                cleanIframe = cleanIframe.replace(/style="[^"]*"/g, '');
-                cleanIframe = cleanIframe.replace('<iframe', '<iframe id="reelIframe"');
-                if (!cleanIframe.includes('allow=')) {
-                    cleanIframe = cleanIframe.replace('<iframe', '<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen');
+                const embedMatch = rawVideo.match(/src=["']([^"']+)["']/i);
+                const embedUrl = embedMatch ? embedMatch[1] : '';
+                const ytIdFromEmbed = typeof extractYoutubeId === 'function' ? extractYoutubeId(embedUrl) : null;
+                if (ytIdFromEmbed) {
+                    mediaLayer.innerHTML = `
+                        <iframe id="reelIframe"
+                            src="https://www.youtube-nocookie.com/embed/${ytIdFromEmbed}?autoplay=1&mute=0&loop=1&playlist=${ytIdFromEmbed}&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0"
+                            title="${short.title || 'Reel'}"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    `;
+                } else {
+                    let cleanIframe = rawVideo.replace(/width="[^"]*"/g, '').replace(/height="[^"]*"/g, '');
+                    cleanIframe = cleanIframe.replace(/style="[^"]*"/g, '');
+                    cleanIframe = cleanIframe.replace('<iframe', '<iframe id="reelIframe"');
+                    if (!cleanIframe.includes('allow=')) {
+                        cleanIframe = cleanIframe.replace('<iframe', '<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen');
+                    }
+                    mediaLayer.innerHTML = cleanIframe;
                 }
-                mediaLayer.innerHTML = cleanIframe;
             } else if (short.youtubeId && (!rawVideo || rawVideo === short.youtubeUrl)) {
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
