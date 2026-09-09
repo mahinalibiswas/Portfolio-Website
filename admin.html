@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=18.0">
-    <link rel="stylesheet" href="css/admin.css?v=18.0">
+    <link rel="stylesheet" href="css/styles.css?v=19.0">
+    <link rel="stylesheet" href="css/admin.css?v=19.0">
 </head>
 <body class="admin-body">
 
@@ -609,9 +609,14 @@
                                     <h3>Vertical Reels &amp; Shorts Manager (<span id="tabShortsCountHeader">6</span>)</h3>
                                     <p>Drag and drop cards or use the up/down arrows to reorder your favorite videos to appear first on your portfolio.</p>
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="openAddShortModal()">
-                                    <i class="fa-solid fa-plus"></i> Add New Short / Reel
-                                </button>
+                                <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                                    <button type="button" class="btn btn-hero-secondary" onclick="autoSyncAllShortDurations()" title="Scan and set real video durations for all cards">
+                                        <i class="fa-solid fa-stopwatch" style="color: var(--accent-neon);"></i> Auto-Sync Durations
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="openAddShortModal()">
+                                        <i class="fa-solid fa-plus"></i> Add New Short / Reel
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="admin-shorts-list" id="adminShortsList">
@@ -889,8 +894,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Duration Tag (e.g. 03:22)</label>
-                    <input type="text" id="editProjDuration" placeholder="03:22">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <label style="margin: 0;">Duration Tag (e.g. 03:22)</label>
+                        <span style="font-size: 0.75rem; color: var(--accent-neon);"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-detects on upload</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="editProjDuration" placeholder="03:22" style="flex: 1;">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentProjDuration()" title="Detect video length">
+                            <i class="fa-solid fa-stopwatch"></i> Auto-Detect
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -986,8 +999,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Duration (e.g. 0:58)</label>
-                    <input type="text" id="editShortDuration" placeholder="e.g. 0:58">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <label style="margin: 0;">Duration (e.g. 1:24)</label>
+                        <span style="font-size: 0.75rem; color: var(--accent-neon);"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-detects on upload</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="editShortDuration" placeholder="e.g. 1:24" style="flex: 1;">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentShortDuration()" title="Detect video length">
+                            <i class="fa-solid fa-stopwatch"></i> Auto-Detect
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -1137,7 +1158,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=18.0"></script>
-    <script src="js/admin.js?v=18.0"></script>
+    <script src="js/siteData.js?v=19.0"></script>
+    <script src="js/admin.js?v=19.0"></script>
 </body>
 </html>

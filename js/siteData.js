@@ -215,7 +215,7 @@ const DEFAULT_SITE_DATA = {
             platform: "instagram",
             platformLabel: "Reels",
             platformIcon: "fa-brands fa-instagram",
-            duration: "0:58",
+            duration: "1:24",
             client: "Mahin Ali Biswas",
             image: "assets/images/short_1_thumb.jpg",
             video: "assets/videos/short_color_grading.mp4",
@@ -231,7 +231,7 @@ const DEFAULT_SITE_DATA = {
             platform: "youtube",
             platformLabel: "Shorts",
             platformIcon: "fa-brands fa-youtube",
-            duration: "0:45",
+            duration: "0:26",
             client: "Mahin Ali Biswas",
             image: "assets/images/short_2_thumb.jpg",
             video: "assets/videos/short_2_raw_edit.mp4",
@@ -247,7 +247,7 @@ const DEFAULT_SITE_DATA = {
             platform: "tiktok",
             platformLabel: "TikTok",
             platformIcon: "fa-brands fa-tiktok",
-            duration: "0:30",
+            duration: "2:22",
             client: "Mahin Ali Biswas",
             image: "assets/images/short_3_thumb.jpg",
             video: "assets/videos/short_3_before_after.mp4",
@@ -279,7 +279,7 @@ const DEFAULT_SITE_DATA = {
             platform: "youtube",
             platformLabel: "Shorts",
             platformIcon: "fa-brands fa-youtube",
-            duration: "0:58",
+            duration: "1:24",
             client: "Mahin Ali Biswas",
             image: "assets/images/short_1_thumb.jpg",
             video: "assets/videos/short_color_grading.mp4",
@@ -295,7 +295,7 @@ const DEFAULT_SITE_DATA = {
             platform: "tiktok",
             platformLabel: "TikTok",
             platformIcon: "fa-brands fa-tiktok",
-            duration: "0:45",
+            duration: "0:26",
             client: "Mahin Ali Biswas",
             image: "assets/images/short_2_thumb.jpg",
             video: "assets/videos/short_2_raw_edit.mp4",
@@ -422,6 +422,17 @@ const DEFAULT_SITE_DATA = {
     }
 };
 
+const KNOWN_VIDEO_DURATIONS = {
+    'short_color_grading.mp4': '1:24',
+    'short_2_raw_edit.mp4': '0:26',
+    'short_3_before_after.mp4': '2:22',
+    'short_4_client_edit.mp4': '0:19',
+    'hero_teaser.mp4': '03:23',
+    'main_showreel.mp4': '03:23',
+    'showreel.mp4': '03:23'
+};
+window.KNOWN_VIDEO_DURATIONS = KNOWN_VIDEO_DURATIONS;
+
 /**
  * Gets current site data from localStorage or initializes with default
  */
@@ -430,6 +441,28 @@ function getSiteData() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
             const parsed = JSON.parse(stored);
+
+            // Auto-upgrade shorts with real video duration if they still hold placeholder values
+            if (parsed.shorts && Array.isArray(parsed.shorts)) {
+                let updatedDurations = false;
+                parsed.shorts = parsed.shorts.map(s => {
+                    const vFile = (s.video || '').split('/').pop().split('?')[0];
+                    if (KNOWN_VIDEO_DURATIONS[vFile]) {
+                        const cur = (s.duration || '').trim();
+                        if (!cur || ['0:58', '0:50', '0:15', '0:30', '0:45', '00:58', '00:15', '00:30'].includes(cur)) {
+                            s.duration = KNOWN_VIDEO_DURATIONS[vFile];
+                            updatedDurations = true;
+                        }
+                    }
+                    return s;
+                });
+                if (updatedDurations) {
+                    try {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+                    } catch (e) {}
+                }
+            }
+
             const merged = {
                 ...DEFAULT_SITE_DATA,
                 ...parsed,

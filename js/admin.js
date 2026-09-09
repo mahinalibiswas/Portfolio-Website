@@ -435,6 +435,7 @@ function renderAdminFormsWithData(data) {
         if (document.getElementById('shortsDesc')) document.getElementById('shortsDesc').value = data.shortsHeader.desc || '';
     }
     renderAdminShortsList(data.shorts || []);
+    setTimeout(() => { if (typeof autoSyncAllShortDurations === 'function') autoSyncAllShortDurations(true); }, 600);
 
     // 4. Render Services List Form Cards
     renderAdminServicesList(data.services || []);
@@ -1366,8 +1367,79 @@ function removeShowreelPosterImage() {
     showToast('Showreel poster image removed', 'info');
 }
 
-function handleProjVideoUpload(event) {
+/* --- Smart Video Duration Extractor (Auto-Detects File & URL Lengths) --- */
+function formatVideoDuration(seconds) {
+    if (isNaN(seconds) || seconds <= 0) return '';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.round(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function extractDurationFromFileOrUrl(fileOrUrl) {
+    return new Promise((resolve) => {
+        try {
+            if (!fileOrUrl) return resolve(null);
+
+            // Check known video filenames
+            if (typeof fileOrUrl === 'string') {
+                const fname = fileOrUrl.split('/').pop().split('?')[0];
+                if (typeof KNOWN_VIDEO_DURATIONS !== 'undefined' && KNOWN_VIDEO_DURATIONS[fname]) {
+                    return resolve(KNOWN_VIDEO_DURATIONS[fname]);
+                }
+            }
+
+            const v = document.createElement('video');
+            v.preload = 'metadata';
+            let timer = setTimeout(() => {
+                cleanup();
+                resolve(null);
+            }, 5000);
+
+            function cleanup() {
+                clearTimeout(timer);
+                v.onloadedmetadata = null;
+                v.onerror = null;
+            }
+
+            v.onloadedmetadata = () => {
+                const dur = formatVideoDuration(v.duration);
+                cleanup();
+                resolve(dur);
+            };
+
+            v.onerror = () => {
+                cleanup();
+                resolve(null);
+            };
+
+            if (typeof fileOrUrl === 'string') {
+                v.src = fileOrUrl;
+            } else if (fileOrUrl instanceof File || fileOrUrl instanceof Blob) {
+                v.src = URL.createObjectURL(fileOrUrl);
+            } else {
+                cleanup();
+                resolve(null);
+            }
+        } catch (e) {
+            resolve(null);
+        }
+    });
+}
+window.extractDurationFromFileOrUrl = extractDurationFromFileOrUrl;
+window.formatVideoDuration = formatVideoDuration;
+
+async function handleProjVideoUpload(event) {
     const file = event.target.files[0];
+    if (!file) return;
+
+    // Auto-detect and write real video duration
+    const detectedDur = await extractDurationFromFileOrUrl(file);
+    const durInput = document.getElementById('editProjDuration');
+    if (detectedDur && durInput) {
+        durInput.value = detectedDur;
+        showToast(`Auto-detected video duration: ${detectedDur}`, 'info');
+    }
+
     processUploadedVideoFile(file, 'editProjVideo', 'editProjVideoPreviewWrap', 'editProjVideoFileName', () => {
         const ytInput = document.getElementById('editProjYoutubeId');
         if (ytInput) ytInput.value = '';
@@ -1382,8 +1454,18 @@ function removeProjVideo() {
     showToast('Project video removed', 'info');
 }
 
-function handleShortVideoUpload(event) {
+async function handleShortVideoUpload(event) {
     const file = event.target.files[0];
+    if (!file) return;
+
+    // Auto-detect and write real video duration
+    const detectedDur = await extractDurationFromFileOrUrl(file);
+    const durInput = document.getElementById('editShortDuration');
+    if (detectedDur && durInput) {
+        durInput.value = detectedDur;
+        showToast(`Auto-detected video length: ${detectedDur}`, 'info');
+    }
+
     processUploadedVideoFile(file, 'editShortVideo', 'editShortVideoPreviewWrap', 'editShortVideoFileName', () => {
         const ytInput = document.getElementById('editShortYoutubeId');
         if (ytInput) ytInput.value = '';
@@ -1407,10 +1489,11 @@ window.removeProjVideo = removeProjVideo;
 window.handleShortVideoUpload = handleShortVideoUpload;
 window.removeShortVideo = removeShortVideo;
 
-function onShortVideoInputChange() {
+async function onShortVideoInputChange() {
     const val = document.getElementById('editShortVideo')?.value.trim() || '';
     const ytField = document.getElementById('editShortYoutubeId');
     const wrap = document.getElementById('editShortVideoPreviewWrap');
+    const durInput = document.getElementById('editShortDuration');
     const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
     if (extracted) {
         if (ytField) ytField.value = extracted;
@@ -1421,6 +1504,16 @@ function onShortVideoInputChange() {
     } else if (val.startsWith('data:video') || val.startsWith('blob:') || val.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(val)) {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'flex';
+        let testSrc = val;
+        if (val.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+            testSrc = await resolveMediaUrl(val);
+        }
+        if (testSrc) {
+            const detected = await extractDurationFromFileOrUrl(testSrc);
+            if (detected && durInput && (!durInput.value || ['0:58', '0:50', '0:15', '0:30', '0:45'].includes(durInput.value))) {
+                durInput.value = detected;
+            }
+        }
     } else {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'none';
@@ -1428,10 +1521,11 @@ function onShortVideoInputChange() {
 }
 window.onShortVideoInputChange = onShortVideoInputChange;
 
-function onProjVideoInputChange() {
+async function onProjVideoInputChange() {
     const val = document.getElementById('editProjVideo')?.value.trim() || '';
     const ytField = document.getElementById('editProjYoutubeId');
     const wrap = document.getElementById('editProjVideoPreviewWrap');
+    const durInput = document.getElementById('editProjDuration');
     const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
     if (extracted) {
         if (ytField) ytField.value = extracted;
@@ -1442,7 +1536,132 @@ function onProjVideoInputChange() {
     } else if (val.startsWith('data:video') || val.startsWith('blob:') || val.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(val)) {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'flex';
+        let testSrc = val;
+        if (val.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+            testSrc = await resolveMediaUrl(val);
+        }
+        if (testSrc) {
+            const detected = await extractDurationFromFileOrUrl(testSrc);
+            if (detected && durInput && (!durInput.value || ['03:00', '03:22'].includes(durInput.value))) {
+                durInput.value = detected;
+            }
+        }
     } else {
+        if (ytField) ytField.value = '';
+        if (wrap) wrap.style.display = 'none';
+    }
+}
+window.onProjVideoInputChange = onProjVideoInputChange;
+
+async function autoDetectCurrentShortDuration() {
+    const fileInput = document.getElementById('editShortVideoFileInput');
+    const urlInput = document.getElementById('editShortVideo');
+    const durInput = document.getElementById('editShortDuration');
+    if (!durInput) return;
+
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+        showToast('Detecting video length...', 'info');
+        const dur = await extractDurationFromFileOrUrl(fileInput.files[0]);
+        if (dur) {
+            durInput.value = dur;
+            showToast(`Detected duration: ${dur}`, 'success');
+            return;
+        }
+    }
+
+    const videoVal = urlInput?.value.trim() || '';
+    if (videoVal) {
+        showToast('Detecting video length from file...', 'info');
+        let srcToTest = videoVal;
+        if (videoVal.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+            srcToTest = await resolveMediaUrl(videoVal);
+        }
+        const dur = await extractDurationFromFileOrUrl(srcToTest);
+        if (dur) {
+            durInput.value = dur;
+            showToast(`Detected duration: ${dur}`, 'success');
+            return;
+        }
+    }
+
+    showToast('Could not auto-detect length. Please enter manually (e.g. 1:24)', 'warning');
+}
+window.autoDetectCurrentShortDuration = autoDetectCurrentShortDuration;
+
+async function autoDetectCurrentProjDuration() {
+    const fileInput = document.getElementById('editProjVideoFileInput');
+    const urlInput = document.getElementById('editProjVideo');
+    const durInput = document.getElementById('editProjDuration');
+    if (!durInput) return;
+
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+        showToast('Detecting video length...', 'info');
+        const dur = await extractDurationFromFileOrUrl(fileInput.files[0]);
+        if (dur) {
+            durInput.value = dur;
+            showToast(`Detected duration: ${dur}`, 'success');
+            return;
+        }
+    }
+
+    const videoVal = urlInput?.value.trim() || '';
+    if (videoVal) {
+        showToast('Detecting video length from file...', 'info');
+        let srcToTest = videoVal;
+        if (videoVal.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+            srcToTest = await resolveMediaUrl(videoVal);
+        }
+        const dur = await extractDurationFromFileOrUrl(srcToTest);
+        if (dur) {
+            durInput.value = dur;
+            showToast(`Detected duration: ${dur}`, 'success');
+            return;
+        }
+    }
+
+    showToast('Could not auto-detect length. Please enter manually (e.g. 03:22)', 'warning');
+}
+window.autoDetectCurrentProjDuration = autoDetectCurrentProjDuration;
+
+async function autoSyncAllShortDurations(silent = false) {
+    const data = getSiteData();
+    if (!data.shorts || !Array.isArray(data.shorts) || !data.shorts.length) return;
+
+    let updatedCount = 0;
+    for (const short of data.shorts) {
+        const vFile = (short.video || '').split('/').pop().split('?')[0];
+        if (typeof KNOWN_VIDEO_DURATIONS !== 'undefined' && KNOWN_VIDEO_DURATIONS[vFile]) {
+            const realDur = KNOWN_VIDEO_DURATIONS[vFile];
+            if (short.duration !== realDur) {
+                short.duration = realDur;
+                updatedCount++;
+            }
+        } else if (short.video && (short.video.startsWith('idb:') || /\.(mp4|webm|mov)($|\?)/i.test(short.video))) {
+            let src = short.video;
+            if (short.video.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                src = await resolveMediaUrl(short.video);
+            }
+            const detected = await extractDurationFromFileOrUrl(src);
+            if (detected && short.duration !== detected) {
+                short.duration = detected;
+                updatedCount++;
+            }
+        }
+    }
+
+    if (updatedCount > 0) {
+        await saveSiteData(data);
+        renderAdminShortsList(data.shorts);
+        if (!silent) {
+            showToast(`Updated ${updatedCount} card(s) to exact video lengths!`, 'success');
+        }
+    } else {
+        if (!silent) {
+            showToast('All video lengths already match original files!', 'info');
+        }
+    }
+}
+window.autoSyncAllShortDurations = autoSyncAllShortDurations;
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'none';
     }
