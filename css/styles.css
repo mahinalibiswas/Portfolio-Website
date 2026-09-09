@@ -2836,6 +2836,8 @@ button {
     padding: 0 !important;
     background: #000000 !important;
     pointer-events: auto !important;
+    transform: scale(1.15) !important;
+    transform-origin: center bottom !important;
 }
 
 /* Video Title & Channel Info at Bottom (Zero Gradient, 100% Transparent) */
