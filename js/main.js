@@ -1277,11 +1277,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         prevBtn.onclick = function(e) {
             e.preventDefault();
+            isWheelLerping = false;
+            cancelAnimationFrame(wheelLerpId);
+            targetScrollLeft = Math.max(0, track.scrollLeft - getStep());
             smoothScrollTrack(-getStep(), 500);
         };
 
         nextBtn.onclick = function(e) {
             e.preventDefault();
+            isWheelLerping = false;
+            cancelAnimationFrame(wheelLerpId);
+            targetScrollLeft = Math.min(track.scrollWidth - track.clientWidth, track.scrollLeft + getStep());
             smoothScrollTrack(getStep(), 500);
         };
 
@@ -1303,6 +1309,8 @@ document.addEventListener('DOMContentLoaded', () => {
             lastMoveX = e.pageX;
             lastMoveTime = performance.now();
             velocity = 0;
+            isWheelLerping = false;
+            cancelAnimationFrame(wheelLerpId);
             cancelAnimationFrame(scrollAnimationId);
             cancelAnimationFrame(momentumId);
         };
@@ -1342,15 +1350,77 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Smooth wheel scroll over track
-        track.onwheel = function(e) {
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                e.preventDefault();
-                smoothScrollTrack(e.deltaY * 1.2, 350);
-            }
-        };
+        // Wheel Scroll Interceptor on Short Video Section:
+        // When mouse is over this section, scrolling slides reels horizontally (NOT page).
+        // When all reels are finished, vertical page scrolling seamlessly resumes!
+        const shortsSection = document.getElementById('shorts') || track.closest('.shorts-section') || track;
+        let targetScrollLeft = track.scrollLeft;
+        let isWheelLerping = false;
+        let wheelLerpId = null;
 
-        track.onscroll = updateUI;
+        function scrollReelsLerp(amount) {
+            cancelAnimationFrame(scrollAnimationId);
+            cancelAnimationFrame(momentumId);
+
+            const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+
+            if (Math.abs(targetScrollLeft - track.scrollLeft) > 250) {
+                targetScrollLeft = track.scrollLeft;
+            }
+
+            targetScrollLeft = Math.max(0, Math.min(maxScroll, targetScrollLeft + amount));
+
+            if (!isWheelLerping) {
+                isWheelLerping = true;
+                function lerpStep() {
+                    const diff = targetScrollLeft - track.scrollLeft;
+                    if (Math.abs(diff) > 0.8) {
+                        track.scrollLeft += diff * 0.18;
+                        updateUI();
+                        wheelLerpId = requestAnimationFrame(lerpStep);
+                    } else {
+                        track.scrollLeft = targetScrollLeft;
+                        updateUI();
+                        isWheelLerping = false;
+                    }
+                }
+                wheelLerpId = requestAnimationFrame(lerpStep);
+            }
+        }
+
+        shortsSection.addEventListener('wheel', function(e) {
+            const maxScroll = track.scrollWidth - track.clientWidth;
+            if (maxScroll <= 5) return; // All cards already in view, let page scroll normally
+
+            const delta = e.deltaY;
+            if (Math.abs(delta) < 2) return;
+
+            // Scrolling DOWN (forward through reels)
+            if (delta > 0) {
+                if (track.scrollLeft < maxScroll - 6) {
+                    e.preventDefault(); // Stop page scroll!
+                    const stepAmount = Math.max(120, Math.abs(delta) * 1.5);
+                    scrollReelsLerp(stepAmount);
+                }
+                // When reached end, e.preventDefault() is NOT called -> Page scroll continues downward!
+            }
+            // Scrolling UP (backward through reels)
+            else if (delta < 0) {
+                if (track.scrollLeft > 6) {
+                    e.preventDefault(); // Stop page scroll!
+                    const stepAmount = Math.max(120, Math.abs(delta) * 1.5);
+                    scrollReelsLerp(-stepAmount);
+                }
+                // When reached beginning, e.preventDefault() is NOT called -> Page scroll continues upward!
+            }
+        }, { passive: false });
+
+        track.onscroll = function() {
+            if (!isWheelLerping) {
+                targetScrollLeft = track.scrollLeft;
+            }
+            updateUI();
+        };
         window.onresize = function() {
             buildDots();
             updateUI();
