@@ -1414,13 +1414,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const delta = e.deltaY;
             if (Math.abs(delta) < 2) return;
 
+            const vh = window.innerHeight || document.documentElement.clientHeight;
+            const trackRect = track.getBoundingClientRect();
+            const trackCenter = trackRect.top + trackRect.height / 2;
+            const screenCenter = vh / 2;
+
+            // Center tolerance threshold:
+            // Ensure cards are properly centered in screen view before horizontal reel sliding activates
+            const centerThreshold = Math.min(85, Math.max(45, vh * 0.09));
+
             const isAtEnd = track.scrollLeft >= maxScroll - 8 && targetScrollLeft >= maxScroll - 8;
             const isAtStart = track.scrollLeft <= 8 && targetScrollLeft <= 8;
 
             // Scrolling DOWN (forward through reels)
             if (delta > 0) {
+                // If video cards haven't reached the screen center yet (still entering from below),
+                // do NOT intercept - let the page scroll down until cards are fully centered!
+                if (trackCenter > screenCenter + centerThreshold) {
+                    window.lenis?.start();
+                    return;
+                }
+
                 if (!isAtEnd) {
-                    // Reels not yet finished: STOP page scrolling completely!
+                    // Cards ARE centered and reels not yet finished: STOP page scrolling completely!
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
@@ -1435,8 +1451,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // Scrolling UP (backward through reels)
             else if (delta < 0) {
+                // If video cards haven't reached the screen center yet (still entering from above),
+                // do NOT intercept - let the page scroll up until cards are fully centered!
+                if (trackCenter < screenCenter - centerThreshold) {
+                    window.lenis?.start();
+                    return;
+                }
+
                 if (!isAtStart) {
-                    // Reels not yet at start: STOP page scrolling completely!
+                    // Cards ARE centered and reels not yet at start: STOP page scrolling completely!
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
