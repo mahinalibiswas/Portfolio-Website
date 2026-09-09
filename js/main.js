@@ -1352,7 +1352,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Wheel Scroll Interceptor on Short Video Section:
         // When mouse is over this section, scrolling slides reels horizontally (NOT page).
-        // When all reels are finished, vertical page scrolling seamlessly resumes!
+        // Page scroll is strictly frozen until all reels are finished, then resumes smoothly!
         const shortsSection = document.getElementById('shorts') || track.closest('.shorts-section') || track;
         let targetScrollLeft = track.scrollLeft;
         let isWheelLerping = false;
@@ -1364,56 +1364,101 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
 
-            if (Math.abs(targetScrollLeft - track.scrollLeft) > 250) {
-                targetScrollLeft = track.scrollLeft;
-            }
+            // Clamp target relative to current position to avoid excessive runaway accumulation
+            const minAllowed = Math.max(0, track.scrollLeft - 500);
+            const maxAllowed = Math.min(maxScroll, track.scrollLeft + 500);
 
-            targetScrollLeft = Math.max(0, Math.min(maxScroll, targetScrollLeft + amount));
+            targetScrollLeft = Math.max(minAllowed, Math.min(maxAllowed, targetScrollLeft + amount));
 
             if (!isWheelLerping) {
                 isWheelLerping = true;
                 function lerpStep() {
                     const diff = targetScrollLeft - track.scrollLeft;
                     if (Math.abs(diff) > 0.8) {
-                        track.scrollLeft += diff * 0.18;
+                        track.scrollLeft += diff * 0.22;
                         updateUI();
                         wheelLerpId = requestAnimationFrame(lerpStep);
                     } else {
                         track.scrollLeft = targetScrollLeft;
                         updateUI();
                         isWheelLerping = false;
+
+                        // Check if boundary was reached to allow Lenis to resume
+                        const atEnd = track.scrollLeft >= maxScroll - 8;
+                        const atStart = track.scrollLeft <= 8;
+                        if (atEnd || atStart) {
+                            window.lenis?.start();
+                        }
                     }
                 }
                 wheelLerpId = requestAnimationFrame(lerpStep);
             }
         }
 
-        shortsSection.addEventListener('wheel', function(e) {
-            const maxScroll = track.scrollWidth - track.clientWidth;
-            if (maxScroll <= 5) return; // All cards already in view, let page scroll normally
+        // Clean up previously registered listener if initShortsCarousel runs multiple times
+        if (shortsSection._wheelHandler) {
+            shortsSection.removeEventListener('wheel', shortsSection._wheelHandler, { capture: true });
+        }
+        if (shortsSection._leaveHandler) {
+            shortsSection.removeEventListener('mouseleave', shortsSection._leaveHandler);
+        }
+
+        shortsSection._wheelHandler = function(e) {
+            const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+            if (maxScroll <= 8) {
+                // All cards already visible on screen - allow normal vertical page scroll
+                window.lenis?.start();
+                return;
+            }
 
             const delta = e.deltaY;
             if (Math.abs(delta) < 2) return;
 
+            const isAtEnd = track.scrollLeft >= maxScroll - 8 && targetScrollLeft >= maxScroll - 8;
+            const isAtStart = track.scrollLeft <= 8 && targetScrollLeft <= 8;
+
             // Scrolling DOWN (forward through reels)
             if (delta > 0) {
-                if (track.scrollLeft < maxScroll - 6) {
-                    e.preventDefault(); // Stop page scroll!
-                    const stepAmount = Math.max(120, Math.abs(delta) * 1.5);
+                if (!isAtEnd) {
+                    // Reels not yet finished: STOP page scrolling completely!
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    window.lenis?.stop();
+
+                    const stepAmount = Math.max(140, Math.min(280, Math.abs(delta) * 1.5));
                     scrollReelsLerp(stepAmount);
+                } else {
+                    // All reels finished! Allow page scrolling to smoothly resume downwards
+                    window.lenis?.start();
                 }
-                // When reached end, e.preventDefault() is NOT called -> Page scroll continues downward!
             }
             // Scrolling UP (backward through reels)
             else if (delta < 0) {
-                if (track.scrollLeft > 6) {
-                    e.preventDefault(); // Stop page scroll!
-                    const stepAmount = Math.max(120, Math.abs(delta) * 1.5);
+                if (!isAtStart) {
+                    // Reels not yet at start: STOP page scrolling completely!
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    window.lenis?.stop();
+
+                    const stepAmount = Math.max(140, Math.min(280, Math.abs(delta) * 1.5));
                     scrollReelsLerp(-stepAmount);
+                } else {
+                    // First reel reached! Allow page scrolling to smoothly resume upwards
+                    window.lenis?.start();
                 }
-                // When reached beginning, e.preventDefault() is NOT called -> Page scroll continues upward!
             }
-        }, { passive: false });
+        };
+
+        shortsSection._leaveHandler = function() {
+            // When mouse leaves the section, ALWAYS ensure Lenis is started
+            window.lenis?.start();
+        };
+
+        // Attach in CAPTURE phase so it intercepts the event BEFORE it bubbles to window/Lenis
+        shortsSection.addEventListener('wheel', shortsSection._wheelHandler, { passive: false, capture: true });
+        shortsSection.addEventListener('mouseleave', shortsSection._leaveHandler);
 
         track.onscroll = function() {
             if (!isWheelLerping) {

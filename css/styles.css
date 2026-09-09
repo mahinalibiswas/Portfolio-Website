@@ -2515,6 +2515,7 @@ button {
     overflow-x: auto;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
     padding: 1.8rem 0.5rem;
     flex: 1;
     min-width: 0;
