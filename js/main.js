@@ -698,7 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         isReelChanging = true;
         const mediaLayer = document.getElementById('reelMediaLayer');
-        const bottomBox = document.querySelector('.reel-overlay-bottom');
+        const bottomBox = document.getElementById('reelBottomBar');
 
         let nextIndex = direction === 'next' ? currentReelIndex + 1 : currentReelIndex - 1;
         if (nextIndex >= currentReelsData.length) nextIndex = 0;
@@ -748,8 +748,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const short = currentReelsData[currentReelIndex];
         const mediaLayer = document.getElementById('reelMediaLayer');
-        const ytTitle = document.getElementById('reelYtTitle');
-        if (ytTitle) ytTitle.textContent = short.title || 'Viral Reels & TikToks';
+        const bottomTitle = document.getElementById('reelBottomTitle') || document.getElementById('reelYtTitle');
+        if (bottomTitle) bottomTitle.textContent = short.title || 'Professional Video Color Grading';
+        const bottomAuthor = document.getElementById('reelBottomAuthor');
+        if (bottomAuthor) bottomAuthor.textContent = short.author || 'Mahin Ali Biswas';
 
         // Render Media Layer (100% Clean & Immersive Showcase)
         const playerFrame = document.getElementById('reelPlayerFrame');
@@ -979,34 +981,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (e.target.id === 'reelModal') {
             closeReelModal();
-            return;
-        }
-
-        // Like & Share actions on Reel Overlay
-        const reelLike = e.target.closest('#reelLikeBtn');
-        if (reelLike) {
-            e.preventDefault();
-            e.stopPropagation();
-            const countEl = document.getElementById('reelLikeCount');
-            const isLiked = reelLike.classList.toggle('liked');
-            if (countEl) countEl.textContent = isLiked ? '1' : 'Like';
-            if (typeof showToast === 'function') showToast(isLiked ? 'Added to Liked videos' : 'Removed from Liked videos');
-            return;
-        }
-
-        const reelShare = e.target.closest('#reelShareBtn');
-        if (reelShare) {
-            e.preventDefault();
-            e.stopPropagation();
-            const short = (currentReelsData && currentReelsData[currentReelIndex]) ? currentReelsData[currentReelIndex] : null;
-            const url = short ? (short.youtubeUrl || short.video || window.location.href) : window.location.href;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(url).then(() => {
-                    if (typeof showToast === 'function') showToast('Reel link copied to clipboard!');
-                });
-            } else if (typeof showToast === 'function') {
-                showToast('Reel link ready to share!');
-            }
             return;
         }
 

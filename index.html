@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=2.2">
+    <link rel="stylesheet" href="css/styles.css?v=2.3">
 </head>
 <body class="dark-theme">
 
@@ -1003,28 +1003,12 @@
                     <!-- Injected dynamically via JS -->
                 </div>
 
-                <!-- YouTube Reels / Shorts UI Overlay -->
-                <div class="reel-yt-hud">
-                    <!-- Bottom Info (Channel name, Avatar & Title) -->
-                    <div class="reel-yt-bottom-info">
-                        <div class="reel-yt-channel-row">
-                            <img src="assets/images/hero_avatar.jpg" alt="Mahin Ali Biswas" class="reel-yt-avatar" onerror="this.src='assets/images/hero_showreel_cover.jpg'">
-                            <span class="reel-yt-channel-name">@mahinalibiswas</span>
-                            <span class="reel-yt-badge" title="Verified Editor"><i class="fa-solid fa-circle-check"></i></span>
-                        </div>
-                        <h3 class="reel-yt-title" id="reelYtTitle">Viral Reels &amp; TikToks</h3>
-                    </div>
-
-                    <!-- Bottom Right Action Icons (Like & Share) -->
-                    <div class="reel-yt-actions">
-                        <button class="reel-yt-btn" id="reelLikeBtn" title="Like">
-                            <div class="reel-yt-icon-circle"><i class="fa-solid fa-thumbs-up"></i></div>
-                            <span class="reel-yt-label" id="reelLikeCount">Like</span>
-                        </button>
-                        <button class="reel-yt-btn" id="reelShareBtn" title="Share Reel">
-                            <div class="reel-yt-icon-circle"><i class="fa-solid fa-share"></i></div>
-                            <span class="reel-yt-label">Share</span>
-                        </button>
+                <!-- Bottom Info Bar (Channel Avatar, Video Title & Channel Name) -->
+                <div class="reel-bottom-bar" id="reelBottomBar">
+                    <img src="assets/images/hero_avatar.jpg" alt="Mahin Ali Biswas" class="reel-bottom-avatar" onerror="this.src='assets/images/hero_showreel_cover.jpg'">
+                    <div class="reel-bottom-meta">
+                        <h3 class="reel-bottom-title" id="reelBottomTitle">Professional Video Color Grading Before &amp; After</h3>
+                        <p class="reel-bottom-author" id="reelBottomAuthor">Mahin Ali Biswas</p>
                     </div>
                 </div>
             </div>
@@ -1065,6 +1049,6 @@
     <!-- Smooth Momentum Scroll Engine (Lenis) -->
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
     <!-- Custom JS -->
-    <script src="js/main.js?v=2.2"></script>
+    <script src="js/main.js?v=2.3"></script>
 </body>
 </html>
