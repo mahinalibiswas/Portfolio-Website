@@ -964,9 +964,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (body) {
                 body.innerHTML = `
-                    <button class="modal-floating-back-btn" id="modalBackToProjectsAction">
-                        <i class="fa-solid fa-arrow-left"></i> Back to Projects
-                    </button>
+                    <div class="modal-video-header-row">
+                        <button class="modal-floating-back-btn" id="modalBackToProjectsAction">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Projects
+                        </button>
+                    </div>
                     <div class="pure-video-lightbox">
                         ${playerHtml}
                     </div>
@@ -1163,13 +1165,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Keyboard listener for Reel modal
+    // Keyboard listener for Reel and Project Video modals
     document.addEventListener('keydown', (e) => {
         const reelModal = document.getElementById('reelModal');
         if (reelModal && reelModal.classList.contains('active')) {
             if (e.key === 'Escape') closeReelModal();
             else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') transitionReel('prev');
             else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') transitionReel('next');
+        }
+        const projModal = document.getElementById('projectModal');
+        if (projModal && projModal.classList.contains('active') && e.key === 'Escape') {
+            projModal.classList.remove('active');
+            const body = document.getElementById('projectModalBody');
+            if (body) body.innerHTML = '';
         }
     });
 
@@ -1222,6 +1230,15 @@ document.addEventListener('DOMContentLoaded', () => {
         modal?.classList.remove('active');
         const body = document.getElementById('projectModalBody') || modal?.querySelector('.video-responsive-wrapper');
         if (body) body.innerHTML = '';
+    });
+
+    const activeProjectModal = document.getElementById('projectModal');
+    activeProjectModal?.addEventListener('click', (e) => {
+        if (e.target === activeProjectModal) {
+            activeProjectModal.classList.remove('active');
+            const body = document.getElementById('projectModalBody');
+            if (body) body.innerHTML = '';
+        }
     });
 
     closeDetailOverlay?.addEventListener('click', () => {

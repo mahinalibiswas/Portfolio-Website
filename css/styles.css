@@ -2110,11 +2110,20 @@ button {
     max-width: 1000px;
     width: 90vw;
     padding: 0;
-    background: #000000;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    border: none;
     border-radius: 20px;
-    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95);
+    box-shadow: none;
     overflow: visible;
+    position: relative;
+}
+
+.modal-video-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    margin-bottom: 1.1rem;
 }
 
 .pure-video-lightbox {
@@ -2122,8 +2131,14 @@ button {
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 20px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95);
     overflow: hidden;
+}
+
+#projectModal .modal-close {
+    display: none !important;
 }
 
 .modal-close {
@@ -2440,18 +2455,18 @@ button {
     box-shadow: 0 8px 20px rgba(255, 0, 0, 0.4);
 }
 
-/* --- Floating Back Button Outside Container --- */
+/* --- Floating Back Button Aligned Directly with Video Container --- */
 .modal-floating-back-btn {
-    position: fixed;
-    top: 30px;
-    left: 40px;
-    z-index: 200005;
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 10;
     display: inline-flex;
     align-items: center;
     gap: 0.65rem;
-    padding: 0.65rem 1.4rem;
+    padding: 0.6rem 1.35rem;
     border-radius: var(--radius-full);
-    background: rgba(11, 17, 32, 0.88);
+    background: rgba(11, 17, 32, 0.9);
     border: 1.5px solid var(--accent-neon);
     color: #ffffff;
     font-size: 0.88rem;
@@ -2472,10 +2487,11 @@ button {
 
 @media (max-width: 768px) {
     .modal-floating-back-btn {
-        top: 15px;
-        left: 15px;
         padding: 0.5rem 1.1rem;
         font-size: 0.8rem;
+    }
+    .modal-video-header-row {
+        margin-bottom: 0.8rem;
     }
 }
 
