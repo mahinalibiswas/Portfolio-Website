@@ -2811,9 +2811,7 @@ button {
     justify-content: center;
 }
 
-/* Natural Seamless 9:16 Video & Iframe (Zero shifting, Zero black bars) */
-.reel-media-layer video,
-.reel-media-layer iframe {
+.reel-media-layer video {
     position: absolute !important;
     inset: 0 !important;
     top: 0 !important;
@@ -2822,6 +2820,17 @@ button {
     height: 100% !important;
     border: none !important;
     object-fit: cover !important;
+    background: #000000 !important;
+}
+
+/* YouTube Shorts Player: Channel name, title, Like and Share at bottom without bottom black gap */
+.reel-media-layer iframe {
+    position: absolute !important;
+    top: -70px !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100% + 96px) !important;
+    border: none !important;
     background: #000000 !important;
     pointer-events: auto !important;
 }
