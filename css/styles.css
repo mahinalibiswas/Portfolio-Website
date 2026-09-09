@@ -2745,3 +2745,415 @@ button {
 @media (max-width: 420px) {
     .short-card { flex: 0 0 85%; width: 85%; }
 }
+
+/* ==========================================================================
+   DEDICATED VERTICAL REELS MODAL (Instagram / TikTok / YouTube Shorts style)
+   ========================================================================== */
+.reel-modal-backdrop {
+    background: rgba(2, 6, 18, 0.94) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    padding: 1rem !important;
+    z-index: 300000 !important;
+}
+
+.reel-modal-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 96vh;
+    height: 100%;
+}
+
+.reel-player-frame {
+    position: relative;
+    width: min(92vw, 410px);
+    height: min(88vh, 740px);
+    aspect-ratio: 9 / 16;
+    background: #000000;
+    border-radius: 28px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 25px 80px rgba(0, 0, 0, 0.95),
+        0 0 45px rgba(0, 240, 255, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: reelScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes reelScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Notch pill for phone aesthetic */
+.reel-notch-pill {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+    z-index: 30;
+    pointer-events: none;
+}
+
+/* Media Layer */
+.reel-media-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #050811;
+    z-index: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reel-media-layer video,
+.reel-media-layer iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: cover;
+    background: #000;
+}
+
+/* Overlay Layer (IG / Shorts floating HUD) */
+.reel-overlay-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem 1rem 0.8rem 1rem;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.6) 0%,
+        rgba(0, 0, 0, 0) 18%,
+        rgba(0, 0, 0, 0) 55%,
+        rgba(0, 0, 0, 0.85) 85%,
+        rgba(0, 0, 0, 0.96) 100%
+    );
+}
+
+/* Top Bar */
+.reel-overlay-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: auto;
+    gap: 0.8rem;
+    margin-top: 0.3rem;
+}
+
+.reel-platform-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.85rem;
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.reel-platform-tag i {
+    font-size: 0.92rem;
+}
+
+.reel-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reel-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: var(--transition-fast);
+}
+
+.reel-icon-btn:hover {
+    background: var(--accent-neon);
+    color: #020817;
+    border-color: var(--accent-neon);
+    transform: scale(1.08);
+}
+
+/* Right Action Rail */
+.reel-action-rail {
+    position: absolute;
+    right: 0.85rem;
+    bottom: 5.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+    pointer-events: auto;
+    z-index: 20;
+}
+
+.reel-rail-item {
+    background: none;
+    border: none;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.reel-rail-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.25s ease;
+}
+
+.reel-rail-item:hover .reel-rail-icon {
+    background: var(--accent-neon);
+    color: #020817;
+    border-color: var(--accent-neon);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    transform: scale(1.1);
+}
+
+.reel-rail-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Bottom Info */
+.reel-overlay-bottom {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    max-width: 80%;
+    margin-bottom: 0.4rem;
+}
+
+.reel-creator-header {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.reel-creator-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent-neon);
+    object-fit: cover;
+}
+
+.reel-creator-handle {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.reel-creator-badge {
+    color: var(--accent-neon);
+    font-size: 0.85rem;
+}
+
+.reel-client-tag {
+    font-size: 0.76rem;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.reel-title-text {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.25;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.reel-desc-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.reel-audio-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.74rem;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    max-width: 100%;
+}
+
+.reel-audio-bar i {
+    color: var(--accent-neon);
+    font-size: 0.76rem;
+}
+
+.reel-audio-marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Bottom Progress Bar */
+.reel-bottom-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 30;
+}
+
+.reel-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00f0ff, #a3e635);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
+    transition: width 0.2s linear;
+}
+
+/* Close button */
+.reel-modal-close {
+    position: absolute;
+    top: -22px;
+    right: -22px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #020817;
+    border: 2px solid var(--accent-neon);
+    color: #ffffff;
+    font-size: 1.25rem;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+}
+
+.reel-modal-close:hover {
+    background: var(--accent-neon);
+    color: #020817;
+    transform: scale(1.12) rotate(90deg);
+}
+
+/* Outside Desktop Nav Arrows */
+.reel-outside-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    z-index: 50;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+}
+
+.reel-outside-prev {
+    left: -75px;
+}
+
+.reel-outside-next {
+    right: -75px;
+}
+
+.reel-outside-nav:hover {
+    background: var(--accent-neon);
+    color: #020817;
+    border-color: var(--accent-neon);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.7);
+    transform: translateY(-50%) scale(1.12);
+}
+
+@media (max-width: 600px) {
+    .reel-outside-nav {
+        display: none !important;
+    }
+    .reel-modal-close {
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    .reel-player-frame {
+        width: 95vw;
+        height: 90vh;
+        border-radius: 20px;
+    }
+}
+

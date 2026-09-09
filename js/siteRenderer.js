@@ -367,18 +367,18 @@ function renderSiteData(customData) {
         const shortsTrack = document.getElementById('shortsTrack');
         if (shortsTrack) {
             shortsTrack.innerHTML = shortsData.map((short, idx) => `
-                <div class="short-card" id="${short.id || 'short-' + (idx + 1)}">
+                <div class="short-card" id="${short.id || 'short-' + (idx + 1)}" data-short-id="${short.id || 'short-' + (idx + 1)}">
                     <div class="short-media-frame">
                         <img src="${short.image}" alt="${short.title}" class="short-card-img">
                         <div class="short-platform-badge"><i class="${short.platformIcon || 'fa-brands fa-' + (short.platform || 'instagram')}"></i> ${short.platformLabel || 'Reels'}</div>
-                        <button class="short-play-btn view-project-btn" data-id="${short.id}" aria-label="Play">
+                        <button class="short-play-btn open-reel-btn" data-short-id="${short.id}" aria-label="Play Reel">
                             <i class="fa-solid fa-play"></i>
                         </button>
                     </div>
                     <div class="short-card-body">
                         <h4 class="short-card-title">${short.title}</h4>
                         <p class="short-card-meta"><i class="fa-regular fa-clock"></i> ${short.duration || '0:50'} &nbsp;•&nbsp; ${short.client || 'Client'}</p>
-                        <button class="card-details-btn" data-id="${short.id}">Details</button>
+                        <button class="card-details-btn short-reel-details-btn" data-short-id="${short.id}">Details</button>
                     </div>
                 </div>
             `).join('');

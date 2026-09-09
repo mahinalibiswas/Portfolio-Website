@@ -641,6 +641,148 @@ document.addEventListener('DOMContentLoaded', () => {
         return fullProjectData[projectId] || fullProjectData['project-' + projectId] || fullProjectData['project-1'];
     }
 
+    /* --- Dedicated Vertical Reels & Shorts Modal System --- */
+    let currentReelIndex = 0;
+    let currentReelsData = [];
+
+    function getShortsList() {
+        if (typeof getSiteData === 'function') {
+            const sd = getSiteData();
+            if (sd && Array.isArray(sd.shorts) && sd.shorts.length > 0) return sd.shorts;
+        }
+        if (typeof DEFAULT_SITE_DATA !== 'undefined' && Array.isArray(DEFAULT_SITE_DATA.shorts)) {
+            return DEFAULT_SITE_DATA.shorts;
+        }
+        return [];
+    }
+
+    function openReelModal(shortId) {
+        const list = getShortsList();
+        if (!list.length) return;
+        
+        currentReelsData = list;
+        let foundIdx = -1;
+        if (shortId) {
+            foundIdx = list.findIndex(s => s.id === shortId || 'short-' + s.id === shortId || s.id === 'short-' + shortId);
+            if (foundIdx === -1) {
+                // If id was project-2 etc
+                foundIdx = list.findIndex(s => s.id == shortId || s.youtubeId === shortId || (s.title && shortId.includes && shortId.includes(s.id)));
+            }
+        }
+        if (foundIdx === -1) foundIdx = 0;
+        
+        currentReelIndex = foundIdx;
+        showReelAtIndex(currentReelIndex);
+
+        window.lenis?.stop();
+        const modal = document.getElementById('reelModal');
+        if (modal) modal.classList.add('active');
+    }
+
+    function showReelAtIndex(index) {
+        if (!currentReelsData || !currentReelsData.length) currentReelsData = getShortsList();
+        if (!currentReelsData.length) return;
+
+        if (index < 0) index = currentReelsData.length - 1;
+        if (index >= currentReelsData.length) index = 0;
+        currentReelIndex = index;
+
+        const short = currentReelsData[currentReelIndex];
+        const mediaLayer = document.getElementById('reelMediaLayer');
+        const titleElem = document.getElementById('reelTitleText');
+        const descElem = document.getElementById('reelDescText');
+        const clientTag = document.getElementById('reelClientTag');
+        const platformTag = document.getElementById('reelPlatformTag');
+        const audioTrack = document.getElementById('reelAudioTrack');
+        const externalLink = document.getElementById('reelRailExternal');
+        const externalIcon = document.getElementById('reelRailExternalIcon');
+
+        if (titleElem) titleElem.textContent = short.title || 'Reel Video';
+        if (descElem) descElem.textContent = short.desc || '';
+        if (clientTag) clientTag.textContent = `• ${short.client || 'Client'}`;
+        if (audioTrack) audioTrack.textContent = `Original Audio • Mahin Video Edit • ${short.duration || '0:50'}`;
+
+        // Platform tag styling
+        if (platformTag) {
+            const p = (short.platform || 'instagram').toLowerCase();
+            let icon = short.platformIcon || 'fa-brands fa-instagram';
+            let label = short.platformLabel || 'Reels';
+            let color = '#e1306c';
+            if (p.includes('youtube')) {
+                icon = 'fa-brands fa-youtube';
+                label = 'Shorts';
+                color = '#ff0000';
+            } else if (p.includes('tiktok')) {
+                icon = 'fa-brands fa-tiktok';
+                label = 'TikTok';
+                color = '#00f0ff';
+            }
+            platformTag.innerHTML = `<i class="${icon}" style="color:${color};"></i> <span>${label}</span>`;
+        }
+
+        // External platform link
+        if (externalLink) {
+            const linkUrl = short.youtubeUrl || (short.youtubeId ? `https://www.youtube.com/watch?v=${short.youtubeId}` : '#');
+            externalLink.href = linkUrl;
+            if (externalIcon) {
+                const p = (short.platform || 'instagram').toLowerCase();
+                if (p.includes('youtube')) externalIcon.className = 'fa-brands fa-youtube';
+                else if (p.includes('tiktok')) externalIcon.className = 'fa-brands fa-tiktok';
+                else externalIcon.className = 'fa-brands fa-instagram';
+            }
+        }
+
+        // Render Media Layer
+        if (mediaLayer) {
+            const ytId = short.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(short.youtubeUrl || short.video || '') : null);
+            
+            if (ytId) {
+                mediaLayer.innerHTML = `
+                    <iframe id="reelIframe"
+                        src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&mute=0&loop=1&playlist=${ytId}&modestbranding=1&rel=0&playsinline=1&controls=1"
+                        title="${short.title}"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        style="width: 100%; height: 100%; border: none;">
+                    </iframe>
+                `;
+            } else if (short.video) {
+                mediaLayer.innerHTML = `
+                    <video id="reelVideo" src="${short.video}" autoplay playsinline loop controls style="width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
+                `;
+            } else {
+                mediaLayer.innerHTML = `
+                    <img src="${short.image}" alt="${short.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                `;
+            }
+        }
+
+        // Animated bottom progress bar
+        const progressFill = document.getElementById('reelProgressFill');
+        if (progressFill) {
+            progressFill.style.transition = 'none';
+            progressFill.style.width = '0%';
+            setTimeout(() => {
+                progressFill.style.transition = 'width 30s linear';
+                progressFill.style.width = '100%';
+            }, 80);
+        }
+    }
+
+    function closeReelModal() {
+        const modal = document.getElementById('reelModal');
+        if (modal) {
+            modal.classList.remove('active');
+            const mediaLayer = document.getElementById('reelMediaLayer');
+            if (mediaLayer) mediaLayer.innerHTML = '';
+        }
+        window.lenis?.start();
+    }
+
+    window.openReelModal = openReelModal;
+    window.closeReelModal = closeReelModal;
+    window.showReelAtIndex = showReelAtIndex;
+
     function openProjectVideoModal(projectId) {
         const data = getProjectDataById(projectId);
         const modal = document.getElementById('projectModal') || document.getElementById('videoModal');
@@ -737,6 +879,89 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delegated Global Event Listeners for statically AND dynamically rendered cards
     document.addEventListener('click', (e) => {
+        // 1. Reel Modal Controls
+        const reelClose = e.target.closest('#closeReelModal');
+        if (reelClose) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeReelModal();
+            return;
+        }
+
+        const reelPrev = e.target.closest('#reelRailPrev, #reelOutsidePrev');
+        if (reelPrev) {
+            e.preventDefault();
+            e.stopPropagation();
+            showReelAtIndex(currentReelIndex - 1);
+            return;
+        }
+
+        const reelNext = e.target.closest('#reelRailNext, #reelOutsideNext');
+        if (reelNext) {
+            e.preventDefault();
+            e.stopPropagation();
+            showReelAtIndex(currentReelIndex + 1);
+            return;
+        }
+
+        const reelSound = e.target.closest('#reelSoundBtn');
+        if (reelSound) {
+            e.preventDefault();
+            e.stopPropagation();
+            const vid = document.querySelector('#reelMediaLayer video');
+            const icon = reelSound.querySelector('i');
+            if (vid) {
+                vid.muted = !vid.muted;
+                if (icon) icon.className = vid.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+            }
+            return;
+        }
+
+        const reelShare = e.target.closest('#reelRailShare');
+        if (reelShare) {
+            e.preventDefault();
+            e.stopPropagation();
+            const cur = currentReelsData[currentReelIndex];
+            if (cur) {
+                const shareUrl = cur.youtubeUrl || window.location.href;
+                navigator.clipboard?.writeText(shareUrl).then(() => {
+                    alert('Reel link copied to clipboard!');
+                }).catch(() => {
+                    prompt('Copy link:', shareUrl);
+                });
+            }
+            return;
+        }
+
+        if (e.target.id === 'reelModal') {
+            closeReelModal();
+            return;
+        }
+
+        // 2. Reel Trigger on Cards (play button, details, or thumbnail)
+        const openReelTrigger = e.target.closest('.open-reel-btn, .short-play-btn, .short-reel-details-btn');
+        if (openReelTrigger) {
+            e.preventDefault();
+            e.stopPropagation();
+            const shortCard = openReelTrigger.closest('.short-card');
+            const shortId = openReelTrigger.getAttribute('data-short-id') || 
+                            openReelTrigger.getAttribute('data-id') || 
+                            shortCard?.getAttribute('data-short-id') || 
+                            shortCard?.id;
+            openReelModal(shortId);
+            return;
+        }
+
+        const shortCardClicked = e.target.closest('.short-card');
+        if (shortCardClicked && !e.target.closest('button, a')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const shortId = shortCardClicked.getAttribute('data-short-id') || shortCardClicked.id;
+            openReelModal(shortId);
+            return;
+        }
+
+        // 3. Long Video Modals & Project Overlays
         const backBtn = e.target.closest('#modalBackToProjectsAction, #modalTopCloseAction, .modal-floating-back-btn, .modal-back-to-projects-btn');
         if (backBtn) {
             e.preventDefault();
@@ -787,6 +1012,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const projectId = playBtn.getAttribute('data-id');
             openProjectVideoModal(projectId);
             return;
+        }
+    });
+
+    // Keyboard listener for Reel modal
+    document.addEventListener('keydown', (e) => {
+        const reelModal = document.getElementById('reelModal');
+        if (reelModal && reelModal.classList.contains('active')) {
+            if (e.key === 'Escape') closeReelModal();
+            else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') showReelAtIndex(currentReelIndex - 1);
+            else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') showReelAtIndex(currentReelIndex + 1);
         }
     });
 
