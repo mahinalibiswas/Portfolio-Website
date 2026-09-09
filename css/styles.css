@@ -2851,39 +2851,257 @@ button {
     );
 }
 
-/* YouTube Mode: Remove custom UI and dark gradient so YouTube's native UI is 100% clean */
+/* YouTube Mode vs Direct Mode UI */
 .reel-player-frame.is-youtube-mode .reel-overlay-layer {
-    background: none !important;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0) 15%,
+        rgba(0, 0, 0, 0) 50%,
+        rgba(0, 0, 0, 0.65) 75%,
+        rgba(0, 0, 0, 0.95) 100%
+    );
     pointer-events: none;
-    padding: 0.8rem 1rem;
+    padding: 1.1rem 1rem 0.8rem 1rem;
 }
 
-.reel-player-frame.is-youtube-mode #reelPlatformTag,
-.reel-player-frame.is-youtube-mode .reel-overlay-bottom {
-    display: none !important;
-}
-
-.reel-player-frame.is-youtube-mode .reel-overlay-top {
-    justify-content: flex-end !important;
+/* Crop YouTube web header (AI badge, title, share) & bottom links to fit clean Shorts frame */
+.reel-player-frame.is-youtube-mode .reel-media-layer iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: calc(100% + 120px);
+    transform: translate(-50%, -50%) scale(1.06);
+    border: none;
+    background: #000;
     pointer-events: auto;
 }
 
-.reel-player-frame.is-youtube-mode .reel-close-btn {
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1.5px solid rgba(255, 255, 255, 0.3);
-    color: #ffffff;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+/* Visibility Switching */
+.reel-player-frame.is-youtube-mode #reelPlatformTag,
+.reel-player-frame.is-youtube-mode #reelDirectBottom {
+    display: none !important;
 }
 
-/* Direct Video Mode: Custom UI displayed cleanly */
+.reel-player-frame.is-youtube-mode #reelYtHeaderTag,
+.reel-player-frame.is-youtube-mode #reelYtSidebar,
+.reel-player-frame.is-youtube-mode #reelYtBottom {
+    display: flex !important;
+}
+
+.reel-player-frame.is-direct-mode #reelYtHeaderTag,
+.reel-player-frame.is-direct-mode #reelYtSidebar,
+.reel-player-frame.is-direct-mode #reelYtBottom {
+    display: none !important;
+}
+
 .reel-player-frame.is-direct-mode #reelPlatformTag {
     display: inline-flex !important;
 }
 
-.reel-player-frame.is-direct-mode .reel-overlay-bottom {
+.reel-player-frame.is-direct-mode #reelDirectBottom {
     display: flex !important;
+}
+
+/* YouTube Shorts Header Badge */
+.reel-yt-header-tag {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.85rem;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    pointer-events: auto;
+}
+
+/* YouTube Shorts Action Sidebar (Right Column) */
+.reel-yt-sidebar {
+    display: none;
+    position: absolute;
+    right: 0.75rem;
+    bottom: 5.2rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    z-index: 25;
+    pointer-events: auto;
+}
+
+.yt-side-btn {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    color: #ffffff;
+    padding: 0;
+    outline: none;
+    transition: transform 0.2s ease;
+}
+
+.yt-side-btn:hover {
+    transform: scale(1.1);
+}
+
+.yt-side-btn:active {
+    transform: scale(0.92);
+}
+
+.yt-side-icon-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease;
+}
+
+.yt-side-btn.liked .yt-side-icon-circle {
+    background: #ff0000;
+    border-color: #ff0000;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+}
+
+.yt-side-count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.yt-audio-disc-wrap {
+    margin-top: 0.4rem;
+}
+
+.yt-audio-disc {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 3px solid #1e293b;
+    background: #000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    animation: ytSpinDisc 4s linear infinite;
+}
+
+.yt-audio-disc img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@keyframes ytSpinDisc {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* YouTube Shorts Bottom Info */
+.reel-yt-bottom {
+    display: none;
+    pointer-events: auto;
+    flex-direction: column;
+    gap: 0.45rem;
+    width: calc(100% - 65px);
+    max-width: calc(100% - 65px);
+    margin-bottom: 0.4rem;
+    z-index: 20;
+}
+
+.yt-channel-row {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.yt-channel-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #ffffff;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.yt-channel-name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.yt-subscribe-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    color: #020817;
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    letter-spacing: 0.02em;
+}
+
+.yt-subscribe-btn:hover {
+    background: #ff0000;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.yt-short-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #f8fafc;
+    line-height: 1.35;
+    margin: 0;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.yt-sound-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.76rem;
+    color: #cbd5e1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.yt-sound-row i {
+    font-size: 0.72rem;
+    color: #ffffff;
+}
+
+.yt-sound-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
 }
 
 /* Top Bar */
