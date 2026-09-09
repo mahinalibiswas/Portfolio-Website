@@ -754,10 +754,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (titleElem) titleElem.textContent = short.title || 'Reel Video';
         if (clientTag) clientTag.textContent = `• ${short.client || 'Client'}`;
-        const ytTitleElem = document.getElementById('reelYtTitleText');
-        if (ytTitleElem) ytTitleElem.textContent = short.title || 'YouTube Short';
-        const ytSoundElem = document.getElementById('reelYtSoundTitle');
-        if (ytSoundElem) ytSoundElem.textContent = `Original Sound - ${short.client || 'Mahin Ali Biswas'}`;
 
         // Platform tag styling
         if (platformTag) {
@@ -862,49 +858,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.closeReelModal = closeReelModal;
     window.showReelAtIndex = showReelAtIndex;
     window.transitionReel = transitionReel;
-
-    // YouTube Shorts sidebar interactive buttons
-    document.getElementById('ytReelLikeBtn')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const btn = e.currentTarget;
-        const countEl = document.getElementById('ytLikeCount');
-        const isLiked = btn.classList.toggle('liked');
-        if (countEl) {
-            countEl.textContent = isLiked ? '14.3K' : '14.2K';
-        }
-        if (typeof showToast === 'function') {
-            showToast(isLiked ? 'Added to Liked videos' : 'Removed from Liked videos');
-        }
-    });
-
-    document.getElementById('ytReelDislikeBtn')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const btn = e.currentTarget;
-        btn.classList.toggle('disliked');
-        if (typeof showToast === 'function') {
-            showToast('Feedback submitted');
-        }
-    });
-
-    document.getElementById('ytReelShareBtn')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const short = (currentReelsData && currentReelsData[currentReelIndex]) ? currentReelsData[currentReelIndex] : null;
-        const url = short ? (short.youtubeUrl || short.video || window.location.href) : window.location.href;
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(url).then(() => {
-                if (typeof showToast === 'function') showToast('Short link copied to clipboard!');
-            });
-        } else if (typeof showToast === 'function') {
-            showToast('Short link ready to share!');
-        }
-    });
-
-    document.getElementById('ytReelCommentBtn')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (typeof showToast === 'function') {
-            showToast('Comments: 384 comments on YouTube');
-        }
-    });
 
     function openProjectVideoModal(projectId) {
         const data = getProjectDataById(projectId);
