@@ -694,8 +694,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const clientTag = document.getElementById('reelClientTag');
         const platformTag = document.getElementById('reelPlatformTag');
         const audioTrack = document.getElementById('reelAudioTrack');
-        const externalLink = document.getElementById('reelRailExternal');
-        const externalIcon = document.getElementById('reelRailExternalIcon');
 
         if (titleElem) titleElem.textContent = short.title || 'Reel Video';
         if (descElem) descElem.textContent = short.desc || '';
@@ -718,18 +716,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 color = '#00f0ff';
             }
             platformTag.innerHTML = `<i class="${icon}" style="color:${color};"></i> <span>${label}</span>`;
-        }
-
-        // External platform link
-        if (externalLink) {
-            const linkUrl = short.youtubeUrl || (short.youtubeId ? `https://www.youtube.com/watch?v=${short.youtubeId}` : '#');
-            externalLink.href = linkUrl;
-            if (externalIcon) {
-                const p = (short.platform || 'instagram').toLowerCase();
-                if (p.includes('youtube')) externalIcon.className = 'fa-brands fa-youtube';
-                else if (p.includes('tiktok')) externalIcon.className = 'fa-brands fa-tiktok';
-                else externalIcon.className = 'fa-brands fa-instagram';
-            }
         }
 
         // Render Media Layer
@@ -888,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const reelPrev = e.target.closest('#reelRailPrev, #reelOutsidePrev');
+        const reelPrev = e.target.closest('#reelOutsidePrev');
         if (reelPrev) {
             e.preventDefault();
             e.stopPropagation();
@@ -896,7 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const reelNext = e.target.closest('#reelRailNext, #reelOutsideNext');
+        const reelNext = e.target.closest('#reelOutsideNext');
         if (reelNext) {
             e.preventDefault();
             e.stopPropagation();
@@ -913,22 +899,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (vid) {
                 vid.muted = !vid.muted;
                 if (icon) icon.className = vid.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
-            }
-            return;
-        }
-
-        const reelShare = e.target.closest('#reelRailShare');
-        if (reelShare) {
-            e.preventDefault();
-            e.stopPropagation();
-            const cur = currentReelsData[currentReelIndex];
-            if (cur) {
-                const shareUrl = cur.youtubeUrl || window.location.href;
-                navigator.clipboard?.writeText(shareUrl).then(() => {
-                    alert('Reel link copied to clipboard!');
-                }).catch(() => {
-                    prompt('Copy link:', shareUrl);
-                });
             }
             return;
         }

@@ -983,11 +983,6 @@
     <!-- Dedicated Vertical Reel Player Modal (Instagram / Shorts / TikTok style) -->
     <div class="modal-backdrop reel-modal-backdrop" id="reelModal">
         <div class="reel-modal-container">
-            <!-- Close Button -->
-            <button class="reel-modal-close" id="closeReelModal" aria-label="Close Reel">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
             <!-- Outside Prev / Next for Desktop -->
             <button class="reel-outside-nav reel-outside-prev" id="reelOutsidePrev" aria-label="Previous Reel" title="Previous Reel (Up Arrow)">
                 <i class="fa-solid fa-chevron-left"></i>
@@ -1008,7 +1003,7 @@
 
                 <!-- Floating Reels UI Layer -->
                 <div class="reel-overlay-layer">
-                    <!-- Top Bar: Platform badge & sound toggle -->
+                    <!-- Top Bar: Platform badge, sound toggle, and close button -->
                     <div class="reel-overlay-top">
                         <span class="reel-platform-tag" id="reelPlatformTag">
                             <i class="fa-brands fa-instagram"></i> <span>Reels</span>
@@ -1017,27 +1012,10 @@
                             <button class="reel-icon-btn reel-sound-btn" id="reelSoundBtn" aria-label="Toggle Mute" title="Mute/Unmute">
                                 <i class="fa-solid fa-volume-high"></i>
                             </button>
+                            <button class="reel-icon-btn reel-close-btn" id="closeReelModal" aria-label="Close Reel" title="Close Reel">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
-                    </div>
-
-                    <!-- Right Action Rail (Instagram Reels / TikTok style) -->
-                    <div class="reel-action-rail">
-                        <button class="reel-rail-item" id="reelRailPrev" title="Previous Reel">
-                            <div class="reel-rail-icon"><i class="fa-solid fa-chevron-up"></i></div>
-                            <span class="reel-rail-label">Prev</span>
-                        </button>
-                        <button class="reel-rail-item" id="reelRailNext" title="Next Reel">
-                            <div class="reel-rail-icon"><i class="fa-solid fa-chevron-down"></i></div>
-                            <span class="reel-rail-label">Next</span>
-                        </button>
-                        <a href="#" target="_blank" class="reel-rail-item" id="reelRailExternal" title="Open Link">
-                            <div class="reel-rail-icon"><i class="fa-solid fa-arrow-up-right-from-square" id="reelRailExternalIcon"></i></div>
-                            <span class="reel-rail-label">Open</span>
-                        </a>
-                        <button class="reel-rail-item" id="reelRailShare" title="Copy Link">
-                            <div class="reel-rail-icon"><i class="fa-solid fa-share-nodes"></i></div>
-                            <span class="reel-rail-label">Share</span>
-                        </button>
                     </div>
 
                     <!-- Bottom Info Box -->
