@@ -881,4 +881,73 @@ document.addEventListener('DOMContentLoaded', () => {
         contactForm.reset();
     });
 
+    /* --- 11. Shorts & Reels Carousel --- */
+    window.initShortsCarousel = function() {
+        const track = document.getElementById('shortsTrack');
+        const prevBtn = document.getElementById('shortsPrevBtn');
+        const nextBtn = document.getElementById('shortsNextBtn');
+        const dotsContainer = document.getElementById('shortsDots');
+
+        if (!track || !prevBtn || !nextBtn || !dotsContainer) return;
+
+        const cards = Array.from(track.querySelectorAll('.short-card'));
+        if (!cards.length) return;
+
+        const GAP = 22; // matches CSS gap 1.4rem ≈ 22px
+
+        function cardWidth() {
+            return (cards[0] ? cards[0].getBoundingClientRect().width : 260) + GAP;
+        }
+
+        function visibleCount() {
+            return Math.max(1, Math.round(track.clientWidth / cardWidth()));
+        }
+
+        function totalPages() {
+            return Math.ceil(cards.length / visibleCount());
+        }
+
+        function currentPage() {
+            return Math.round(track.scrollLeft / (cardWidth() * visibleCount()));
+        }
+
+        function buildDots() {
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalPages(); i++) {
+                const dot = document.createElement('button');
+                dot.className = 'shorts-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Page ' + (i + 1));
+                dot.addEventListener('click', () => goToPage(i));
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function goToPage(page) {
+            track.scrollLeft = page * cardWidth() * visibleCount();
+        }
+
+        function updateUI() {
+            const page = currentPage();
+            dotsContainer.querySelectorAll('.shorts-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === page);
+            });
+            prevBtn.disabled = page === 0;
+            nextBtn.disabled = page >= totalPages() - 1;
+        }
+
+        if (!prevBtn.dataset.bound) {
+            prevBtn.addEventListener('click', () => goToPage(Math.max(0, currentPage() - 1)));
+            nextBtn.addEventListener('click', () => goToPage(Math.min(totalPages() - 1, currentPage() + 1)));
+            track.addEventListener('scroll', updateUI, { passive: true });
+            window.addEventListener('resize', () => { buildDots(); updateUI(); });
+            prevBtn.dataset.bound = 'true';
+        }
+
+        buildDots();
+        updateUI();
+    };
+
+    window.initShortsCarousel();
+
 });
+

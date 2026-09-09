@@ -201,6 +201,100 @@ const DEFAULT_SITE_DATA = {
         }
     ],
 
+    // 4.5 Shorts & Reels Section
+    shorts: [
+        {
+            id: "short-1",
+            title: "Viral Reels & TikToks",
+            platform: "instagram",
+            platformLabel: "Reels",
+            platformIcon: "fa-brands fa-instagram",
+            duration: "0:58",
+            client: "Social Media Client",
+            image: "assets/images/project_reels_shorts.jpg",
+            video: "assets/videos/hero_teaser.mp4",
+            youtubeId: "kJQP7kiw5Fk",
+            youtubeUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
+            date: "2026",
+            desc: "Dynamic vertical video edit featuring pop-up emojis, animated Bangla/English motion subtitles, zoom cuts, audio sound effects, and fast-hook intro pacing."
+        },
+        {
+            id: "short-2",
+            title: "YouTube Shorts Edit",
+            platform: "youtube",
+            platformLabel: "Shorts",
+            platformIcon: "fa-brands fa-youtube",
+            duration: "0:45",
+            client: "Mahin Ali Biswas",
+            image: "assets/images/project_youtube_doc.jpg",
+            video: "assets/videos/main_showreel.mp4",
+            youtubeId: "M7lc1UVf-VE",
+            youtubeUrl: "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+            date: "2026",
+            desc: "High-retention vertical YouTube Shorts cut with fast-paced storytelling and sound effects."
+        },
+        {
+            id: "short-3",
+            title: "TikTok Ad Promo",
+            platform: "tiktok",
+            platformLabel: "TikTok",
+            platformIcon: "fa-brands fa-tiktok",
+            duration: "0:30",
+            client: "E-Commerce Brand",
+            image: "assets/images/project_commercial_ad.jpg",
+            video: "assets/videos/hero_teaser.mp4",
+            youtubeId: "ScMzIvxBSi4",
+            youtubeUrl: "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+            date: "2026",
+            desc: "High-converting short-form TikTok ad with product callouts and energetic music sync."
+        },
+        {
+            id: "short-4",
+            title: "Animated Logo Short",
+            platform: "instagram",
+            platformLabel: "Reels",
+            platformIcon: "fa-brands fa-instagram",
+            duration: "0:15",
+            client: "Tech Brand",
+            image: "assets/images/project_motion_logo.jpg",
+            video: "assets/videos/hero_teaser.mp4",
+            youtubeId: "2g811Ko7K8U",
+            youtubeUrl: "https://www.youtube.com/watch?v=2g811Ko7K8U",
+            date: "2026",
+            desc: "Sleek 15-second logo motion reveal formatted for 9:16 vertical feeds."
+        },
+        {
+            id: "short-5",
+            title: "Corporate Short Clip",
+            platform: "youtube",
+            platformLabel: "Shorts",
+            platformIcon: "fa-brands fa-youtube",
+            duration: "1:00",
+            client: "Corporate Agency",
+            image: "assets/images/project_talking_head.jpg",
+            video: "assets/videos/main_showreel.mp4",
+            youtubeId: "aqz-KE-bpKQ",
+            youtubeUrl: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+            date: "2025",
+            desc: "Bite-sized talking head snippet with auto-captions and audio enhancement."
+        },
+        {
+            id: "short-6",
+            title: "Cinematic Color Short",
+            platform: "tiktok",
+            platformLabel: "TikTok",
+            platformIcon: "fa-brands fa-tiktok",
+            duration: "0:52",
+            client: "Film Director",
+            image: "assets/images/project_color_pass.jpg",
+            video: "assets/videos/main_showreel.mp4",
+            youtubeId: "L_LUpnjgPso",
+            youtubeUrl: "https://www.youtube.com/watch?v=L_LUpnjgPso",
+            date: "2025",
+            desc: "Before/after color grading reel showcasing cinematic film LUTs on vertical video."
+        }
+    ],
+
     // 5. Services Offered Section
     services: [
         {
@@ -325,14 +419,18 @@ function getSiteData() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
             const parsed = JSON.parse(stored);
-            return {
+            const merged = {
                 ...DEFAULT_SITE_DATA,
                 ...parsed,
+                navigation: { ...DEFAULT_SITE_DATA.navigation, ...(parsed.navigation || {}) },
                 hero: { ...DEFAULT_SITE_DATA.hero, ...(parsed.hero || {}) },
                 about: { ...DEFAULT_SITE_DATA.about, ...(parsed.about || {}) },
                 showreel: { ...DEFAULT_SITE_DATA.showreel, ...(parsed.showreel || {}) },
-                contact: { ...DEFAULT_SITE_DATA.contact, ...(parsed.contact || {}) }
+                contact: { ...DEFAULT_SITE_DATA.contact, ...(parsed.contact || {}) },
+                shorts: (parsed.shorts && parsed.shorts.length) ? parsed.shorts : DEFAULT_SITE_DATA.shorts
             };
+
+            return merged;
         }
     } catch (e) {
         console.error("Error reading site data from localStorage", e);
