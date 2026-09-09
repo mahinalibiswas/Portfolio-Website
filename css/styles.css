@@ -2826,10 +2826,10 @@ button {
 
 .reel-media-layer iframe {
     position: absolute !important;
-    top: -54px !important;
-    left: -16px !important;
-    width: calc(100% + 32px) !important;
-    height: calc(100% + 54px) !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     border: none !important;
     margin: 0 !important;
     padding: 0 !important;
