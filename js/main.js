@@ -4,6 +4,43 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    /* --- 0. Ultra-Smooth Momentum Scrolling Engine (Lenis) --- */
+    if (typeof Lenis !== 'undefined') {
+        const lenis = new Lenis({
+            duration: 1.25,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: 'vertical',
+            gestureOrientation: 'vertical',
+            smoothWheel: true,
+            wheelMultiplier: 1.0,
+            touchMultiplier: 1.6,
+            infinite: false
+        });
+
+        window.lenis = lenis;
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Smooth scroll delegation for internal anchor links
+        document.addEventListener('click', (e) => {
+            const anchor = e.target.closest('a[href^="#"]');
+            if (anchor) {
+                const targetId = anchor.getAttribute('href');
+                if (targetId && targetId !== '#' && targetId.length > 1) {
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        e.preventDefault();
+                        lenis.scrollTo(targetEl, { offset: -70, duration: 1.3 });
+                    }
+                }
+            }
+        });
+    }
+
     /* --- 1. Custom Glowing Cursor (Perfect Dead-Center Alignment) --- */
     const cursorDot = document.getElementById('cursorDot');
     const cursorOutline = document.getElementById('cursorOutline');
@@ -189,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openDirectVideoModal(videoSrc) {
+        window.lenis?.stop();
         if (!videoModal) videoModal = document.getElementById('directVideoModal');
         if (!videoModal) return;
         const wrapper = videoModal.querySelector('.video-responsive-wrapper');
@@ -236,6 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function closeDirectVideoModal() {
+        window.lenis?.start();
         if (!videoModal) videoModal = document.getElementById('directVideoModal');
         if (!videoModal) return;
         videoModal.classList.remove('active');
@@ -635,6 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openProjectDetailsOverlay(projectId) {
+        window.lenis?.stop();
         const overlay = document.getElementById('projectDetailOverlay');
         const content = document.getElementById('projectDetailContent');
         const modal = document.getElementById('projectModal') || document.getElementById('directVideoModal');
@@ -758,6 +798,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     closeDetailOverlay?.addEventListener('click', () => {
+        window.lenis?.start();
         const overlay = document.getElementById('projectDetailOverlay');
         if (overlay) {
             const detailVideos = overlay.querySelectorAll('video');
