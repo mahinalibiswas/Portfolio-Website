@@ -2819,13 +2819,13 @@ button {
     background: #000000;
 }
 
-/* Crop YouTube web header (AI badge, title, avatar) & bottom web clutter cleanly */
+/* Crop YouTube web header (AI badge, title, avatar) & keep bottom Shorts UI (avatar, like, share) fully visible */
 .reel-media-layer iframe {
     position: absolute !important;
-    top: -82px !important;
-    left: -4% !important;
-    width: 108% !important;
-    height: calc(100% + 165px) !important;
+    top: -78px !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100% + 75px) !important;
     border: none !important;
     background: #000000 !important;
     pointer-events: auto !important;
