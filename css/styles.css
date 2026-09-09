@@ -2575,29 +2575,10 @@ button {
     transform: scale(1.06);
 }
 
-/* Platform badge (Instagram / YouTube / TikTok) */
+/* Platform badge (Instagram / YouTube / TikTok) - Hidden as requested */
 .short-platform-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 0.75rem;
-    border-radius: 100px;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.3px;
+    display: none !important;
 }
-
-/* Platform-specific colors */
-.short-platform-badge .fa-instagram { color: #e1306c; }
-.short-platform-badge .fa-youtube   { color: #ff0000; }
-.short-platform-badge .fa-tiktok    { color: #69c9d0; }
 
 /* Play button on short card - Centered in middle */
 .short-play-btn {

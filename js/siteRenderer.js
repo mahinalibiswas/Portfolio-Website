@@ -415,7 +415,6 @@ function renderSiteData(customData) {
                 <div class="short-card" id="${short.id || 'short-' + (idx + 1)}" data-short-id="${short.id || 'short-' + (idx + 1)}">
                     <div class="short-media-frame">
                         <img src="${short.image}" alt="${short.title}" class="short-card-img">
-                        <div class="short-platform-badge"><i class="${short.platformIcon || 'fa-brands fa-' + (short.platform || 'instagram')}"></i> ${short.platformLabel || 'Reels'}</div>
                         <button class="short-play-btn open-reel-btn" data-short-id="${short.id}" aria-label="Play Reel">
                             <i class="fa-solid fa-play"></i>
                         </button>
