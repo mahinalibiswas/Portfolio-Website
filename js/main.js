@@ -773,13 +773,25 @@ document.addEventListener('DOMContentLoaded', () => {
             platformTag.innerHTML = `<i class="${icon}" style="color:${color};"></i> <span>${label}</span>`;
         }
 
-        // Render Media Layer
-        if (mediaLayer) {
-            const rawVideo = (short.video || short.youtubeUrl || '').trim();
-            const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
-            const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : null;
-            const isEmbedCode = rawVideo.includes('<iframe');
+        // Render Media Layer & Mode Detection
+        const playerFrame = document.getElementById('reelPlayerFrame');
+        const rawVideo = (short.video || short.youtubeUrl || '').trim();
+        const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
+        const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : null;
+        const isEmbedCode = rawVideo.includes('<iframe');
+        const isYoutubeOrEmbed = (extractedYt || isEmbedCode || (short.youtubeId && (!rawVideo || rawVideo === short.youtubeUrl))) && !isDirectVideo;
 
+        if (playerFrame) {
+            if (isYoutubeOrEmbed) {
+                playerFrame.classList.add('is-youtube-mode');
+                playerFrame.classList.remove('is-direct-mode');
+            } else {
+                playerFrame.classList.add('is-direct-mode');
+                playerFrame.classList.remove('is-youtube-mode');
+            }
+        }
+
+        if (mediaLayer) {
             if (isDirectVideo) {
                 mediaLayer.innerHTML = `
                     <video id="reelVideo" src="${rawVideo}" autoplay playsinline loop controls style="width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
@@ -833,6 +845,10 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.classList.remove('active');
             const mediaLayer = document.getElementById('reelMediaLayer');
             if (mediaLayer) mediaLayer.innerHTML = '';
+        }
+        const playerFrame = document.getElementById('reelPlayerFrame');
+        if (playerFrame) {
+            playerFrame.classList.remove('is-youtube-mode', 'is-direct-mode');
         }
         isReelChanging = false;
         window.lenis?.start();

@@ -2847,6 +2847,41 @@ button {
     );
 }
 
+/* YouTube Mode: Remove custom UI and dark gradient so YouTube's native UI is 100% clean */
+.reel-player-frame.is-youtube-mode .reel-overlay-layer {
+    background: none !important;
+    pointer-events: none;
+    padding: 0.8rem 1rem;
+}
+
+.reel-player-frame.is-youtube-mode #reelPlatformTag,
+.reel-player-frame.is-youtube-mode .reel-overlay-bottom {
+    display: none !important;
+}
+
+.reel-player-frame.is-youtube-mode .reel-overlay-top {
+    justify-content: flex-end !important;
+    pointer-events: auto;
+}
+
+.reel-player-frame.is-youtube-mode .reel-close-btn {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* Direct Video Mode: Custom UI displayed cleanly */
+.reel-player-frame.is-direct-mode #reelPlatformTag {
+    display: inline-flex !important;
+}
+
+.reel-player-frame.is-direct-mode .reel-overlay-bottom {
+    display: flex !important;
+}
+
 /* Top Bar */
 .reel-overlay-top {
     display: flex;
