@@ -329,19 +329,19 @@
                                     <textarea id="showreelDesc" rows="3" placeholder="Enter section description paragraph..." oninput="renderLiveShowreelPreview()"></textarea>
                                 </div>
                                 <div class="form-group full-width">
-                                    <label>Showreel Video (YouTube URL, Embed Code, or PC Video Upload)</label>
-                                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.6rem;">
+                                    <label>Showreel Video *</label>
+                                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                                         <input type="file" id="showreelVideoFileInput" accept="video/mp4,video/webm,video/ogg,video/*" style="display: none;" onchange="handleShowreelVideoUpload(event)">
                                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('showreelVideoFileInput').click()">
-                                            <i class="fa-solid fa-file-video" style="color: var(--accent-neon);"></i> Upload Video from PC (MP4/WebM)
+                                            <i class="fa-solid fa-file-video" style="color: var(--accent-neon);"></i> Upload Video
                                         </button>
-                                        <div id="showreelVideoPreviewWrap" style="display: none; align-items: center; gap: 0.6rem; background: rgba(163, 230, 53, 0.1); border: 1px solid var(--accent-neon); padding: 0.35rem 0.8rem; border-radius: 8px;">
-                                            <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 0.9rem;"></i>
-                                            <span id="showreelVideoFileName" style="color: #ffffff; font-size: 0.82rem; font-weight: 600; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">video.mp4</span>
-                                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0 0.3rem;" onclick="removeShowreelVideo()"><i class="fa-solid fa-xmark"></i></button>
+                                        <input type="text" id="showreelVideoUrl" placeholder="Paste YouTube video URL, Embed Code, or upload from PC..." style="flex: 1; min-width: 250px;" oninput="renderLiveShowreelPreview()">
+                                        <div id="showreelVideoPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(163, 230, 53, 0.1); border: 1px solid var(--accent-neon); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                                            <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 0.85rem;"></i>
+                                            <span id="showreelVideoFileName" style="color: #ffffff; font-size: 0.8rem; font-weight: 600; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">video.mp4</span>
+                                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0 0.2rem;" onclick="removeShowreelVideo()"><i class="fa-solid fa-xmark"></i></button>
                                         </div>
                                     </div>
-                                    <textarea id="showreelVideoUrl" rows="2" placeholder="Paste YouTube video URL, Embed Code (<iframe...>), direct MP4 link, or upload from PC above..." oninput="renderLiveShowreelPreview()"></textarea>
                                 </div>
                                 <div class="form-group full-width">
                                     <label>Showreel Poster / Cover Image</label>
@@ -873,19 +873,19 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Project Video (YouTube URL, Embed Code, or PC Video Upload) *</label>
-                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.6rem;">
+                    <label>Project Video *</label>
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                         <input type="file" id="editProjVideoFileInput" accept="video/mp4,video/webm,video/ogg,video/*" style="display: none;" onchange="handleProjVideoUpload(event)">
                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editProjVideoFileInput').click()">
-                            <i class="fa-solid fa-file-video" style="color: var(--accent-neon);"></i> Upload Video from PC (MP4/WebM)
+                            <i class="fa-solid fa-file-video" style="color: var(--accent-neon);"></i> Upload Video
                         </button>
-                        <div id="editProjVideoPreviewWrap" style="display: none; align-items: center; gap: 0.6rem; background: rgba(163, 230, 53, 0.1); border: 1px solid var(--accent-neon); padding: 0.35rem 0.8rem; border-radius: 8px;">
-                            <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 0.9rem;"></i>
-                            <span id="editProjVideoFileName" style="color: #ffffff; font-size: 0.82rem; font-weight: 600; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">video.mp4</span>
-                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0 0.3rem;" onclick="removeProjVideo()"><i class="fa-solid fa-xmark"></i></button>
+                        <input type="text" id="editProjVideo" placeholder="Paste YouTube Embed / Watch URL, direct link, or upload from PC..." style="flex: 1; min-width: 250px;" required>
+                        <div id="editProjVideoPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(163, 230, 53, 0.1); border: 1px solid var(--accent-neon); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 0.85rem;"></i>
+                            <span id="editProjVideoFileName" style="color: #ffffff; font-size: 0.8rem; font-weight: 600; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">video.mp4</span>
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0 0.2rem;" onclick="removeProjVideo()"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     </div>
-                    <textarea id="editProjVideo" rows="2" placeholder="Paste YouTube Embed Code (<iframe...</iframe>), Watch URL, direct MP4 link, or upload from PC above..." required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -965,19 +965,19 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Reel Video (YouTube Shorts Link, Embed Code, or PC Video Upload) *</label>
-                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.6rem;">
+                    <label>Reel Video *</label>
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                         <input type="file" id="editShortVideoFileInput" accept="video/mp4,video/webm,video/ogg,video/*" style="display: none;" onchange="handleShortVideoUpload(event)">
                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editShortVideoFileInput').click()">
-                            <i class="fa-solid fa-file-video" style="color: var(--accent-neon);"></i> Upload Vertical Video from PC (MP4/WebM)
+                            <i class="fa-solid fa-file-video" style="color: var(--accent-neon);"></i> Upload Video
                         </button>
-                        <div id="editShortVideoPreviewWrap" style="display: none; align-items: center; gap: 0.6rem; background: rgba(163, 230, 53, 0.1); border: 1px solid var(--accent-neon); padding: 0.35rem 0.8rem; border-radius: 8px;">
-                            <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 0.9rem;"></i>
-                            <span id="editShortVideoFileName" style="color: #ffffff; font-size: 0.82rem; font-weight: 600; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">reel.mp4</span>
-                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0 0.3rem;" onclick="removeShortVideo()"><i class="fa-solid fa-xmark"></i></button>
+                        <input type="text" id="editShortVideo" placeholder="Paste YouTube link / Embed code / Direct MP4 URL..." style="flex: 1; min-width: 250px;" required>
+                        <div id="editShortVideoPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(163, 230, 53, 0.1); border: 1px solid var(--accent-neon); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 0.85rem;"></i>
+                            <span id="editShortVideoFileName" style="color: #ffffff; font-size: 0.8rem; font-weight: 600; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">reel.mp4</span>
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0 0.2rem;" onclick="removeShortVideo()"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     </div>
-                    <textarea id="editShortVideo" rows="2" placeholder="Paste YouTube Shorts / Watch URL, Embed Code (<iframe...</iframe>), direct MP4 link, or upload from PC above..." required></textarea>
                 </div>
 
                 <div class="form-group">
