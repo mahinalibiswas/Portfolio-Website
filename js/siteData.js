@@ -249,7 +249,7 @@ const DEFAULT_SITE_DATA = {
             platformIcon: "fa-brands fa-tiktok",
             duration: "0:30",
             client: "Mahin Ali Biswas",
-            image: "assets/images/project_commercial_ad.jpg",
+            image: "assets/images/short_3_thumb.jpg",
             video: "assets/videos/short_3_before_after.mp4",
             youtubeId: "",
             youtubeUrl: "",
@@ -443,19 +443,40 @@ function getSiteData() {
             };
 
             if (merged.shorts && merged.shorts.length) {
+                let isDirty = false;
                 merged.shorts.forEach((s, idx) => {
                     const defaultShort = DEFAULT_SITE_DATA.shorts.find(d => d.id === s.id) || DEFAULT_SITE_DATA.shorts[idx];
+                    // Always lock short-3 to clean direct MP4 (no YouTube badges or embeds)
+                    if (s.id === 'short-3' || idx === 2) {
+                        if (!s.video || s.video.includes('youtube') || s.video.includes('youtu.be') || s.youtubeId || s.youtubeUrl) {
+                            s.video = 'assets/videos/short_3_before_after.mp4';
+                            s.youtubeId = '';
+                            s.youtubeUrl = '';
+                            isDirty = true;
+                        }
+                        if (!s.image || s.image.includes('project_commercial_ad')) {
+                            s.image = 'assets/images/short_3_thumb.jpg';
+                            isDirty = true;
+                        }
+                    }
                     if (!s.video && !s.youtubeUrl && !s.youtubeId) {
                         if (defaultShort) {
                             s.video = defaultShort.video;
                             s.youtubeId = defaultShort.youtubeId || '';
                             s.youtubeUrl = defaultShort.youtubeUrl || '';
+                            isDirty = true;
                         }
                     }
                     if (!s.author || s.author === 'Social Media Client') {
                         s.author = 'Mahin Ali Biswas';
+                        isDirty = true;
                     }
                 });
+                if (isDirty) {
+                    try {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+                    } catch (e) {}
+                }
             }
 
             return merged;
