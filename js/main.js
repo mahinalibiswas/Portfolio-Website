@@ -779,15 +779,22 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 playerFrame.classList.add('is-direct-mode');
                 playerFrame.classList.remove('is-youtube-mode');
-                if (bottomInfo) bottomInfo.style.display = 'flex';
+                if (bottomInfo) bottomInfo.style.display = 'none';
             }
         }
 
         if (mediaLayer) {
             if (isDirectVideo) {
                 mediaLayer.innerHTML = `
-                    <video id="reelVideo" src="${rawVideo}" autoplay playsinline loop controls style="width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
+                    <video id="reelVideo" src="${rawVideo}" autoplay playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
+                const v = document.getElementById('reelVideo');
+                if (v) {
+                    v.addEventListener('click', () => {
+                        if (v.paused) v.play();
+                        else v.pause();
+                    });
+                }
             } else if (extractedYt) {
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
@@ -830,8 +837,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             } else if (rawVideo) {
                 mediaLayer.innerHTML = `
-                    <video id="reelVideo" src="${rawVideo}" autoplay playsinline loop controls style="width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
+                    <video id="reelVideo" src="${rawVideo}" autoplay playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
+                const v = document.getElementById('reelVideo');
+                if (v) {
+                    v.addEventListener('click', () => {
+                        if (v.paused) v.play();
+                        else v.pause();
+                    });
+                }
             } else {
                 mediaLayer.innerHTML = `
                     <img src="${short.image || 'assets/images/project_reels_shorts.jpg'}" alt="${short.title || 'Reel'}" style="width: 100%; height: 100%; object-fit: cover;">
