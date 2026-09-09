@@ -786,18 +786,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaLayer) {
             if (isDirectVideo) {
                 mediaLayer.innerHTML = `
-                    <video id="reelVideo" src="${rawVideo}" autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
+                    <video id="reelVideo" src="${rawVideo}" playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
+                const soundBtn = document.getElementById('reelSoundBtn');
+                if (soundBtn) soundBtn.style.display = 'flex';
+
                 const v = document.getElementById('reelVideo');
                 if (v) {
-                    v.play().catch(e => console.log('Autoplay handled:', e));
+                    v.muted = false;
+                    v.volume = 1.0;
+                    updateReelSoundUI(false);
+
+                    const playPromise = v.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(err => {
+                            console.warn("Unmuted autoplay restricted by browser, fallback to muted:", err);
+                            v.muted = true;
+                            updateReelSoundUI(true);
+                            v.play().catch(e => console.log('Autoplay fallback error:', e));
+                        });
+                    }
+
                     v.addEventListener('click', () => {
-                        if (v.muted) v.muted = false;
                         if (v.paused) v.play();
                         else v.pause();
                     });
                 }
             } else if (extractedYt) {
+                const soundBtn = document.getElementById('reelSoundBtn');
+                if (soundBtn) soundBtn.style.display = 'none';
+
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
                         src="https://www.youtube-nocookie.com/embed/${extractedYt}?autoplay=1&mute=0&loop=1&playlist=${extractedYt}&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0"
@@ -807,6 +825,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </iframe>
                 `;
             } else if (isEmbedCode) {
+                const soundBtn = document.getElementById('reelSoundBtn');
+                if (soundBtn) soundBtn.style.display = 'none';
+
                 const embedMatch = rawVideo.match(/src=["']([^"']+)["']/i);
                 const embedUrl = embedMatch ? embedMatch[1] : '';
                 const ytIdFromEmbed = typeof extractYoutubeId === 'function' ? extractYoutubeId(embedUrl) : null;
@@ -829,6 +850,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     mediaLayer.innerHTML = cleanIframe;
                 }
             } else if (short.youtubeId && (!rawVideo || rawVideo === short.youtubeUrl)) {
+                const soundBtn = document.getElementById('reelSoundBtn');
+                if (soundBtn) soundBtn.style.display = 'none';
+
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
                         src="https://www.youtube-nocookie.com/embed/${short.youtubeId}?autoplay=1&mute=0&loop=1&playlist=${short.youtubeId}&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0"
@@ -839,23 +863,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             } else if (rawVideo) {
                 mediaLayer.innerHTML = `
-                    <video id="reelVideo" src="${rawVideo}" autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
+                    <video id="reelVideo" src="${rawVideo}" playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
+                const soundBtn = document.getElementById('reelSoundBtn');
+                if (soundBtn) soundBtn.style.display = 'flex';
+
                 const v = document.getElementById('reelVideo');
                 if (v) {
-                    v.play().catch(e => console.log('Autoplay handled:', e));
+                    v.muted = false;
+                    v.volume = 1.0;
+                    updateReelSoundUI(false);
+                    const playPromise = v.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(err => {
+                            console.warn("Unmuted autoplay restricted, muting:", err);
+                            v.muted = true;
+                            updateReelSoundUI(true);
+                            v.play().catch(e => console.log('Autoplay handled:', e));
+                        });
+                    }
                     v.addEventListener('click', () => {
-                        if (v.muted) v.muted = false;
                         if (v.paused) v.play();
                         else v.pause();
                     });
                 }
             } else {
+                const soundBtn = document.getElementById('reelSoundBtn');
+                if (soundBtn) soundBtn.style.display = 'none';
+
                 mediaLayer.innerHTML = `
                     <img src="${short.image || 'assets/images/project_reels_shorts.jpg'}" alt="${short.title || 'Reel'}" style="width: 100%; height: 100%; object-fit: cover;">
                 `;
             }
         }
+    }
+
+    function updateReelSoundUI(isMuted) {
+        const soundBtn = document.getElementById('reelSoundBtn');
+        if (!soundBtn) return;
+        const icon = soundBtn.querySelector('i');
+        if (icon) {
+            icon.className = isMuted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+        }
+        soundBtn.setAttribute('title', isMuted ? 'Unmute Sound' : 'Mute Sound');
     }
 
     function closeReelModal() {
@@ -865,6 +915,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const mediaLayer = document.getElementById('reelMediaLayer');
             if (mediaLayer) mediaLayer.innerHTML = '';
         }
+        const soundBtn = document.getElementById('reelSoundBtn');
+        if (soundBtn) soundBtn.style.display = 'none';
         const playerFrame = document.getElementById('reelPlayerFrame');
         if (playerFrame) {
             playerFrame.classList.remove('is-youtube-mode', 'is-direct-mode');
@@ -994,6 +1046,18 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             e.stopPropagation();
             closeReelModal();
+            return;
+        }
+
+        const soundBtn = e.target.closest('#reelSoundBtn');
+        if (soundBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const v = document.getElementById('reelVideo');
+            if (v) {
+                v.muted = !v.muted;
+                updateReelSoundUI(v.muted);
+            }
             return;
         }
 

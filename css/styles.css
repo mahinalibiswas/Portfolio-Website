@@ -2837,6 +2837,36 @@ button {
     pointer-events: auto !important;
 }
 
+/* Floating Sound Mute/Unmute Toggle Button */
+.reel-sound-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 25;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.reel-sound-btn:hover {
+    background: rgba(0, 0, 0, 0.85);
+    border-color: var(--accent-neon);
+    color: var(--accent-neon);
+    transform: scale(1.1);
+}
+
 /* 100% Pure Clean Video View - All overlays & headlines completely hidden */
 .reel-bottom-info {
     display: none !important;

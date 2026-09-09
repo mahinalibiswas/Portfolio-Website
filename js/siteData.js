@@ -443,43 +443,14 @@ function getSiteData() {
             };
 
             if (merged.shorts && merged.shorts.length) {
-                merged.shorts.forEach(s => {
-                    if (s.id === 'short-1' || s.id === 1 || s.title === 'Viral Reels & TikToks' || s.title === 'Professional Video Color Grading') {
-                        s.title = 'Professional Video Color Grading';
-                        s.video = 'assets/videos/short_color_grading.mp4';
-                        s.youtubeId = '';
-                        s.youtubeUrl = '';
-                        s.author = 'Mahin Ali Biswas';
-                    } else if (s.id === 'short-2' || s.id === 2 || s.title === 'YouTube Shorts Edit' || s.title === 'Raw Footage to Professional Edit') {
-                        s.title = 'Raw Footage to Professional Edit';
-                        s.video = 'assets/videos/short_2_raw_edit.mp4';
-                        s.youtubeId = '';
-                        s.youtubeUrl = '';
-                        s.author = 'Mahin Ali Biswas';
-                    } else if (s.id === 'short-3' || s.id === 3 || s.title === 'TikTok Ad Promo' || s.title === 'Professional Video Editing Showcase') {
-                        s.title = 'Professional Video Editing Showcase';
-                        s.video = 'assets/videos/short_3_before_after.mp4';
-                        s.youtubeId = '';
-                        s.youtubeUrl = '';
-                        s.author = 'Mahin Ali Biswas';
-                    } else if (s.id === 'short-4' || s.id === 4 || s.title === 'Animated Logo Short' || s.title === 'Motion Graphics & Client Edit') {
-                        s.title = 'Motion Graphics & Client Edit';
-                        s.video = 'assets/videos/short_4_client_edit.mp4';
-                        s.youtubeId = '';
-                        s.youtubeUrl = '';
-                        s.author = 'Mahin Ali Biswas';
-                    } else if (s.id === 'short-5' || s.id === 5 || s.title === 'Corporate Short Clip' || s.title === 'High-Retention Commercial Edit') {
-                        s.title = 'High-Retention Commercial Edit';
-                        s.video = 'assets/videos/short_color_grading.mp4';
-                        s.youtubeId = '';
-                        s.youtubeUrl = '';
-                        s.author = 'Mahin Ali Biswas';
-                    } else if (s.id === 'short-6' || s.id === 6 || s.title === 'Cinematic Color Short' || s.title === 'Raw to Cinematic Showcase') {
-                        s.title = 'Raw to Cinematic Showcase';
-                        s.video = 'assets/videos/short_2_raw_edit.mp4';
-                        s.youtubeId = '';
-                        s.youtubeUrl = '';
-                        s.author = 'Mahin Ali Biswas';
+                merged.shorts.forEach((s, idx) => {
+                    const defaultShort = DEFAULT_SITE_DATA.shorts.find(d => d.id === s.id) || DEFAULT_SITE_DATA.shorts[idx];
+                    if (!s.video && !s.youtubeUrl && !s.youtubeId) {
+                        if (defaultShort) {
+                            s.video = defaultShort.video;
+                            s.youtubeId = defaultShort.youtubeId || '';
+                            s.youtubeUrl = defaultShort.youtubeUrl || '';
+                        }
                     }
                     if (!s.author || s.author === 'Social Media Client') {
                         s.author = 'Mahin Ali Biswas';
