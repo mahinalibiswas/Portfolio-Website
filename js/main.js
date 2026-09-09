@@ -1192,12 +1192,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (playBtn) {
             e.preventDefault();
             e.stopPropagation();
-            const projectId = playBtn.getAttribute('data-id');
-            if (projectId === 'project-2') {
-                openReelModal('short-1');
-            } else {
-                openProjectVideoModal(projectId);
-            }
+            const projectId = playBtn.getAttribute('data-id') || playBtn.closest('.work-card')?.getAttribute('data-id') || 'project-1';
+            openProjectVideoModal(projectId);
             return;
         }
     });
@@ -1290,12 +1286,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    window.startDetailInlineVideo = function(projectId) {
+    window.startDetailInlineVideo = async function(projectId) {
         const data = getProjectDataById(projectId);
         const mediaCard = document.getElementById(`detailMediaCard_${projectId}`) || document.querySelector('.detail-media-card');
         if (mediaCard && data) {
-            const ytId = data.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(data.youtubeUrl || data.video || '') : null);
-            const rawVideo = data.video || data.youtubeUrl || '';
+            let rawVideo = (data.video || data.youtubeUrl || '').trim();
+            if (rawVideo.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                const resolved = await resolveMediaUrl(rawVideo);
+                if (resolved) rawVideo = resolved;
+            }
+            const ytId = data.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : null);
 
             let playerHtml = '';
             if (rawVideo.includes('<iframe')) {

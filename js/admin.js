@@ -1440,10 +1440,11 @@ async function handleProjVideoUpload(event) {
         showToast(`Auto-detected video duration: ${detectedDur}`, 'info');
     }
 
-    processUploadedVideoFile(file, 'editProjVideo', 'editProjVideoPreviewWrap', 'editProjVideoFileName', () => {
+    await processUploadedVideoFile(file, 'editProjVideo', 'editProjVideoPreviewWrap', 'editProjVideoFileName', () => {
         const ytInput = document.getElementById('editProjYoutubeId');
         if (ytInput) ytInput.value = '';
     });
+    event.target.value = '';
 }
 
 function removeProjVideo() {
@@ -1451,6 +1452,8 @@ function removeProjVideo() {
     if (input) input.value = '';
     const wrap = document.getElementById('editProjVideoPreviewWrap');
     if (wrap) wrap.style.display = 'none';
+    const fileInput = document.getElementById('editProjVideoFileInput');
+    if (fileInput) fileInput.value = '';
     showToast('Project video removed', 'info');
 }
 
@@ -1466,10 +1469,11 @@ async function handleShortVideoUpload(event) {
         showToast(`Auto-detected video length: ${detectedDur}`, 'info');
     }
 
-    processUploadedVideoFile(file, 'editShortVideo', 'editShortVideoPreviewWrap', 'editShortVideoFileName', () => {
+    await processUploadedVideoFile(file, 'editShortVideo', 'editShortVideoPreviewWrap', 'editShortVideoFileName', () => {
         const ytInput = document.getElementById('editShortYoutubeId');
         if (ytInput) ytInput.value = '';
     });
+    event.target.value = '';
 }
 
 function removeShortVideo() {
@@ -1477,6 +1481,8 @@ function removeShortVideo() {
     if (input) input.value = '';
     const wrap = document.getElementById('editShortVideoPreviewWrap');
     if (wrap) wrap.style.display = 'none';
+    const fileInput = document.getElementById('editShortVideoFileInput');
+    if (fileInput) fileInput.value = '';
     showToast('Short video removed', 'info');
 }
 
@@ -2127,6 +2133,10 @@ function openAddProjectModal() {
     if (document.getElementById('projectModalTitle')) document.getElementById('projectModalTitle').textContent = 'Add New Video Project';
     if (document.getElementById('projectEditForm')) document.getElementById('projectEditForm').reset();
     if (document.getElementById('editProjectId')) document.getElementById('editProjectId').value = '';
+    const fileInput = document.getElementById('editProjVideoFileInput');
+    if (fileInput) fileInput.value = '';
+    const imgFileInput = document.getElementById('editProjImageFileInput');
+    if (imgFileInput) imgFileInput.value = '';
     const previewWrap = document.getElementById('editProjImagePreviewWrap');
     if (previewWrap) previewWrap.style.display = 'none';
     const videoWrap = document.getElementById('editProjVideoPreviewWrap');
@@ -2136,6 +2146,11 @@ function openAddProjectModal() {
 }
 
 function openEditProjectModal(projectId) {
+    const fileInput = document.getElementById('editProjVideoFileInput');
+    if (fileInput) fileInput.value = '';
+    const imgFileInput = document.getElementById('editProjImageFileInput');
+    if (imgFileInput) imgFileInput.value = '';
+
     const data = getSiteData();
     const proj = (data.projects || []).find(p => p.id === projectId);
 
