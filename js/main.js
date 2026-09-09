@@ -698,7 +698,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         isReelChanging = true;
         const mediaLayer = document.getElementById('reelMediaLayer');
-        const bottomBox = document.getElementById('reelBottomBar');
 
         let nextIndex = direction === 'next' ? currentReelIndex + 1 : currentReelIndex - 1;
         if (nextIndex >= currentReelsData.length) nextIndex = 0;
@@ -711,24 +710,12 @@ document.addEventListener('DOMContentLoaded', () => {
             mediaLayer.classList.remove('reel-slide-out-up', 'reel-slide-in-up', 'reel-slide-out-down', 'reel-slide-in-down');
             mediaLayer.classList.add(outClass);
         }
-        if (bottomBox) {
-            bottomBox.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-            bottomBox.style.opacity = '0';
-            bottomBox.style.transform = direction === 'next' ? 'translateY(-10px)' : 'translateY(10px)';
-        }
 
         setTimeout(() => {
             showReelAtIndex(nextIndex);
             if (mediaLayer) {
                 mediaLayer.classList.remove(outClass);
                 mediaLayer.classList.add(inClass);
-            }
-            if (bottomBox) {
-                bottomBox.style.transform = direction === 'next' ? 'translateY(10px)' : 'translateY(-10px)';
-                setTimeout(() => {
-                    bottomBox.style.opacity = '1';
-                    bottomBox.style.transform = 'translateY(0)';
-                }, 40);
             }
 
             setTimeout(() => {
@@ -748,10 +735,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const short = currentReelsData[currentReelIndex];
         const mediaLayer = document.getElementById('reelMediaLayer');
-        const bottomTitle = document.getElementById('reelBottomTitle') || document.getElementById('reelYtTitle');
-        if (bottomTitle) bottomTitle.textContent = short.title || 'Professional Video Color Grading';
-        const bottomAuthor = document.getElementById('reelBottomAuthor');
-        if (bottomAuthor) bottomAuthor.textContent = short.author || 'Mahin Ali Biswas';
 
         // Render Media Layer (100% Clean & Immersive Showcase)
         const playerFrame = document.getElementById('reelPlayerFrame');
