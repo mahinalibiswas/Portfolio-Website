@@ -433,6 +433,32 @@ const KNOWN_VIDEO_DURATIONS = {
 };
 window.KNOWN_VIDEO_DURATIONS = KNOWN_VIDEO_DURATIONS;
 
+function resolveShortDuration(short, idx) {
+    if (!short) return '1:24';
+    const cur = (short.duration || '').trim();
+    const isPlaceholder = !cur || ['0:58', '0:50', '0:15', '0:30', '0:45', '00:58', '00:15', '00:30'].includes(cur);
+    if (!isPlaceholder) return cur;
+
+    const vFile = (short.video || '').split('/').pop().split('?')[0];
+    if (typeof KNOWN_VIDEO_DURATIONS !== 'undefined' && KNOWN_VIDEO_DURATIONS[vFile]) {
+        return KNOWN_VIDEO_DURATIONS[vFile];
+    }
+
+    const idMap = {
+        'short-1': '1:24',
+        'short-2': '0:26',
+        'short-3': '2:22',
+        'short-4': '0:19',
+        'short-5': '1:24',
+        'short-6': '0:26'
+    };
+    if (idMap[short.id]) return idMap[short.id];
+
+    const indexMap = ['1:24', '0:19', '2:22', '0:26', '1:24', '0:26'];
+    return (idx !== undefined && indexMap[idx]) ? indexMap[idx] : (cur || '1:24');
+}
+window.resolveShortDuration = resolveShortDuration;
+
 /**
  * Gets current site data from localStorage or initializes with default
  */
@@ -445,14 +471,11 @@ function getSiteData() {
             // Auto-upgrade shorts with real video duration if they still hold placeholder values
             if (parsed.shorts && Array.isArray(parsed.shorts)) {
                 let updatedDurations = false;
-                parsed.shorts = parsed.shorts.map(s => {
-                    const vFile = (s.video || '').split('/').pop().split('?')[0];
-                    if (KNOWN_VIDEO_DURATIONS[vFile]) {
-                        const cur = (s.duration || '').trim();
-                        if (!cur || ['0:58', '0:50', '0:15', '0:30', '0:45', '00:58', '00:15', '00:30'].includes(cur)) {
-                            s.duration = KNOWN_VIDEO_DURATIONS[vFile];
-                            updatedDurations = true;
-                        }
+                parsed.shorts = parsed.shorts.map((s, idx) => {
+                    const resolved = resolveShortDuration(s, idx);
+                    if (s.duration !== resolved) {
+                        s.duration = resolved;
+                        updatedDurations = true;
                     }
                     return s;
                 });
@@ -621,6 +644,12 @@ function fetchCloudSiteData(callback) {
             .then(res => res.json())
             .then(cloudData => {
                 if (cloudData && typeof cloudData === 'object' && Object.keys(cloudData).length > 0 && !cloudData.error) {
+                    if (cloudData.shorts && Array.isArray(cloudData.shorts)) {
+                        cloudData.shorts = cloudData.shorts.map((s, idx) => {
+                            s.duration = resolveShortDuration(s, idx);
+                            return s;
+                        });
+                    }
                     try {
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudData));
                     } catch (e) {}

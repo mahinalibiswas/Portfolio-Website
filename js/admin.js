@@ -2326,7 +2326,7 @@ function renderAdminShortsList(shorts) {
                     <span class="admin-short-badge ${platformClass}">
                         <i class="${icon}"></i> ${label}
                     </span>
-                    <span class="admin-short-meta"><i class="fa-regular fa-clock"></i> ${short.duration || '0:50'}</span>
+                    <span class="admin-short-meta"><i class="fa-regular fa-clock"></i> ${(typeof resolveShortDuration === 'function' ? resolveShortDuration(short, idx) : short.duration) || '1:24'}</span>
                     <span class="admin-short-meta">• ${short.client || 'Client'}</span>
                 </div>
                 <div style="font-size: 0.76rem; color: var(--accent-neon); display: flex; align-items: center; gap: 0.35rem;">

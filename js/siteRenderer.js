@@ -422,7 +422,7 @@ function renderSiteData(customData) {
                     </div>
                     <div class="short-card-body">
                         <h4 class="short-card-title">${short.title}</h4>
-                        <p class="short-card-meta"><i class="fa-regular fa-clock"></i> ${short.duration || '0:50'} &nbsp;•&nbsp; ${short.client || 'Client'}</p>
+                        <p class="short-card-meta"><i class="fa-regular fa-clock"></i> ${(typeof resolveShortDuration === 'function' ? resolveShortDuration(short, idx) : short.duration) || '1:24'} &nbsp;•&nbsp; ${short.client || 'Client'}</p>
                         <button class="card-details-btn short-reel-details-btn" data-short-id="${short.id}">Details</button>
                     </div>
                 </div>
