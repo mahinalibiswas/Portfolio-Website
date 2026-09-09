@@ -217,7 +217,7 @@ const DEFAULT_SITE_DATA = {
             platformIcon: "fa-brands fa-instagram",
             duration: "0:58",
             client: "Mahin Ali Biswas",
-            image: "assets/images/mahin_profile.jpg",
+            image: "assets/images/short_1_thumb.jpg",
             video: "assets/videos/short_color_grading.mp4",
             youtubeId: "",
             youtubeUrl: "",
@@ -233,7 +233,7 @@ const DEFAULT_SITE_DATA = {
             platformIcon: "fa-brands fa-youtube",
             duration: "0:45",
             client: "Mahin Ali Biswas",
-            image: "assets/images/project_youtube_doc.jpg",
+            image: "assets/images/short_2_thumb.jpg",
             video: "assets/videos/short_2_raw_edit.mp4",
             youtubeId: "",
             youtubeUrl: "",
@@ -265,7 +265,7 @@ const DEFAULT_SITE_DATA = {
             platformIcon: "fa-brands fa-instagram",
             duration: "0:19",
             client: "Mahin Ali Biswas",
-            image: "assets/images/project_motion_logo.jpg",
+            image: "assets/images/short_3_thumb.jpg",
             video: "assets/videos/short_4_client_edit.mp4",
             youtubeId: "",
             youtubeUrl: "",
@@ -281,7 +281,7 @@ const DEFAULT_SITE_DATA = {
             platformIcon: "fa-brands fa-youtube",
             duration: "0:58",
             client: "Mahin Ali Biswas",
-            image: "assets/images/project_talking_head.jpg",
+            image: "assets/images/short_1_thumb.jpg",
             video: "assets/videos/short_color_grading.mp4",
             youtubeId: "",
             youtubeUrl: "",
@@ -297,7 +297,7 @@ const DEFAULT_SITE_DATA = {
             platformIcon: "fa-brands fa-tiktok",
             duration: "0:45",
             client: "Mahin Ali Biswas",
-            image: "assets/images/project_color_pass.jpg",
+            image: "assets/images/short_2_thumb.jpg",
             video: "assets/videos/short_2_raw_edit.mp4",
             youtubeId: "",
             youtubeUrl: "",
@@ -446,29 +446,69 @@ function getSiteData() {
                 let isDirty = false;
                 merged.shorts.forEach((s, idx) => {
                     const defaultShort = DEFAULT_SITE_DATA.shorts.find(d => d.id === s.id) || DEFAULT_SITE_DATA.shorts[idx];
-                    // Always lock short-3 to clean direct MP4 (no YouTube badges or embeds)
+
+                    // Lock short-1 to clean direct MP4 and authentic 9:16 thumbnail
+                    if (s.id === 'short-1' || idx === 0) {
+                        if (!s.video || s.video.includes('youtube') || s.video.includes('youtu.be') || s.youtubeId || s.youtubeUrl || !s.video.includes('short_color_grading.mp4')) {
+                            s.video = 'assets/videos/short_color_grading.mp4';
+                            s.youtubeId = '';
+                            s.youtubeUrl = '';
+                            isDirty = true;
+                        }
+                        if (!s.image || s.image.includes('mahin_profile') || s.image.includes('project_') || !s.image.includes('short_1_thumb')) {
+                            s.image = 'assets/images/short_1_thumb.jpg';
+                            isDirty = true;
+                        }
+                    }
+
+                    // Lock short-2 to clean direct MP4 and authentic 9:16 thumbnail
+                    if (s.id === 'short-2' || idx === 1) {
+                        if (!s.video || s.video.includes('youtube') || s.video.includes('youtu.be') || s.youtubeId || s.youtubeUrl || !s.video.includes('short_2_raw_edit.mp4')) {
+                            s.video = 'assets/videos/short_2_raw_edit.mp4';
+                            s.youtubeId = '';
+                            s.youtubeUrl = '';
+                            isDirty = true;
+                        }
+                        if (!s.image || s.image.includes('project_youtube_doc') || s.image.includes('mahin_profile') || s.image.includes('project_') || !s.image.includes('short_2_thumb')) {
+                            s.image = 'assets/images/short_2_thumb.jpg';
+                            isDirty = true;
+                        }
+                    }
+
+                    // Lock short-3 to clean direct MP4 and authentic 9:16 thumbnail
                     if (s.id === 'short-3' || idx === 2) {
-                        if (!s.video || s.video.includes('youtube') || s.video.includes('youtu.be') || s.youtubeId || s.youtubeUrl) {
+                        if (!s.video || s.video.includes('youtube') || s.video.includes('youtu.be') || s.youtubeId || s.youtubeUrl || !s.video.includes('short_3_before_after.mp4')) {
                             s.video = 'assets/videos/short_3_before_after.mp4';
                             s.youtubeId = '';
                             s.youtubeUrl = '';
                             isDirty = true;
                         }
-                        if (!s.image || s.image.includes('project_commercial_ad')) {
+                        if (!s.image || s.image.includes('project_commercial_ad') || s.image.includes('mahin_profile') || s.image.includes('project_') || !s.image.includes('short_3_thumb')) {
                             s.image = 'assets/images/short_3_thumb.jpg';
                             isDirty = true;
                         }
                     }
-                    if (!s.video && !s.youtubeUrl && !s.youtubeId) {
-                        if (defaultShort) {
+
+                    // Clean and align shorts 4, 5, 6
+                    if (idx >= 3 && defaultShort) {
+                        if (s.youtubeId || s.youtubeUrl || !s.video) {
                             s.video = defaultShort.video;
-                            s.youtubeId = defaultShort.youtubeId || '';
-                            s.youtubeUrl = defaultShort.youtubeUrl || '';
+                            s.youtubeId = '';
+                            s.youtubeUrl = '';
+                            isDirty = true;
+                        }
+                        if (!s.image || s.image.includes('mahin_profile') || s.image.includes('project_talking_head') || s.image.includes('project_color_pass') || s.image.includes('project_motion_logo')) {
+                            s.image = defaultShort.image;
                             isDirty = true;
                         }
                     }
+
                     if (!s.author || s.author === 'Social Media Client') {
                         s.author = 'Mahin Ali Biswas';
+                        isDirty = true;
+                    }
+                    if (!s.client || s.client === 'Client') {
+                        s.client = 'Mahin Ali Biswas';
                         isDirty = true;
                     }
                 });
