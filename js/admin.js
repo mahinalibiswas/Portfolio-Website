@@ -1464,22 +1464,158 @@ function extractDurationFromFileOrUrl(fileOrUrl) {
 window.extractDurationFromFileOrUrl = extractDurationFromFileOrUrl;
 window.formatVideoDuration = formatVideoDuration;
 
+function autoDetectProjectMetadataFromFileName(fileName) {
+    if (!fileName) return { title: '', badge: 'Featured Video', slug: 'featured commercial-ad corporate', client: '' };
+    let clean = fileName.replace(/\.(mp4|webm|mov|ogg|mkv|avi|wmv|m4v)$/i, '');
+    clean = clean.replace(/[_\.\-]+/g, ' ').trim();
+
+    // Clean technical suffix keywords
+    const cleanTokens = clean.split(' ').filter(w => !/^(1080p|720p|4k|h264|x264|hevc|raw|render|final|finel|v\d+|\d+fps)$/i.test(w));
+    const title = (cleanTokens.length > 0 ? cleanTokens : clean.split(' '))
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+
+    const lower = clean.toLowerCase();
+    let badge = 'Commercial Video';
+    let slug = 'commercial-ad promotional corporate';
+    let client = '';
+
+    if (lower.includes('campaign') || lower.includes('commercial') || lower.includes('promo') || lower.includes('brand') || lower.includes('ad')) {
+        badge = 'Commercial Ad';
+        slug = 'commercial-ad promotional corporate';
+    } else if (lower.includes('reel') || lower.includes('short') || lower.includes('tiktok') || lower.includes('viral') || lower.includes('vertical')) {
+        badge = 'Reels / Shorts';
+        slug = 'reels-shorts social-media viral';
+    } else if (lower.includes('corporate') || lower.includes('talking') || lower.includes('interview') || lower.includes('consultant') || lower.includes('presentation')) {
+        badge = 'Corporate';
+        slug = 'corporate talking-head interview';
+    } else if (lower.includes('logo') || lower.includes('animation') || lower.includes('motion') || lower.includes('intro') || lower.includes('reveal')) {
+        badge = 'Motion Graphics';
+        slug = 'motion-graphics logo-animation intro';
+    } else if (lower.includes('color') || lower.includes('grading') || lower.includes('lut') || lower.includes('cinematic') || lower.includes('film')) {
+        badge = 'Color Pass';
+        slug = 'color-pass cinematic documentary';
+    } else if (lower.includes('doc') || lower.includes('documentary')) {
+        badge = 'Documentary';
+        slug = 'documentary cinematic storytelling';
+    }
+
+    // Try extracting client from the first word before known project keywords
+    const match = clean.match(/^([a-zA-Z0-9]+)\s+(campaign|ad|promo|video|project|commercial|edit|shoot|brand)/i);
+    if (match && match[1]) {
+        client = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+    } else if (cleanTokens.length > 0) {
+        client = cleanTokens[0].charAt(0).toUpperCase() + cleanTokens[0].slice(1).toLowerCase();
+    }
+
+    return { title, badge, slug, client };
+}
+window.autoDetectProjectMetadataFromFileName = autoDetectProjectMetadataFromFileName;
+
+function captureVideoThumbnail(file, atTime = 1) {
+    return new Promise((resolve) => {
+        try {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.muted = true;
+            video.playsInline = true;
+            const url = URL.createObjectURL(file);
+            video.src = url;
+
+            const timer = setTimeout(() => {
+                URL.revokeObjectURL(url);
+                resolve(null);
+            }, 6000);
+
+            video.onloadedmetadata = () => {
+                video.currentTime = Math.min(atTime, (video.duration || 2) / 2);
+            };
+
+            video.onseeked = () => {
+                clearTimeout(timer);
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.min(video.videoWidth || 1280, 1280);
+                    const ratio = canvas.width / (video.videoWidth || 1280);
+                    canvas.height = Math.round((video.videoHeight || 720) * ratio);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    let output = canvas.toDataURL('image/webp', 0.82);
+                    if (!output.startsWith('data:image/webp')) {
+                        output = canvas.toDataURL('image/jpeg', 0.82);
+                    }
+                    URL.revokeObjectURL(url);
+                    resolve(output);
+                } catch (e) {
+                    URL.revokeObjectURL(url);
+                    resolve(null);
+                }
+            };
+
+            video.onerror = () => {
+                clearTimeout(timer);
+                URL.revokeObjectURL(url);
+                resolve(null);
+            };
+        } catch (e) {
+            resolve(null);
+        }
+    });
+}
+window.captureVideoThumbnail = captureVideoThumbnail;
+
 async function handleProjVideoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Auto-detect and write real video duration
+    // 1. Auto-detect video duration
     const detectedDur = await extractDurationFromFileOrUrl(file);
     const durInput = document.getElementById('editProjDuration');
     if (detectedDur && durInput) {
         durInput.value = detectedDur;
-        showToast(`Auto-detected video duration: ${detectedDur}`, 'info');
     }
 
+    // 2. Smart auto-detect metadata from filename
+    const meta = autoDetectProjectMetadataFromFileName(file.name);
+    const titleInput = document.getElementById('editProjTitle');
+    const badgeInput = document.getElementById('editProjCategoryBadge');
+    const slugInput = document.getElementById('editProjCategory');
+    const clientInput = document.getElementById('editProjClient');
+
+    if (titleInput && (!titleInput.value.trim() || titleInput.value.startsWith('Project '))) {
+        titleInput.value = meta.title;
+    }
+    if (badgeInput && !badgeInput.value.trim()) {
+        badgeInput.value = meta.badge;
+    }
+    if (slugInput && !slugInput.value.trim()) {
+        slugInput.value = meta.slug;
+    }
+    if (clientInput && !clientInput.value.trim() && meta.client) {
+        clientInput.value = meta.client;
+    }
+
+    // 3. Auto-capture thumbnail snapshot from video frame if cover image is empty
+    const imgInput = document.getElementById('editProjImage');
+    const previewImg = document.getElementById('editProjImagePreview');
+    const previewWrap = document.getElementById('editProjImagePreviewWrap');
+    if (imgInput && !imgInput.value.trim()) {
+        showToast('Generating video thumbnail snapshot...', 'info');
+        const snap = await captureVideoThumbnail(file, 1);
+        if (snap) {
+            imgInput.value = snap;
+            if (previewImg) previewImg.src = snap;
+            if (previewWrap) previewWrap.style.display = 'flex';
+        }
+    }
+
+    // 4. Store video in IndexedDB
     await processUploadedVideoFile(file, 'editProjVideo', 'editProjVideoPreviewWrap', 'editProjVideoFileName', () => {
         const ytInput = document.getElementById('editProjYoutubeId');
         if (ytInput) ytInput.value = '';
     });
+
+    showToast(`Auto-detected title "${meta.title}", duration (${detectedDur || '0:30'}) & category from video!`, 'success');
     event.target.value = '';
 }
 
@@ -1497,18 +1633,44 @@ async function handleShortVideoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Auto-detect and write real video duration
+    // 1. Auto-detect video duration
     const detectedDur = await extractDurationFromFileOrUrl(file);
     const durInput = document.getElementById('editShortDuration');
     if (detectedDur && durInput) {
         durInput.value = detectedDur;
-        showToast(`Auto-detected video length: ${detectedDur}`, 'info');
     }
 
+    // 2. Smart auto-detect title
+    const meta = autoDetectProjectMetadataFromFileName(file.name);
+    const titleInput = document.getElementById('editShortTitle');
+    const categoryInput = document.getElementById('editShortCategory');
+    if (titleInput && (!titleInput.value.trim() || titleInput.value.startsWith('Reel '))) {
+        titleInput.value = meta.title;
+    }
+    if (categoryInput && !categoryInput.value.trim()) {
+        categoryInput.value = 'reels-shorts social-media viral';
+    }
+
+    // 3. Auto-capture vertical thumbnail snapshot if empty
+    const imgInput = document.getElementById('editShortImage');
+    const previewImg = document.getElementById('editShortImagePreview');
+    const previewWrap = document.getElementById('editShortImagePreviewWrap');
+    if (imgInput && !imgInput.value.trim()) {
+        const snap = await captureVideoThumbnail(file, 1);
+        if (snap) {
+            imgInput.value = snap;
+            if (previewImg) previewImg.src = snap;
+            if (previewWrap) previewWrap.style.display = 'flex';
+        }
+    }
+
+    // 4. Store video in IndexedDB
     await processUploadedVideoFile(file, 'editShortVideo', 'editShortVideoPreviewWrap', 'editShortVideoFileName', () => {
         const ytInput = document.getElementById('editShortYoutubeId');
         if (ytInput) ytInput.value = '';
     });
+
+    showToast(`Auto-detected title & length (${detectedDur || '0:15'}) from reel!`, 'success');
     event.target.value = '';
 }
 
@@ -1572,6 +1734,32 @@ async function onProjVideoInputChange() {
     if (extracted) {
         if (ytField) ytField.value = extracted;
         if (wrap) wrap.style.display = 'none';
+        try {
+            fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${extracted}`)
+                .then(r => r.json())
+                .then(yt => {
+                    const titleEl = document.getElementById('editProjTitle');
+                    const clientEl = document.getElementById('editProjClient');
+                    const imgEl = document.getElementById('editProjImage');
+                    const prevImg = document.getElementById('editProjImagePreview');
+                    const prevWrap = document.getElementById('editProjImagePreviewWrap');
+                    if (yt.title && titleEl && !titleEl.value.trim()) {
+                        titleEl.value = yt.title;
+                    }
+                    if (yt.author_name && clientEl && !clientEl.value.trim()) {
+                        clientEl.value = yt.author_name;
+                    }
+                    if (yt.thumbnail_url && imgEl && !imgEl.value.trim()) {
+                        imgEl.value = yt.thumbnail_url;
+                        if (prevImg) prevImg.src = yt.thumbnail_url;
+                        if (prevWrap) prevWrap.style.display = 'flex';
+                    }
+                    if (yt.title) {
+                        showToast(`Auto-detected YouTube details: "${yt.title.slice(0, 30)}..."`, 'success');
+                    }
+                })
+                .catch(() => {});
+        } catch (e) {}
     } else if (val.includes('<iframe')) {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'none';
