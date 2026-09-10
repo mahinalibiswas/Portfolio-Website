@@ -825,10 +825,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (rawVideo.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
             const resolved = await resolveMediaUrl(rawVideo);
-            if (resolved) rawVideo = resolved;
+            rawVideo = resolved || short.youtubeUrl || (short.youtubeId ? `https://www.youtube.com/watch?v=${short.youtubeId}` : '') || 'assets/videos/short_color_grading.mp4';
+        }
+        if (rawVideo.startsWith('idb:')) {
+            rawVideo = short.youtubeUrl || (short.youtubeId ? `https://www.youtube.com/watch?v=${short.youtubeId}` : '') || 'assets/videos/short_color_grading.mp4';
         }
 
-        const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || rawVideo.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
+        const isDirectVideo = rawVideo && !rawVideo.startsWith('idb:') && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
         const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : null;
         const isEmbedCode = rawVideo.includes('<iframe');
         const isYoutubeOrEmbed = (extractedYt || isEmbedCode || (short.youtubeId && (!rawVideo || rawVideo === short.youtubeUrl))) && !isDirectVideo;
@@ -1002,9 +1005,12 @@ document.addEventListener('DOMContentLoaded', () => {
             let rawVideo = (data.video || data.youtubeUrl || '').trim();
             if (rawVideo.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
                 const resolved = await resolveMediaUrl(rawVideo);
-                if (resolved) rawVideo = resolved;
+                rawVideo = resolved || data.youtubeUrl || (data.youtubeId ? `https://www.youtube.com/watch?v=${data.youtubeId}` : '') || 'assets/videos/main_showreel.mp4';
             }
-            const isDirectVideo = rawVideo && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || rawVideo.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
+            if (rawVideo.startsWith('idb:')) {
+                rawVideo = data.youtubeUrl || (data.youtubeId ? `https://www.youtube.com/watch?v=${data.youtubeId}` : '') || 'assets/videos/main_showreel.mp4';
+            }
+            const isDirectVideo = rawVideo && !rawVideo.startsWith('idb:') && (rawVideo.startsWith('data:video') || rawVideo.startsWith('blob:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(rawVideo));
             const extractedYt = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : null;
             const isEmbedCode = rawVideo.includes('<iframe');
             
@@ -1356,7 +1362,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let rawVideo = (data.video || data.youtubeUrl || '').trim();
             if (rawVideo.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
                 const resolved = await resolveMediaUrl(rawVideo);
-                if (resolved) rawVideo = resolved;
+                rawVideo = resolved || data.youtubeUrl || (data.youtubeId ? `https://www.youtube.com/watch?v=${data.youtubeId}` : '') || 'assets/videos/main_showreel.mp4';
+            }
+            if (rawVideo.startsWith('idb:')) {
+                rawVideo = data.youtubeUrl || (data.youtubeId ? `https://www.youtube.com/watch?v=${data.youtubeId}` : '') || 'assets/videos/main_showreel.mp4';
             }
             const ytId = data.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : null);
 

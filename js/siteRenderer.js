@@ -293,7 +293,7 @@ function renderSiteData(customData) {
                 const existingIframe = playerBox.querySelector('iframe');
                 if (!existingIframe || !existingIframe.src.includes(ytId)) {
                     playerBox.innerHTML = `
-                        <iframe id="directShowreelIframe" src="${iframeSrc}" title="Featured Motion & Video Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>
+                        <iframe id="directShowreelIframe" src="${iframeSrc}" title="Featured Motion & Video Reel" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>
                     `;
                 }
             } else if (rawUrl.includes('<iframe')) {
@@ -306,14 +306,15 @@ function renderSiteData(customData) {
                     if (!newSrc.includes('autoplay=1')) newSrc += '&autoplay=1';
                     if (!newSrc.includes('mute=1')) newSrc += '&mute=1';
                     if (!newSrc.includes('playsinline=1')) newSrc += '&playsinline=1';
-                    return `src="${newSrc}" id="directShowreelIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"`;
+                    return `src="${newSrc}" id="directShowreelIframe" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"`;
                 });
                 playerBox.innerHTML = clean;
             } else {
                 let videoEl = document.getElementById('directShowreelVideo');
+                const safeSrc = rawUrl.startsWith('idb:') ? 'assets/videos/main_showreel.mp4' : rawUrl;
                 if (!videoEl) {
                     playerBox.innerHTML = `
-                        <video id="directShowreelVideo" src="${rawUrl}" class="showreel-video-element" controls autoplay loop muted playsinline poster="${posterUrl}"></video>
+                        <video id="directShowreelVideo" src="${safeSrc}" class="showreel-video-element" controls autoplay loop muted playsinline poster="${posterUrl}"></video>
                         <div class="showreel-controls-overlay" id="showreelOverlay" style="opacity:0; pointer-events:none;">
                             <button class="big-play-btn" id="mainPlayBtn">
                                 <i class="fa-solid fa-play"></i>
@@ -333,14 +334,15 @@ function renderSiteData(customData) {
                 } else {
                     if (rawUrl.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
                         resolveMediaUrl(rawUrl).then(resolved => {
-                            if (videoEl.src !== resolved) {
-                                videoEl.src = resolved;
+                            const finalSrc = resolved || 'assets/videos/main_showreel.mp4';
+                            if (videoEl.src !== finalSrc) {
+                                videoEl.src = finalSrc;
                                 if (posterUrl) videoEl.poster = posterUrl;
                                 videoEl.load();
                             }
                         });
-                    } else if (videoEl.src !== rawUrl && !videoEl.src.includes(rawUrl)) {
-                        videoEl.src = rawUrl;
+                    } else if (videoEl.src !== safeSrc && !videoEl.src.includes(safeSrc)) {
+                        videoEl.src = safeSrc;
                         if (posterUrl) videoEl.poster = posterUrl;
                         videoEl.load();
                     }
@@ -356,7 +358,7 @@ function renderSiteData(customData) {
             worksGrid.innerHTML = data.projects.map((proj, index) => `
                 <div class="work-card" data-category="${proj.category || 'featured'}" data-id="${proj.id || 'project-' + (index + 1)}">
                     <div class="card-media-frame">
-                        <img src="${proj.image}" alt="${proj.title}" class="card-img">
+                        <img src="${proj.image}" alt="${proj.title}" class="card-img" loading="lazy" decoding="async">
                         <button class="card-glass-play-btn view-project-btn" data-id="${proj.id}" aria-label="Play Video">
                             <i class="fa-solid fa-play"></i>
                         </button>
@@ -372,7 +374,7 @@ function renderSiteData(customData) {
                     <div class="card-footer">
                         <div class="card-author-info">
                             <div class="card-author-avatar">
-                                <img src="assets/images/mahin_profile.jpg" alt="${proj.client || 'Mahin Ali Biswas'}">
+                                <img src="assets/images/mahin_profile.jpg" alt="${proj.client || 'Mahin Ali Biswas'}" loading="lazy" decoding="async">
                             </div>
                             <div class="card-author-text">
                                 <span class="author-name">${proj.client || 'Mahin Ali Biswas'}</span>
@@ -423,7 +425,7 @@ function renderSiteData(customData) {
             shortsTrack.innerHTML = shortsData.map((short, idx) => `
                 <div class="short-card" id="${short.id || 'short-' + (idx + 1)}" data-short-id="${short.id || 'short-' + (idx + 1)}">
                     <div class="short-media-frame">
-                        <img src="${short.image}" alt="${short.title}" class="short-card-img">
+                        <img src="${short.image}" alt="${short.title}" class="short-card-img" loading="lazy" decoding="async">
                         <button class="short-play-btn open-reel-btn" data-short-id="${short.id}" aria-label="Play Reel">
                             <i class="fa-solid fa-play"></i>
                         </button>

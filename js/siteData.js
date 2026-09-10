@@ -593,10 +593,17 @@ async function resolveMediaUrl(urlOrKey) {
     if (!urlOrKey) return '';
     if (typeof urlOrKey === 'string' && urlOrKey.startsWith('idb:')) {
         const key = urlOrKey.replace('idb:', '');
-        const blob = await getMediaBlob(key);
-        if (blob) {
-            return URL.createObjectURL(blob);
+        try {
+            const blob = await getMediaBlob(key);
+            if (blob) {
+                return URL.createObjectURL(blob);
+            }
+        } catch (e) {
+            console.warn("Local media blob not found for key:", key);
         }
+        // When accessed from another browser or device where local IndexedDB is not present,
+        // return null so caller can safely fall back to bundled or YouTube video
+        return null;
     }
     return urlOrKey;
 }

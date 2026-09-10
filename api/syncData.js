@@ -46,7 +46,8 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const fbRes = await fetch(`${FIREBASE_URL}?t=${Date.now()}`, { cache: 'no-store' });
+            res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+            const fbRes = await fetch(FIREBASE_URL);
             const fbData = await fbRes.json();
             return res.status(200).json(fbData || {});
         } catch (err) {
