@@ -459,10 +459,17 @@ function resolveShortDuration(short, idx) {
 }
 window.resolveShortDuration = resolveShortDuration;
 
+let inMemorySiteData = null;
+window.inMemorySiteData = inMemorySiteData;
+
 /**
- * Gets current site data from localStorage or initializes with default
+ * Gets current site data from in-memory cache, localStorage, or initializes with default
  */
 function getSiteData() {
+    if (inMemorySiteData && typeof inMemorySiteData === 'object' && inMemorySiteData.projects) {
+        return JSON.parse(JSON.stringify(inMemorySiteData));
+    }
+
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -498,13 +505,16 @@ function getSiteData() {
                 shorts: (parsed.shorts && parsed.shorts.length) ? parsed.shorts : DEFAULT_SITE_DATA.shorts
             };
 
+            inMemorySiteData = merged;
             return merged;
         }
     } catch (e) {
         console.error("Error reading site data from localStorage", e);
     }
 
-    return JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
+    const defaultClone = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
+    inMemorySiteData = defaultClone;
+    return defaultClone;
 }
 
 /* ==========================================================================
@@ -604,6 +614,7 @@ const CLOUD_DB_URL = '/api/syncData';
  * Saves updated site data to localStorage & Live Cloud Backend
  */
 async function saveSiteData(data) {
+    inMemorySiteData = data;
     let localSaved = false;
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -664,6 +675,7 @@ function fetchCloudSiteData(callback) {
                             return s;
                         });
                     }
+                    inMemorySiteData = cloudData;
                     try {
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudData));
                     } catch (e) {}
