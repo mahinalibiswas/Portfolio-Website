@@ -387,6 +387,16 @@ function renderSiteData(customData) {
             if (typeof initProjectDetailEvents === 'function') {
                 initProjectDetailEvents();
             }
+
+            // Enforce 6-card initial limit & See All Projects engine on live cards
+            if (typeof window.initPortfolioFilterEngine === 'function') {
+                window.initPortfolioFilterEngine();
+            } else if (typeof window.applyPortfolioCardVisibility === 'function') {
+                window.applyPortfolioCardVisibility();
+                if (typeof window.updatePortfolioFilterCounts === 'function') {
+                    window.updatePortfolioFilterCounts();
+                }
+            }
         }
     }
 

@@ -404,26 +404,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* --- 6. Portfolio Category Filter & "See All Projects" Expand/Collapse Engine --- */
-    const portfolioFilter = document.getElementById('portfolioFilter');
-    const workCards = document.querySelectorAll('.work-card');
-    const seeAllBtn = document.getElementById('seeAllProjectsBtn');
-    const seeAllWrapper = document.getElementById('seeAllWrapper');
-    const seeAllBadge = document.getElementById('seeAllBadge');
-    const seeAllIcon = document.getElementById('seeAllIcon');
+    let isPortfolioExpanded = false;
+    const PORTFOLIO_INITIAL_LIMIT = 6;
 
-    let isExpanded = false;
-    const INITIAL_LIMIT = 6;
+    function getLiveWorkCards() {
+        return Array.from(document.querySelectorAll('#worksGrid .work-card'));
+    }
 
-    function applyCardVisibility(activeFilter) {
+    function applyPortfolioCardVisibility(customFilter) {
+        const portfolioFilter = document.getElementById('portfolioFilter');
+        const activeBtn = portfolioFilter ? portfolioFilter.querySelector('.filter-btn.active') : null;
+        const activeFilter = customFilter || (activeBtn ? (activeBtn.getAttribute('data-filter') || 'all') : 'all');
+
+        const workCards = getLiveWorkCards();
+        const seeAllBtn = document.getElementById('seeAllProjectsBtn');
+        const seeAllWrapper = document.getElementById('seeAllWrapper');
+        const seeAllBadge = document.getElementById('seeAllBadge');
+        const seeAllIcon = document.getElementById('seeAllIcon');
+
         let visibleMatchingCount = 0;
+        let totalMatchingCount = 0;
 
         workCards.forEach((card) => {
             const categories = (card.getAttribute('data-category') || '').split(' ');
             const matchesCategory = (activeFilter === 'all' || categories.includes(activeFilter));
 
             if (matchesCategory) {
+                totalMatchingCount++;
                 visibleMatchingCount++;
-                if (activeFilter === 'all' && !isExpanded && visibleMatchingCount > INITIAL_LIMIT) {
+                // If not expanded and count exceeds 6, hide it
+                if (!isPortfolioExpanded && visibleMatchingCount > PORTFOLIO_INITIAL_LIMIT) {
                     card.style.display = 'none';
                 } else {
                     card.style.display = 'flex';
@@ -433,68 +443,102 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Manage See All button visibility (Always visible under 6 default cards)
+        // Manage See All button visibility & state
         if (seeAllWrapper) {
-            seeAllWrapper.style.display = 'flex';
-            if (seeAllBadge) seeAllBadge.textContent = workCards.length;
-            
-            if (isExpanded) {
-                if (seeAllBtn) seeAllBtn.querySelector('span').textContent = 'Show Less';
-                if (seeAllIcon) seeAllIcon.className = 'fa-solid fa-chevron-up';
+            // If total matching projects > 6, always display See All button
+            if (totalMatchingCount > PORTFOLIO_INITIAL_LIMIT) {
+                seeAllWrapper.style.display = 'flex';
+                if (seeAllBadge) seeAllBadge.textContent = totalMatchingCount;
+
+                if (isPortfolioExpanded) {
+                    if (seeAllBtn) {
+                        const span = seeAllBtn.querySelector('span');
+                        if (span) span.textContent = 'Show Less';
+                    }
+                    if (seeAllIcon) seeAllIcon.className = 'fa-solid fa-chevron-up';
+                } else {
+                    if (seeAllBtn) {
+                        const span = seeAllBtn.querySelector('span');
+                        if (span) span.textContent = 'See All Projects';
+                    }
+                    if (seeAllIcon) seeAllIcon.className = 'fa-solid fa-chevron-down';
+                }
             } else {
-                if (seeAllBtn) seeAllBtn.querySelector('span').textContent = 'See All Projects';
-                if (seeAllIcon) seeAllIcon.className = 'fa-solid fa-chevron-down';
+                // 6 or fewer cards: hide the expand button
+                seeAllWrapper.style.display = 'none';
             }
         }
     }
+    window.applyPortfolioCardVisibility = applyPortfolioCardVisibility;
 
-    if (portfolioFilter && workCards.length > 0) {
+    function updatePortfolioFilterCounts() {
+        const portfolioFilter = document.getElementById('portfolioFilter');
+        if (!portfolioFilter) return;
+        const workCards = getLiveWorkCards();
         const filterBtns = portfolioFilter.querySelectorAll('.filter-btn');
 
-        // Dynamically calculate and update category count badges based on active cards
-        function updateFilterCounts() {
+        filterBtns.forEach(btn => {
+            const filterValue = btn.getAttribute('data-filter');
+            const countBadge = btn.querySelector('.filter-count');
+            if (countBadge) {
+                if (filterValue === 'all') {
+                    countBadge.textContent = workCards.length;
+                } else {
+                    let count = 0;
+                    workCards.forEach(card => {
+                        const categories = (card.getAttribute('data-category') || '').split(' ');
+                        if (categories.includes(filterValue)) {
+                            count++;
+                        }
+                    });
+                    countBadge.textContent = count;
+                }
+            }
+        });
+    }
+    window.updatePortfolioFilterCounts = updatePortfolioFilterCounts;
+
+    function initPortfolioFilterEngine() {
+        const portfolioFilter = document.getElementById('portfolioFilter');
+        const seeAllBtn = document.getElementById('seeAllProjectsBtn');
+
+        if (portfolioFilter && !portfolioFilter.dataset.filterBound) {
+            portfolioFilter.dataset.filterBound = 'true';
+            const filterBtns = portfolioFilter.querySelectorAll('.filter-btn');
+
             filterBtns.forEach(btn => {
-                const filterValue = btn.getAttribute('data-filter');
-                const countBadge = btn.querySelector('.filter-count');
-                
-                if (countBadge) {
-                    if (filterValue === 'all') {
-                        countBadge.textContent = workCards.length;
-                    } else {
-                        let count = 0;
-                        workCards.forEach(card => {
-                            const categories = (card.getAttribute('data-category') || '').split(' ');
-                            if (categories.includes(filterValue)) {
-                                count++;
-                            }
-                        });
-                        countBadge.textContent = count;
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const filterValue = btn.getAttribute('data-filter') || 'all';
+                    applyPortfolioCardVisibility(filterValue);
+                });
+            });
+        }
+
+        if (seeAllBtn && !seeAllBtn.dataset.expandBound) {
+            seeAllBtn.dataset.expandBound = 'true';
+            seeAllBtn.addEventListener('click', () => {
+                isPortfolioExpanded = !isPortfolioExpanded;
+                applyPortfolioCardVisibility();
+
+                // If collapsing back to 6 cards, scroll smoothly to the works section
+                if (!isPortfolioExpanded) {
+                    const worksSection = document.getElementById('works');
+                    if (worksSection) {
+                        worksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
             });
         }
 
-        // Initialize dynamic count calculation and visibility
-        updateFilterCounts();
-        applyCardVisibility('all');
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const filterValue = btn.getAttribute('data-filter');
-                applyCardVisibility(filterValue);
-            });
-        });
-
-        seeAllBtn?.addEventListener('click', () => {
-            isExpanded = !isExpanded;
-            const activeBtn = portfolioFilter.querySelector('.filter-btn.active');
-            const activeFilter = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
-            applyCardVisibility(activeFilter);
-        });
+        updatePortfolioFilterCounts();
+        applyPortfolioCardVisibility();
     }
+    window.initPortfolioFilterEngine = initPortfolioFilterEngine;
+
+    initPortfolioFilterEngine();
 
     /* --- 7. Project Detail Video Lightbox Modal (Smart Auto-Detection Engine) --- */
     const projectData = {
