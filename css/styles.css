@@ -2171,7 +2171,7 @@ button {
     width: 100%;
     aspect-ratio: 16 / 9;
     background: radial-gradient(circle at 50% 30%, #0a1120 0%, #020617 100%);
-    border: 1.5px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 20px;
     box-shadow: 
         0 0 0 1px rgba(163, 230, 53, 0.25),
@@ -2180,6 +2180,22 @@ button {
         0 0 110px -25px rgba(56, 189, 248, 0.18);
     overflow: hidden;
     transition: all 0.3s ease;
+}
+
+.pure-video-lightbox video,
+.pure-video-lightbox iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    object-fit: cover !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    transform: scale(1.015);
+    transform-origin: center center;
 }
 
 .pure-video-lightbox::before {

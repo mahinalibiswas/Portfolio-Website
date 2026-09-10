@@ -604,18 +604,16 @@ const CLOUD_DB_URL = '/api/syncData';
  * Saves updated site data to localStorage & Live Cloud Backend
  */
 async function saveSiteData(data) {
+    let localSaved = false;
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        localSaved = true;
     } catch (e) {
-        console.error("Error saving site data to localStorage", e);
-        if (e.name === 'QuotaExceededError' || e.code === 22 || e.number === -2147024882) {
-            if (typeof showToast === 'function') {
-                showToast('Storage Limit Exceeded! Large video/image files cannot be stored in browser storage. Please use YouTube/Cloud links.', 'error');
-            }
-        }
+        console.warn("localStorage quota exceeded. Storing in fallback and cloud.", e);
     }
 
     // Live Cloud Backend Realtime Sync across all devices worldwide
+    let cloudSaved = false;
     try {
         const res = await fetch(CLOUD_DB_URL, {
             method: 'POST',
@@ -623,12 +621,28 @@ async function saveSiteData(data) {
             body: JSON.stringify(data)
         });
         if (res.ok) {
+            cloudSaved = true;
             console.log("Live Cloud Backend synced successfully across all devices!");
         } else {
             console.warn("Cloud Backend returned status:", res.status);
         }
     } catch (err) {
         console.warn("Cloud Backend sync error:", err);
+    }
+
+    // If local storage failed due to large media, try to at least save in IndexedDB
+    if (!localSaved && typeof saveMediaBlob === 'function') {
+        try {
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            await saveMediaBlob('siteData_fallback', blob);
+        } catch (idbErr) {}
+    }
+
+    if (!localSaved && !cloudSaved) {
+        if (typeof showToast === 'function') {
+            showToast('Storage Limit Exceeded! Large video/image files cannot be stored. Please use YouTube/Cloud links.', 'error');
+        }
+        return false;
     }
 
     return true;

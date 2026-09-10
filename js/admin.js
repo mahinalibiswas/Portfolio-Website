@@ -1241,21 +1241,54 @@ window.addNewNavLinkItem = addNewNavLinkItem;
 window.deleteNavLinkItem = deleteNavLinkItem;
 window.updateNavLinkProp = updateNavLinkProp;
 
-function handleHeroPosterUpload(event) {
+async function compressImageToDataUrl(file, maxWidth = 1280, maxHeight = 720, quality = 0.82) {
+    if (!file) return null;
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let w = img.width;
+                let h = img.height;
+                if (w > maxWidth || h > maxHeight) {
+                    const ratio = Math.min(maxWidth / w, maxHeight / h);
+                    w = Math.round(w * ratio);
+                    h = Math.round(h * ratio);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                let output = canvas.toDataURL('image/webp', quality);
+                if (!output.startsWith('data:image/webp')) {
+                    output = canvas.toDataURL('image/jpeg', quality);
+                }
+                resolve(output);
+            };
+            img.onerror = () => resolve(e.target.result);
+            img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+    });
+}
+window.compressImageToDataUrl = compressImageToDataUrl;
+
+async function handleHeroPosterUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const dataUrl = e.target.result;
-        document.getElementById('heroShowreelPoster').value = dataUrl;
-        const previewImg = document.getElementById('heroPosterPreview');
-        const previewWrap = document.getElementById('heroPosterPreviewWrap');
-        if (previewImg) previewImg.src = dataUrl;
-        if (previewWrap) previewWrap.style.display = 'flex';
-        showToast('Hero cover image uploaded from PC!', 'success');
-    };
-    reader.readAsDataURL(file);
+    showToast('Optimizing and loading cover image...', 'info');
+    const dataUrl = await compressImageToDataUrl(file, 1280, 720, 0.82);
+    if (!dataUrl) return;
+
+    document.getElementById('heroShowreelPoster').value = dataUrl;
+    const previewImg = document.getElementById('heroPosterPreview');
+    const previewWrap = document.getElementById('heroPosterPreviewWrap');
+    if (previewImg) previewImg.src = dataUrl;
+    if (previewWrap) previewWrap.style.display = 'flex';
+    showToast('Hero cover image uploaded and optimized!', 'success');
 }
 
 function removeHeroPosterImage() {
@@ -1265,21 +1298,20 @@ function removeHeroPosterImage() {
     showToast('Hero cover image removed', 'info');
 }
 
-function handleProjImageUpload(event) {
+async function handleProjImageUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const dataUrl = e.target.result;
-        document.getElementById('editProjImage').value = dataUrl;
-        const previewImg = document.getElementById('editProjImagePreview');
-        const previewWrap = document.getElementById('editProjImagePreviewWrap');
-        if (previewImg) previewImg.src = dataUrl;
-        if (previewWrap) previewWrap.style.display = 'flex';
-        showToast('Project thumbnail image uploaded from PC!', 'success');
-    };
-    reader.readAsDataURL(file);
+    showToast('Optimizing project thumbnail...', 'info');
+    const dataUrl = await compressImageToDataUrl(file, 1280, 720, 0.82);
+    if (!dataUrl) return;
+
+    document.getElementById('editProjImage').value = dataUrl;
+    const previewImg = document.getElementById('editProjImagePreview');
+    const previewWrap = document.getElementById('editProjImagePreviewWrap');
+    if (previewImg) previewImg.src = dataUrl;
+    if (previewWrap) previewWrap.style.display = 'flex';
+    showToast('Project thumbnail image uploaded and optimized!', 'success');
 }
 
 function removeProjImage() {
@@ -1346,22 +1378,21 @@ function removeShowreelVideo() {
     showToast('Showreel video removed', 'info');
 }
 
-function handleShowreelPosterUpload(event) {
+async function handleShowreelPosterUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const dataUrl = e.target.result;
-        document.getElementById('showreelPoster').value = dataUrl;
-        const previewImg = document.getElementById('showreelPosterPreview');
-        const previewWrap = document.getElementById('showreelPosterPreviewWrap');
-        if (previewImg) previewImg.src = dataUrl;
-        if (previewWrap) previewWrap.style.display = 'flex';
-        if (typeof renderLiveShowreelPreview === 'function') renderLiveShowreelPreview();
-        showToast('Showreel poster image uploaded from PC!', 'success');
-    };
-    reader.readAsDataURL(file);
+    showToast('Optimizing showreel poster...', 'info');
+    const dataUrl = await compressImageToDataUrl(file, 1280, 720, 0.82);
+    if (!dataUrl) return;
+
+    document.getElementById('showreelPoster').value = dataUrl;
+    const previewImg = document.getElementById('showreelPosterPreview');
+    const previewWrap = document.getElementById('showreelPosterPreviewWrap');
+    if (previewImg) previewImg.src = dataUrl;
+    if (previewWrap) previewWrap.style.display = 'flex';
+    if (typeof renderLiveShowreelPreview === 'function') renderLiveShowreelPreview();
+    showToast('Showreel poster image uploaded and optimized!', 'success');
 }
 
 function removeShowreelPosterImage() {
@@ -2638,21 +2669,20 @@ function closeShortEditModal() {
     if (modal) modal.classList.remove('active');
 }
 
-function handleShortImageUpload(event) {
+async function handleShortImageUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const dataUrl = e.target.result;
-        document.getElementById('editShortImage').value = dataUrl;
-        const previewImg = document.getElementById('editShortImagePreview');
-        const previewWrap = document.getElementById('editShortImagePreviewWrap');
-        if (previewImg) previewImg.src = dataUrl;
-        if (previewWrap) previewWrap.style.display = 'flex';
-        showToast('Vertical cover image uploaded from PC!', 'success');
-    };
-    reader.readAsDataURL(file);
+    showToast('Optimizing vertical reel cover...', 'info');
+    const dataUrl = await compressImageToDataUrl(file, 720, 1280, 0.82);
+    if (!dataUrl) return;
+
+    document.getElementById('editShortImage').value = dataUrl;
+    const previewImg = document.getElementById('editShortImagePreview');
+    const previewWrap = document.getElementById('editShortImagePreviewWrap');
+    if (previewImg) previewImg.src = dataUrl;
+    if (previewWrap) previewWrap.style.display = 'flex';
+    showToast('Vertical cover image uploaded and optimized!', 'success');
 }
 
 function removeShortImage() {

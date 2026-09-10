@@ -947,19 +947,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let playerHtml = '';
             if (isDirectVideo) {
-                playerHtml = `<video src="${rawVideo}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 20px;"></video>`;
+                playerHtml = `<video src="${rawVideo}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
             } else if (extractedYt) {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 20px;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else if (isEmbedCode) {
                 let clean = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
                 if (!clean.includes('style=')) {
-                    clean = clean.replace('<iframe', '<iframe style="width: 100%; height: 100%; border: none; border-radius: 20px;"');
+                    clean = clean.replace('<iframe', '<iframe style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"');
                 }
                 playerHtml = clean;
             } else if (data.youtubeId && (!rawVideo || rawVideo === data.youtubeUrl)) {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 20px;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else {
-                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 20px;"></video>`;
+                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
             }
 
             if (body) {
@@ -1301,9 +1301,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rawVideo.includes('<iframe')) {
                 playerHtml = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
             } else if (ytId) {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; border-radius: 20px;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else {
-                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 20px;"></video>`;
+                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
             }
             mediaCard.innerHTML = playerHtml;
         }
