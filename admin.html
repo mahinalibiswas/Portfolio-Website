@@ -922,8 +922,13 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Full Project Description</label>
-                    <textarea id="editProjDesc" rows="3" placeholder="Enter detailed project description..."></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <label style="margin: 0;">Full Project Description</label>
+                        <button type="button" id="btnAiProjDesc" class="btn btn-hero-secondary btn-sm" onclick="generateAiProjDescription()" style="font-size: 0.75rem; padding: 0.25rem 0.65rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Auto-write project description using AI">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Auto-Generate
+                        </button>
+                    </div>
+                    <textarea id="editProjDesc" rows="3" placeholder="Enter detailed project description or click 'AI Auto-Generate'..."></textarea>
                 </div>
 
                 <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
@@ -1022,8 +1027,13 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Short Video Description</label>
-                    <textarea id="editShortDesc" rows="3" placeholder="Enter short video description..."></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <label style="margin: 0;">Short Video Description</label>
+                        <button type="button" id="btnAiShortDesc" class="btn btn-hero-secondary btn-sm" onclick="generateAiShortDescription()" style="font-size: 0.75rem; padding: 0.25rem 0.65rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Auto-write short description using AI">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Auto-Generate
+                        </button>
+                    </div>
+                    <textarea id="editShortDesc" rows="3" placeholder="Enter short video description or click 'AI Auto-Generate'..."></textarea>
                 </div>
 
                 <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
@@ -1158,7 +1168,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=31.0"></script>
-    <script src="js/admin.js?v=31.0"></script>
+    <script src="js/siteData.js?v=32.0"></script>
+    <script src="js/admin.js?v=32.0"></script>
 </body>
 </html>

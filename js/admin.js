@@ -1512,6 +1512,164 @@ function autoDetectProjectMetadataFromFileName(fileName) {
 }
 window.autoDetectProjectMetadataFromFileName = autoDetectProjectMetadataFromFileName;
 
+function generateAiProjectDescription({ title, categoryBadge, slug, client, tools, duration, isShort } = {}) {
+    title = (title || 'Video Project').trim();
+    client = (client || '').trim();
+    categoryBadge = (categoryBadge || '').toLowerCase();
+    slug = (slug || '').toLowerCase();
+    tools = (tools || 'Adobe Premiere Pro, After Effects').trim();
+
+    const clientPhrase = client ? `crafted for ${client}` : 'crafted for modern digital brands and audiences';
+    const toolPhrase = tools ? `executed with precision in ${tools}` : 'crafted with industry-standard post-production workflows';
+
+    // 1. Short / Reel / Vertical video
+    if (isShort || slug.includes('reels') || slug.includes('short') || slug.includes('tiktok') || categoryBadge.includes('reel') || categoryBadge.includes('short')) {
+        const shortTemplates = [
+            `High-retention vertical video edit ${clientPhrase}, engineered for maximum watch time and viral reach. Features rapid hook pacing, custom animated motion subtitles, pop-up SFX, and dynamic punch-ins.`,
+            `Fast-paced social media short ${clientPhrase}, optimized for algorithmic engagement across Instagram Reels, TikTok, and YouTube Shorts. Built with visual pattern interrupts, sound design layering, and kinetic typography.`,
+            `Dynamic vertical showcase ${clientPhrase}, combining high-energy jump cuts, animated text highlights, and trending audio rhythm ${toolPhrase}.`
+        ];
+        return shortTemplates[Math.floor(Math.random() * shortTemplates.length)];
+    }
+
+    // 2. Commercial / Brand Ad / Campaign
+    if (categoryBadge.includes('commercial') || slug.includes('commercial') || slug.includes('ad') || slug.includes('promo') || categoryBadge.includes('campaign') || slug.includes('campaign')) {
+        const commercialTemplates = [
+            `High-impact commercial video campaign ${clientPhrase}, engineered to boost brand authority and conversion. Combines dynamic rhythm cutting, kinetic product callouts, custom sound design, and a cinematic color pass ${toolPhrase}.`,
+            `Premium promotional brand campaign ${clientPhrase}, blending compelling narrative pacing with broadcast-quality visuals. Features multi-track audio mastering, motion graphic titles, and filmic color grading.`,
+            `Energetic promotional commercial ${clientPhrase}, tailored for high-conversion advertising campaigns. Designed with punchy transitions, synced sound effects, and clean visual storytelling ${toolPhrase}.`
+        ];
+        return commercialTemplates[Math.floor(Math.random() * commercialTemplates.length)];
+    }
+
+    // 3. Color Pass / Cinematic
+    if (categoryBadge.includes('color') || slug.includes('color') || slug.includes('grading') || slug.includes('lut')) {
+        const colorTemplates = [
+            `Professional color grading and filmic finishing pass ${clientPhrase}. Transforms flat Log footage into a rich, cinema-grade aesthetic with calibrated skin tones, balanced shadows, and high-contrast color depth ${toolPhrase}.`,
+            `Cinematic color pass ${clientPhrase}, delivering a bespoke film look through custom LUT mastery, dynamic hue separation, atmospheric tone curves, and seamless clip-to-clip matching.`,
+            `High-end color correction and film emulation ${clientPhrase}, meticulously graded to evoke deep visual mood while maintaining broadcast-standard dynamic range and pristine skin tones.`
+        ];
+        return colorTemplates[Math.floor(Math.random() * colorTemplates.length)];
+    }
+
+    // 4. Motion Graphics / Logo Animation
+    if (categoryBadge.includes('motion') || slug.includes('motion') || slug.includes('logo') || slug.includes('intro')) {
+        const motionTemplates = [
+            `High-end 2D/3D motion graphics and title sequence ${clientPhrase}. Built with smooth easing keyframes, atmospheric particle accents, custom glowing neon highlights, and impact sound design in ${tools}.`,
+            `Dynamic animated logo reveal and visual branding sequence ${clientPhrase}. Engineered with kinetic timing, modern typography animations, and punchy audio SFX to establish a memorable identity.`,
+            `Sleek motion graphics showcase ${clientPhrase}, integrating seamless vector animations, kinetic text transitions, and clean geometric reveals ${toolPhrase}.`
+        ];
+        return motionTemplates[Math.floor(Math.random() * motionTemplates.length)];
+    }
+
+    // 5. Corporate / Talking Head / Presentation
+    if (categoryBadge.includes('corporate') || slug.includes('corporate') || slug.includes('talking') || slug.includes('interview')) {
+        const corporateTemplates = [
+            `Polished corporate video edit ${clientPhrase}. Features seamless dialogue flow, multi-camera audio syncing, lower-third branding graphics, background noise suppression, and clean color correction ${toolPhrase}.`,
+            `Executive interview and talking-head presentation ${clientPhrase}, structured with engaging B-roll cutaways, crisp audio mastering, and modern corporate typography.`,
+            `Professional corporate communication video ${clientPhrase}, engineered for maximum clarity and engagement with pacing enhancements, graphic overlays, and studio-grade sound cleanup.`
+        ];
+        return corporateTemplates[Math.floor(Math.random() * corporateTemplates.length)];
+    }
+
+    // 6. Documentary / Film Storytelling
+    if (categoryBadge.includes('doc') || slug.includes('doc') || slug.includes('cinematic')) {
+        const docTemplates = [
+            `Cinematic documentary storytelling ${clientPhrase}, woven together with emotive pacing, immersive ambient sound design, archival footage restoration, and nuanced color grading ${toolPhrase}.`,
+            `In-depth narrative documentary visual edit ${clientPhrase}, prioritizing story rhythm, authentic emotional beats, cinematic lighting balance, and atmospheric soundscapes.`
+        ];
+        return docTemplates[Math.floor(Math.random() * docTemplates.length)];
+    }
+
+    // 7. General / Creative Video Project
+    const generalTemplates = [
+        `High-production video edit ${clientPhrase}, crafted with narrative rhythm, custom visual transitions, sound design layering, and professional color mastering ${toolPhrase}.`,
+        `Complete video post-production project ${clientPhrase}, featuring meticulous pacing, dynamic visual storytelling, audio enhancement, and cinematic finishing in ${tools}.`,
+        `Creative video showcase ${clientPhrase}, combining seamless scene transitions, engaging rhythm cuts, polished sound effects, and color grading for a standout portfolio presentation.`
+    ];
+    return generalTemplates[Math.floor(Math.random() * generalTemplates.length)];
+}
+window.generateAiProjectDescription = generateAiProjectDescription;
+
+function generateAiProjDescription() {
+    const title = document.getElementById('editProjTitle')?.value;
+    const categoryBadge = document.getElementById('editProjCategoryBadge')?.value;
+    const slug = document.getElementById('editProjCategory')?.value;
+    const client = document.getElementById('editProjClient')?.value;
+    const tools = document.getElementById('editProjTools')?.value;
+    const duration = document.getElementById('editProjDuration')?.value;
+    const descInput = document.getElementById('editProjDesc');
+
+    if (!descInput) return;
+
+    const btn = document.getElementById('btnAiProjDesc');
+    if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Writing...';
+        btn.disabled = true;
+    }
+
+    setTimeout(() => {
+        const newDesc = generateAiProjectDescription({
+            title,
+            categoryBadge,
+            slug,
+            client,
+            tools,
+            duration,
+            isShort: false
+        });
+        descInput.value = newDesc;
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> AI Generated!';
+            btn.disabled = false;
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> AI Auto-Generate';
+            }, 2200);
+        }
+        showToast('AI generated a new project description!', 'success');
+    }, 280);
+}
+window.generateAiProjDescription = generateAiProjDescription;
+
+function generateAiShortDescription() {
+    const title = document.getElementById('editShortTitle')?.value;
+    const platform = document.getElementById('editShortPlatform')?.value;
+    const platformLabel = document.getElementById('editShortPlatformLabel')?.value;
+    const client = document.getElementById('editShortClient')?.value;
+    const duration = document.getElementById('editShortDuration')?.value;
+    const descInput = document.getElementById('editShortDesc');
+
+    if (!descInput) return;
+
+    const btn = document.getElementById('btnAiShortDesc');
+    if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Writing...';
+        btn.disabled = true;
+    }
+
+    setTimeout(() => {
+        const newDesc = generateAiProjectDescription({
+            title,
+            categoryBadge: platformLabel || 'Reels / Shorts',
+            slug: 'reels-shorts social-media viral ' + (platform || ''),
+            client,
+            tools: 'Adobe Premiere Pro, After Effects',
+            duration,
+            isShort: true
+        });
+        descInput.value = newDesc;
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> AI Generated!';
+            btn.disabled = false;
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> AI Auto-Generate';
+            }, 2200);
+        }
+        showToast('AI generated a new short description!', 'success');
+    }, 280);
+}
+window.generateAiShortDescription = generateAiShortDescription;
+
 function captureVideoThumbnail(file, atTime = 1) {
     return new Promise((resolve) => {
         try {
@@ -1595,7 +1753,24 @@ async function handleProjVideoUpload(event) {
         clientInput.value = meta.client;
     }
 
-    // 3. Auto-capture thumbnail snapshot from video frame if cover image is empty
+    // 3. Smart AI Auto-Generated Project Description if empty
+    const descInput = document.getElementById('editProjDesc');
+    if (descInput && !descInput.value.trim()) {
+        const generatedDesc = generateAiProjectDescription({
+            title: meta.title,
+            categoryBadge: meta.badge,
+            slug: meta.slug,
+            client: meta.client,
+            tools: document.getElementById('editProjTools')?.value,
+            duration: detectedDur,
+            isShort: false
+        });
+        if (generatedDesc) {
+            descInput.value = generatedDesc;
+        }
+    }
+
+    // 4. Auto-capture thumbnail snapshot from video frame if cover image is empty
     const imgInput = document.getElementById('editProjImage');
     const previewImg = document.getElementById('editProjImagePreview');
     const previewWrap = document.getElementById('editProjImagePreviewWrap');
@@ -1609,13 +1784,13 @@ async function handleProjVideoUpload(event) {
         }
     }
 
-    // 4. Store video in IndexedDB
+    // 5. Store video in IndexedDB
     await processUploadedVideoFile(file, 'editProjVideo', 'editProjVideoPreviewWrap', 'editProjVideoFileName', () => {
         const ytInput = document.getElementById('editProjYoutubeId');
         if (ytInput) ytInput.value = '';
     });
 
-    showToast(`Auto-detected title "${meta.title}", duration (${detectedDur || '0:30'}) & category from video!`, 'success');
+    showToast(`Auto-detected title "${meta.title}", AI description, duration (${detectedDur || '0:30'}) & category from video!`, 'success');
     event.target.value = '';
 }
 
@@ -1664,13 +1839,32 @@ async function handleShortVideoUpload(event) {
         }
     }
 
-    // 4. Store video in IndexedDB
+    // 4. Smart AI Auto-Generated Short Description if empty
+    const descInput = document.getElementById('editShortDesc');
+    if (descInput && !descInput.value.trim()) {
+        const platformLabel = document.getElementById('editShortPlatformLabel')?.value;
+        const platform = document.getElementById('editShortPlatform')?.value;
+        const generatedDesc = generateAiProjectDescription({
+            title: meta.title,
+            categoryBadge: platformLabel || 'Reels / Shorts',
+            slug: 'reels-shorts social-media viral ' + (platform || ''),
+            client: document.getElementById('editShortClient')?.value,
+            tools: 'Adobe Premiere Pro, After Effects',
+            duration: detectedDur,
+            isShort: true
+        });
+        if (generatedDesc) {
+            descInput.value = generatedDesc;
+        }
+    }
+
+    // 5. Store video in IndexedDB
     await processUploadedVideoFile(file, 'editShortVideo', 'editShortVideoPreviewWrap', 'editShortVideoFileName', () => {
         const ytInput = document.getElementById('editShortYoutubeId');
         if (ytInput) ytInput.value = '';
     });
 
-    showToast(`Auto-detected title & length (${detectedDur || '0:15'}) from reel!`, 'success');
+    showToast(`Auto-detected title "${meta.title}", AI description & length (${detectedDur || '0:15'}) from reel!`, 'success');
     event.target.value = '';
 }
 
@@ -1702,6 +1896,40 @@ async function onShortVideoInputChange() {
     if (extracted) {
         if (ytField) ytField.value = extracted;
         if (wrap) wrap.style.display = 'none';
+        try {
+            fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${extracted}`)
+                .then(r => r.json())
+                .then(yt => {
+                    const titleEl = document.getElementById('editShortTitle');
+                    const imgEl = document.getElementById('editShortImage');
+                    const prevImg = document.getElementById('editShortImagePreview');
+                    const prevWrap = document.getElementById('editShortImagePreviewWrap');
+                    const descEl = document.getElementById('editShortDesc');
+                    if (yt.title && titleEl && !titleEl.value.trim()) {
+                        titleEl.value = yt.title;
+                    }
+                    if (yt.thumbnail_url && imgEl && !imgEl.value.trim()) {
+                        imgEl.value = yt.thumbnail_url;
+                        if (prevImg) prevImg.src = yt.thumbnail_url;
+                        if (prevWrap) prevWrap.style.display = 'flex';
+                    }
+                    if (descEl && !descEl.value.trim() && yt.title) {
+                        descEl.value = generateAiProjectDescription({
+                            title: yt.title,
+                            categoryBadge: 'Reels / Shorts',
+                            slug: 'reels-shorts social-media viral',
+                            client: yt.author_name || '',
+                            tools: 'Adobe Premiere Pro, After Effects',
+                            duration: durInput?.value || '',
+                            isShort: true
+                        });
+                    }
+                    if (yt.title) {
+                        showToast(`Auto-detected YouTube details: "${yt.title.slice(0, 30)}..."`, 'success');
+                    }
+                })
+                .catch(() => {});
+        } catch (e) {}
     } else if (val.includes('<iframe')) {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'none';
@@ -1743,6 +1971,7 @@ async function onProjVideoInputChange() {
                     const imgEl = document.getElementById('editProjImage');
                     const prevImg = document.getElementById('editProjImagePreview');
                     const prevWrap = document.getElementById('editProjImagePreviewWrap');
+                    const descEl = document.getElementById('editProjDesc');
                     if (yt.title && titleEl && !titleEl.value.trim()) {
                         titleEl.value = yt.title;
                     }
@@ -1753,6 +1982,17 @@ async function onProjVideoInputChange() {
                         imgEl.value = yt.thumbnail_url;
                         if (prevImg) prevImg.src = yt.thumbnail_url;
                         if (prevWrap) prevWrap.style.display = 'flex';
+                    }
+                    if (descEl && !descEl.value.trim() && yt.title) {
+                        descEl.value = generateAiProjectDescription({
+                            title: yt.title,
+                            categoryBadge: document.getElementById('editProjCategoryBadge')?.value || 'Commercial Video',
+                            slug: document.getElementById('editProjCategory')?.value || 'commercial-ad',
+                            client: yt.author_name || clientEl?.value || '',
+                            tools: document.getElementById('editProjTools')?.value || '',
+                            duration: durInput?.value || '',
+                            isShort: false
+                        });
                     }
                     if (yt.title) {
                         showToast(`Auto-detected YouTube details: "${yt.title.slice(0, 30)}..."`, 'success');
