@@ -2,7 +2,23 @@
    MAHIN MOTION DESIGN STUDIO - MAIN SCRIPT
    ========================================================================== */
 
+// 0. Force Always Scroll to Top on Every Page Refresh / Reload
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
+window.addEventListener('beforeunload', () => {
+    window.scrollTo(0, 0);
+});
+
+// Clear any location hash on reload so browser doesn't anchor-jump to lower sections
+if (window.location.hash) {
+    history.replaceState(null, null, window.location.pathname + window.location.search);
+}
+window.scrollTo(0, 0);
+
 document.addEventListener('DOMContentLoaded', () => {
+    window.scrollTo(0, 0);
 
     /* --- 0. Ultra-Smooth Momentum Scrolling Engine (Lenis) --- */
     if (typeof Lenis !== 'undefined') {
@@ -18,6 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         window.lenis = lenis;
+
+        // Force Lenis to start at the top (Hero section) immediately
+        lenis.scrollTo(0, { immediate: true });
 
         function raf(time) {
             lenis.raf(time);
@@ -1753,6 +1772,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.initShortsCarousel();
+});
 
+// Safeguard on window load: lock viewport to top (hero section)
+window.addEventListener('load', () => {
+    window.scrollTo(0, 0);
+    if (window.lenis) {
+        window.lenis.scrollTo(0, { immediate: true });
+    }
+    setTimeout(() => {
+        window.scrollTo(0, 0);
+        if (window.lenis) {
+            window.lenis.scrollTo(0, { immediate: true });
+        }
+    }, 60);
 });
 
