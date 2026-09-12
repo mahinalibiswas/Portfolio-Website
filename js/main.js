@@ -952,14 +952,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const soundBtn = document.getElementById('reelSoundBtn');
                 if (soundBtn) soundBtn.style.display = 'none';
 
+                const _ytId1 = extractedYt;
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
-                        src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${extractedYt}&rel=0"
+                        src="https://www.youtube.com/embed/${_ytId1}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId1}&rel=0&origin=${encodeURIComponent(location.origin)}"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
                 `;
+                _scheduleYtUnmute();
             } else if (isEmbedCode) {
                 const soundBtn = document.getElementById('reelSoundBtn');
                 if (soundBtn) soundBtn.style.display = 'none';
@@ -968,14 +970,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const embedUrl = embedMatch ? embedMatch[1] : '';
                 const ytIdFromEmbed = typeof extractYoutubeId === 'function' ? extractYoutubeId(embedUrl) : null;
                 if (ytIdFromEmbed) {
+                    const _ytId2 = ytIdFromEmbed;
                     mediaLayer.innerHTML = `
                         <iframe id="reelIframe"
-                            src="https://www.youtube.com/embed/${ytIdFromEmbed}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${ytIdFromEmbed}&rel=0"
+                            src="https://www.youtube.com/embed/${_ytId2}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId2}&rel=0&origin=${encodeURIComponent(location.origin)}"
                             title="${short.title || 'Reel'}"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen>
                         </iframe>
                     `;
+                    _scheduleYtUnmute();
                 } else {
                     let cleanIframe = rawVideo.replace(/width="[^"]*"/g, '').replace(/height="[^"]*"/g, '');
                     cleanIframe = cleanIframe.replace(/style="[^"]*"/g, '');
@@ -989,14 +993,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const soundBtn = document.getElementById('reelSoundBtn');
                 if (soundBtn) soundBtn.style.display = 'none';
 
+                const _ytId3 = short.youtubeId;
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
-                        src="https://www.youtube.com/embed/${short.youtubeId}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${short.youtubeId}&rel=0"
+                        src="https://www.youtube.com/embed/${_ytId3}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId3}&rel=0&origin=${encodeURIComponent(location.origin)}"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
                 `;
+                _scheduleYtUnmute();
             } else if (rawVideo) {
                 mediaLayer.innerHTML = `
                     <video id="reelVideo" src="${rawVideo}" playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
@@ -1032,6 +1038,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
         }
+    }
+
+    /* Unmute YouTube iframe via JS API after it finishes loading */
+    function _scheduleYtUnmute() {
+        let attempts = 0;
+        const maxAttempts = 12;
+        const tryUnmute = () => {
+            const iframe = document.getElementById('reelIframe');
+            if (!iframe || !iframe.contentWindow) return;
+            try {
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'setVolume', args: [100] }), '*');
+            } catch (e) { /* cross-origin, ignore */ }
+            attempts++;
+            if (attempts < maxAttempts) setTimeout(tryUnmute, 500);
+        };
+        // First attempt after 1.5s (give YouTube time to init)
+        setTimeout(tryUnmute, 1500);
     }
 
     function updateReelSoundUI(isMuted) {
