@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=28.0">
+    <link rel="stylesheet" href="css/styles.css?v=36.0">
 
     <!-- Force Always Scroll to Top on Page Load / Reload -->
     <script>
@@ -79,6 +79,78 @@
             </div>
         </nav>
     </header>
+
+    <!-- Mobile Navigation Drawer & Backdrop -->
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+    <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile Navigation" aria-hidden="true">
+        <div class="mobile-drawer-inner">
+            <div class="mobile-drawer-header">
+                <div class="mobile-nav-profile">
+                    <img src="assets/images/mahin_profile.jpg" alt="Mahin Ali Biswas" class="mobile-nav-avatar">
+                    <div class="mobile-nav-user-info">
+                        <span class="mobile-nav-name">Mahin Ali Biswas</span>
+                        <span class="mobile-nav-role">Motion & Video Artist</span>
+                    </div>
+                </div>
+                <button class="mobile-drawer-close" id="closeMobileNavBtn" aria-label="Close Navigation Menu">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="mobile-drawer-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Available for Work</span>
+            </div>
+
+            <nav class="mobile-nav-links" id="mobileNavLinks">
+                <a href="#hero" class="mobile-nav-link active">
+                    <i class="fa-solid fa-house"></i> <span>Home</span>
+                </a>
+                <a href="#about" class="mobile-nav-link">
+                    <i class="fa-solid fa-user"></i> <span>About Me</span>
+                </a>
+                <a href="#showreel" class="mobile-nav-link">
+                    <i class="fa-solid fa-play"></i> <span>Showreel</span>
+                </a>
+                <a href="#works" class="mobile-nav-link">
+                    <i class="fa-solid fa-film"></i> <span>Projects</span>
+                </a>
+                <a href="#shorts" class="mobile-nav-link">
+                    <i class="fa-solid fa-mobile-screen"></i> <span>Reels & Shorts</span>
+                </a>
+                <a href="#services" class="mobile-nav-link">
+                    <i class="fa-solid fa-layer-group"></i> <span>Services</span>
+                </a>
+                <a href="#pipeline" class="mobile-nav-link">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Toolkit</span>
+                </a>
+                <a href="#estimator" class="mobile-nav-link">
+                    <i class="fa-solid fa-calculator"></i> <span>Estimator</span>
+                </a>
+                <a href="#contact" class="mobile-nav-link">
+                    <i class="fa-solid fa-paper-plane"></i> <span>Contact</span>
+                </a>
+            </nav>
+
+            <div class="mobile-drawer-footer">
+                <a href="#contact" class="btn btn-primary mobile-drawer-cta" id="mobileDrawerContactBtn">
+                    <span>Hire Me / Contact</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <div class="mobile-drawer-socials">
+                    <a href="https://www.behance.net/mahinalibiswas" target="_blank" class="mobile-social-icon" aria-label="Behance">
+                        <i class="fa-brands fa-behance"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@mahinalibiswas" target="_blank" class="mobile-social-icon" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                    <a href="https://www.facebook.com/mahinalibiswas" target="_blank" class="mobile-social-icon" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </aside>
 
     <!-- Main Content -->
     <main>
@@ -1044,11 +1116,11 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Site Data Store & Dynamic Renderer -->
-    <script src="js/siteData.js?v=35.0"></script>
-    <script src="js/siteRenderer.js?v=35.0"></script>
+    <script src="js/siteData.js?v=36.0"></script>
+    <script src="js/siteRenderer.js?v=36.0"></script>
     <!-- Smooth Momentum Scroll Engine (Lenis) -->
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
     <!-- Custom JS -->
-    <script src="js/main.js?v=35.0"></script>
+    <script src="js/main.js?v=36.0"></script>
 </body>
 </html>
