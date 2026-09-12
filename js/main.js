@@ -925,20 +925,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     <video id="reelVideo" src="${rawVideo}" playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
                 const soundBtn = document.getElementById('reelSoundBtn');
-                if (soundBtn) soundBtn.style.display = 'flex';
+                if (soundBtn) soundBtn.style.display = 'none';
 
                 const v = document.getElementById('reelVideo');
                 if (v) {
                     v.muted = false;
                     v.volume = 1.0;
-                    updateReelSoundUI(false);
 
                     const playPromise = v.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(err => {
                             console.warn("Unmuted autoplay restricted by browser, fallback to muted:", err);
                             v.muted = true;
-                            updateReelSoundUI(true);
                             v.play().catch(e => console.log('Autoplay fallback error:', e));
                         });
                     }
