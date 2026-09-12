@@ -954,7 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
-                        src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${extractedYt}&rel=0"
+                        src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${extractedYt}&controls=0&modestbranding=1&rel=0"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
@@ -970,7 +970,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (ytIdFromEmbed) {
                     mediaLayer.innerHTML = `
                         <iframe id="reelIframe"
-                            src="https://www.youtube.com/embed/${ytIdFromEmbed}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${ytIdFromEmbed}&rel=0"
+                            src="https://www.youtube.com/embed/${ytIdFromEmbed}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${ytIdFromEmbed}&controls=0&modestbranding=1&rel=0"
                             title="${short.title || 'Reel'}"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen>
@@ -991,7 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
-                        src="https://www.youtube.com/embed/${short.youtubeId}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${short.youtubeId}&rel=0"
+                        src="https://www.youtube.com/embed/${short.youtubeId}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${short.youtubeId}&controls=0&modestbranding=1&rel=0"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
