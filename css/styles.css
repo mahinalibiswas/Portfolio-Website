@@ -3710,10 +3710,12 @@ button {
 
 .reel-media-layer iframe {
     position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    top: 50% !important;
+    left: 50% !important;
     width: 100% !important;
     height: 100% !important;
+    transform: translate(-50%, -50%) scale(1.18) !important;
+    transform-origin: center center !important;
     border: none !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -3726,29 +3728,38 @@ button {
     position: absolute;
     top: 16px;
     right: 16px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-    font-size: 0.95rem;
+    height: 38px;
+    padding: 0 0.95rem;
+    border-radius: 999px;
+    background: rgba(10, 15, 30, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid var(--accent-neon);
+    color: var(--accent-neon);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.5rem;
     cursor: pointer;
-    z-index: 25;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    z-index: 35;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(163, 230, 53, 0.35);
 }
 
 .reel-sound-btn:hover {
-    background: rgba(0, 0, 0, 0.85);
-    border-color: var(--accent-neon);
-    color: var(--accent-neon);
-    transform: scale(1.1);
+    background: rgba(163, 230, 53, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7), 0 0 24px rgba(163, 230, 53, 0.6);
+}
+
+.reel-sound-hint {
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1;
+    color: #ffffff;
+    user-select: none;
 }
 
 /* 100% Pure Clean Video View - All overlays & headlines completely hidden */

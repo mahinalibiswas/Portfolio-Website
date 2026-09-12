@@ -950,33 +950,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else if (extractedYt) {
                 const soundBtn = document.getElementById('reelSoundBtn');
-                if (soundBtn) soundBtn.style.display = 'none';
+                if (soundBtn) soundBtn.style.display = 'flex';
+                window._reelIframeMuted = true;
+                updateReelSoundUI(true);
 
+                const pageOrigin = encodeURIComponent(window.location.origin);
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
-                        src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${extractedYt}&controls=0&modestbranding=1&rel=0"
+                        src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&mute=1&enablejsapi=1&playsinline=1&loop=1&playlist=${extractedYt}&controls=0&modestbranding=1&rel=0&origin=${pageOrigin}"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
                 `;
             } else if (isEmbedCode) {
-                const soundBtn = document.getElementById('reelSoundBtn');
-                if (soundBtn) soundBtn.style.display = 'none';
-
                 const embedMatch = rawVideo.match(/src=["']([^"']+)["']/i);
                 const embedUrl = embedMatch ? embedMatch[1] : '';
                 const ytIdFromEmbed = typeof extractYoutubeId === 'function' ? extractYoutubeId(embedUrl) : null;
                 if (ytIdFromEmbed) {
+                    const soundBtn = document.getElementById('reelSoundBtn');
+                    if (soundBtn) soundBtn.style.display = 'flex';
+                    window._reelIframeMuted = true;
+                    updateReelSoundUI(true);
+
+                    const pageOrigin = encodeURIComponent(window.location.origin);
                     mediaLayer.innerHTML = `
                         <iframe id="reelIframe"
-                            src="https://www.youtube.com/embed/${ytIdFromEmbed}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${ytIdFromEmbed}&controls=0&modestbranding=1&rel=0"
+                            src="https://www.youtube.com/embed/${ytIdFromEmbed}?autoplay=1&mute=1&enablejsapi=1&playsinline=1&loop=1&playlist=${ytIdFromEmbed}&controls=0&modestbranding=1&rel=0&origin=${pageOrigin}"
                             title="${short.title || 'Reel'}"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen>
                         </iframe>
                     `;
                 } else {
+                    const soundBtn = document.getElementById('reelSoundBtn');
+                    if (soundBtn) soundBtn.style.display = 'none';
                     let cleanIframe = rawVideo.replace(/width="[^"]*"/g, '').replace(/height="[^"]*"/g, '');
                     cleanIframe = cleanIframe.replace(/style="[^"]*"/g, '');
                     cleanIframe = cleanIframe.replace('<iframe', '<iframe id="reelIframe"');
@@ -987,11 +995,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else if (short.youtubeId && (!rawVideo || rawVideo === short.youtubeUrl)) {
                 const soundBtn = document.getElementById('reelSoundBtn');
-                if (soundBtn) soundBtn.style.display = 'none';
+                if (soundBtn) soundBtn.style.display = 'flex';
+                window._reelIframeMuted = true;
+                updateReelSoundUI(true);
 
+                const pageOrigin = encodeURIComponent(window.location.origin);
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
-                        src="https://www.youtube.com/embed/${short.youtubeId}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${short.youtubeId}&controls=0&modestbranding=1&rel=0"
+                        src="https://www.youtube.com/embed/${short.youtubeId}?autoplay=1&mute=1&enablejsapi=1&playsinline=1&loop=1&playlist=${short.youtubeId}&controls=0&modestbranding=1&rel=0&origin=${pageOrigin}"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
@@ -1038,10 +1049,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const soundBtn = document.getElementById('reelSoundBtn');
         if (!soundBtn) return;
         const icon = soundBtn.querySelector('i');
+        const hint = soundBtn.querySelector('#reelSoundHint') || soundBtn.querySelector('.reel-sound-hint');
         if (icon) {
             icon.className = isMuted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
         }
-        soundBtn.setAttribute('title', isMuted ? 'Unmute Sound' : 'Mute Sound');
+        if (hint) {
+            hint.textContent = isMuted ? 'Tap for sound' : 'Sound on';
+        }
+        soundBtn.setAttribute('title', isMuted ? 'Click to Unmute' : 'Click to Mute');
     }
 
     function closeReelModal() {
@@ -1234,7 +1249,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const v = document.getElementById('reelVideo');
             if (v) {
                 v.muted = !v.muted;
+                if (!v.muted) v.volume = 1.0;
                 updateReelSoundUI(v.muted);
+            } else {
+                const iframe = document.getElementById('reelIframe');
+                if (iframe && iframe.contentWindow) {
+                    window._reelIframeMuted = (window._reelIframeMuted === undefined) ? false : !window._reelIframeMuted;
+                    const isMuted = window._reelIframeMuted;
+                    try {
+                        iframe.contentWindow.postMessage(JSON.stringify({
+                            event: 'command',
+                            func: isMuted ? 'mute' : 'unMute',
+                            args: []
+                        }), '*');
+                        if (!isMuted) {
+                            iframe.contentWindow.postMessage(JSON.stringify({
+                                event: 'command',
+                                func: 'setVolume',
+                                args: [100]
+                            }), '*');
+                        }
+                    } catch (err) {
+                        console.warn('PostMessage to iframe failed:', err);
+                    }
+                    updateReelSoundUI(isMuted);
+                }
             }
             return;
         }

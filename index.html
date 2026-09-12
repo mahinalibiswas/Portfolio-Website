@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=38.0">
+    <link rel="stylesheet" href="css/styles.css?v=39.0">
 
     <!-- Force Always Scroll to Top on Page Load / Reload -->
     <script>
@@ -1067,8 +1067,9 @@
             <!-- Vertical Phone / Reel Player Frame (9:16) -->
             <div class="reel-player-frame" id="reelPlayerFrame">
                 <!-- Sound Mute/Unmute Toggle Button -->
-                <button class="reel-sound-btn" id="reelSoundBtn" aria-label="Toggle Sound" title="Sound Mute / Unmute" style="display: none;">
-                    <i class="fa-solid fa-volume-high"></i>
+                <button class="reel-sound-btn" id="reelSoundBtn" aria-label="Toggle Sound" title="Click to Unmute Sound" style="display: none;">
+                    <i class="fa-solid fa-volume-xmark"></i>
+                    <span class="reel-sound-hint" id="reelSoundHint">Tap for sound</span>
                 </button>
 
                 <!-- Media Layer (Video / Iframe) -->
@@ -1116,11 +1117,11 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Site Data Store & Dynamic Renderer -->
-    <script src="js/siteData.js?v=38.0"></script>
-    <script src="js/siteRenderer.js?v=38.0"></script>
+    <script src="js/siteData.js?v=39.0"></script>
+    <script src="js/siteRenderer.js?v=39.0"></script>
     <!-- Smooth Momentum Scroll Engine (Lenis) -->
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
     <!-- Custom JS -->
-    <script src="js/main.js?v=38.0"></script>
+    <script src="js/main.js?v=39.0"></script>
 </body>
 </html>
