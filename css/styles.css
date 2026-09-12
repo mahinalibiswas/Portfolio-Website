@@ -3710,10 +3710,10 @@ button {
 
 .reel-media-layer iframe {
     position: absolute !important;
-    top: 0 !important;
+    top: -9% !important;
     left: 0 !important;
     width: 100% !important;
-    height: 100% !important;
+    height: 118% !important;
     transform: none !important;
     border: none !important;
     margin: 0 !important;
