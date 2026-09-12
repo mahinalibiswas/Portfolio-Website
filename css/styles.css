@@ -3714,7 +3714,7 @@ button {
     left: 50% !important;
     width: 100% !important;
     height: 100% !important;
-    transform: translate(-50%, -50%) scale(1.12) !important;
+    transform: translate(-50%, -50%) scale(1.22) !important;
     transform-origin: center center !important;
     border: none !important;
     margin: 0 !important;
