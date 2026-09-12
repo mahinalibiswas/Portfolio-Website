@@ -3695,6 +3695,37 @@ button {
     justify-content: center;
 }
 
+/* Dark vignette overlay - masks YouTube title bar gradient at the top */
+.reel-media-layer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20%;
+    background: linear-gradient(to bottom,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(0, 0, 0, 0.6) 45%,
+        transparent 100%);
+    z-index: 20;
+    pointer-events: none;
+}
+
+/* Matching bottom vignette for clean look */
+.reel-media-layer::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10%;
+    background: linear-gradient(to top,
+        rgba(0, 0, 0, 0.8) 0%,
+        transparent 100%);
+    z-index: 20;
+    pointer-events: none;
+}
+
 .reel-media-layer video {
     position: absolute !important;
     inset: 0 !important;
