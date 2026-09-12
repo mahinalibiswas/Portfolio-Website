@@ -808,18 +808,53 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shortId) {
             foundIdx = list.findIndex(s => s.id === shortId || 'short-' + s.id === shortId || s.id === 'short-' + shortId);
             if (foundIdx === -1) {
-                // If id was project-2 etc
                 foundIdx = list.findIndex(s => s.id == shortId || s.youtubeId === shortId || (s.title && shortId.includes && shortId.includes(s.id)));
             }
         }
         if (foundIdx === -1) foundIdx = 0;
-        
         currentReelIndex = foundIdx;
-        showReelAtIndex(currentReelIndex);
 
+        // Show modal FIRST (synchronous — preserves user-activation token)
         window.lenis?.stop();
         const modal = document.getElementById('reelModal');
         if (modal) modal.classList.add('active');
+
+        const short = list[currentReelIndex];
+
+        // Set meta info synchronously
+        const bottomTitle = document.getElementById('reelBottomTitle');
+        const realTitle = (short.title && short.title !== 'Viral Reels & TikToks') ? short.title : 'Professional Video Color Grading';
+        if (bottomTitle) bottomTitle.textContent = realTitle;
+        const bottomChannel = document.getElementById('reelBottomChannel');
+        if (bottomChannel) bottomChannel.textContent = short.author || 'Mahin Ali Biswas';
+
+        // For YouTube videos: inject iframe SYNCHRONOUSLY so browser user-activation
+        // token is still valid → mute=0 + autoplay=1 works with full sound immediately!
+        const rawVideoSync = (short.video || short.youtubeUrl || '').trim();
+        if (!rawVideoSync.startsWith('idb:') && !rawVideoSync.startsWith('blob:') && !rawVideoSync.startsWith('data:')) {
+            let ytIdSync = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideoSync) : null;
+            if (!ytIdSync && rawVideoSync.includes('<iframe')) {
+                const m = rawVideoSync.match(/src=["']([^"']+)["']/i);
+                if (m && m[1]) ytIdSync = typeof extractYoutubeId === 'function' ? extractYoutubeId(m[1]) : null;
+            }
+            if (!ytIdSync && short.youtubeId) ytIdSync = short.youtubeId;
+
+            if (ytIdSync) {
+                const mediaLayer = document.getElementById('reelMediaLayer');
+                if (mediaLayer) {
+                    // Synchronous iframe injection — user gesture still active → sound from second 0!
+                    mediaLayer.innerHTML = `<iframe id="reelIframe"
+                        src="https://www.youtube.com/embed/${ytIdSync}?autoplay=1&mute=0&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${ytIdSync}&rel=0"
+                        title="${short.title || 'Reel'}"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen></iframe>`;
+                }
+                return; // iframe injected synchronously — done!
+            }
+        }
+
+        // For direct MP4 / blob / idb — use the full async handler
+        showReelAtIndex(currentReelIndex);
     }
 
     let isReelChanging = false;
