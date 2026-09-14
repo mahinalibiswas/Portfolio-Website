@@ -994,14 +994,13 @@
 }
 
 .admin-preview-pane {
-    position: sticky;
-    top: 67px;
-    z-index: 900;
+    position: relative;
+    z-index: 10;
     background: #020617;
     border: 1px solid var(--border-glow);
     border-radius: var(--radius-lg);
     padding: 0;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
