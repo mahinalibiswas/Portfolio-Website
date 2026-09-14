@@ -844,6 +844,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (mediaLayer) {
                     // Synchronous iframe injection — user gesture still active → sound from second 0!
                     mediaLayer.innerHTML = `<iframe id="reelIframe"
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; transform: none; background: #000000;"
                         src="https://www.youtube.com/embed/${ytIdSync}?autoplay=1&mute=0&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${ytIdSync}&rel=0"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -988,6 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const _ytId1 = extractedYt;
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; transform: none; background: #000000;"
                         src="https://www.youtube.com/embed/${_ytId1}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId1}&rel=0&origin=${encodeURIComponent(location.origin)}"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -1006,6 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const _ytId2 = ytIdFromEmbed;
                     mediaLayer.innerHTML = `
                         <iframe id="reelIframe"
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; transform: none; background: #000000;"
                             src="https://www.youtube.com/embed/${_ytId2}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId2}&rel=0&origin=${encodeURIComponent(location.origin)}"
                             title="${short.title || 'Reel'}"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -1029,6 +1032,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const _ytId3 = short.youtubeId;
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; transform: none; background: #000000;"
                         src="https://www.youtube.com/embed/${_ytId3}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId3}&rel=0&origin=${encodeURIComponent(location.origin)}"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
