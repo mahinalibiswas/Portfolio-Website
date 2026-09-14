@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=44.0">
-    <link rel="stylesheet" href="css/admin.css?v=44.0">
+    <link rel="stylesheet" href="css/styles.css?v=45.0">
+    <link rel="stylesheet" href="css/admin.css?v=45.0">
 </head>
 <body class="admin-body">
 
@@ -901,13 +901,10 @@
                 </div>
 
                 <div class="form-group">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-                        <label style="margin: 0;">Duration Tag (e.g. 03:22)</label>
-                        <span style="font-size: 0.75rem; color: var(--accent-neon);"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-detects on upload</span>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="text" id="editProjDuration" placeholder="03:22" style="flex: 1;">
-                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentProjDuration()" title="Detect video length">
+                    <label>Duration Tag (e.g. 03:22)</label>
+                    <div style="position: relative; width: 100%;">
+                        <input type="text" id="editProjDuration" placeholder="e.g. 03:22" style="width: 100%; padding-right: 115px;">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentProjDuration()" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 0.72rem; padding: 0.28rem 0.6rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Detect video length">
                             <i class="fa-solid fa-stopwatch"></i> Auto-Detect
                         </button>
                     </div>
@@ -1015,13 +1012,10 @@
                 </div>
 
                 <div class="form-group">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-                        <label style="margin: 0;">Duration (e.g. 1:24)</label>
-                        <span style="font-size: 0.75rem; color: var(--accent-neon);"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-detects on upload</span>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="text" id="editShortDuration" placeholder="e.g. 1:24" style="flex: 1;">
-                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentShortDuration()" title="Detect video length">
+                    <label>Duration (e.g. 1:24)</label>
+                    <div style="position: relative; width: 100%;">
+                        <input type="text" id="editShortDuration" placeholder="e.g. 1:24" style="width: 100%; padding-right: 115px;">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentShortDuration()" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 0.72rem; padding: 0.28rem 0.6rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Detect video length">
                             <i class="fa-solid fa-stopwatch"></i> Auto-Detect
                         </button>
                     </div>
