@@ -2598,11 +2598,11 @@ function renderAdminProjectsList(projects) {
             </div>
             <img src="${proj.image}" alt="${proj.title}" class="admin-project-thumb" onerror="this.onerror=null; this.src='assets/images/project_cinematic_vfx.jpg';">
             <div class="admin-project-info">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
-                    <span class="project-order-badge" title="Position #${idx + 1}">#${idx + 1}</span>
-                    <h4 style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;" title="${proj.title}">${proj.title}</h4>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; min-width: 0; width: 100%;">
+                    <span class="project-order-badge" title="Position #${idx + 1}" style="flex-shrink: 0;">#${idx + 1}</span>
+                    <h4 style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;" title="${proj.title}">${proj.title}</h4>
                 </div>
-                <span>${proj.categoryBadge || 'Video Project'}</span>
+                <span style="max-width: 100%; display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${proj.categoryBadge || 'Video Project'}</span>
             </div>
             <div class="admin-project-actions">
                 <div class="order-btn-group" title="Reorder position">

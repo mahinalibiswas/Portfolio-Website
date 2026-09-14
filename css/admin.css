@@ -150,8 +150,12 @@
 
 .admin-container {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 280px minmax(0, 1fr);
     min-height: calc(100vh - 75px);
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 /* --- Sidebar Tabs --- */
@@ -215,8 +219,12 @@
 
 /* --- Content Area --- */
 .admin-main {
-    padding: 2.5rem;
+    padding: 2.2rem;
     background: var(--bg-dark);
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .admin-tab-content {
@@ -237,8 +245,11 @@
     background: rgba(15, 23, 42, 0.6);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 2.5rem;
+    padding: 2.2rem;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .panel-header {
@@ -249,7 +260,19 @@
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--border-color);
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.panel-header > div:first-child {
+    flex: 1 1 280px;
+    min-width: 0;
+}
+
+.panel-header .btn {
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .panel-header h3 {
@@ -323,22 +346,28 @@
 /* --- Project List Admin Cards --- */
 .admin-projects-list {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .admin-project-item {
     background: rgba(2, 8, 23, 0.6);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 1.1rem;
+    padding: 1rem 1.1rem;
     display: flex;
-    gap: 1rem;
+    gap: 0.85rem;
     align-items: center;
     transition: var(--transition-fast);
     cursor: grab;
     user-select: none;
     position: relative;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .admin-project-item:active {
@@ -350,41 +379,53 @@
 }
 
 .admin-project-thumb {
-    width: 110px;
-    height: 75px;
+    width: 95px;
+    height: 65px;
     border-radius: var(--radius-sm);
     object-fit: cover;
     flex-shrink: 0;
 }
 
 .admin-project-info {
-    flex-grow: 1;
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .admin-project-info h4 {
-    font-size: 1.05rem;
+    font-size: 0.98rem;
     font-weight: 600;
     margin-bottom: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .admin-project-info span {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: var(--accent-neon);
     background: rgba(163, 230, 53, 0.1);
-    padding: 0.2rem 0.6rem;
+    padding: 0.18rem 0.55rem;
     border-radius: 20px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .admin-project-actions {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     flex-shrink: 0;
+    margin-left: auto;
 }
 
 .action-btn {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
@@ -394,6 +435,7 @@
     align-items: center;
     justify-content: center;
     transition: var(--transition-fast);
+    flex-shrink: 0;
 }
 
 .action-btn.edit-btn:hover {
@@ -844,9 +886,65 @@
     }
 }
 
+@media (max-width: 1380px) {
+    .admin-container {
+        grid-template-columns: 250px minmax(0, 1fr);
+    }
+    .admin-sidebar {
+        width: 250px;
+        padding: 1.2rem 0.85rem;
+    }
+    .admin-main {
+        padding: 1.8rem 1.4rem;
+    }
+    .panel-card {
+        padding: 1.8rem 1.4rem;
+    }
+    .admin-projects-list,
+    .admin-shorts-list,
+    .admin-services-list,
+    .admin-software-list {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    .panel-header > div:first-child {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+    .panel-header .btn {
+        margin-top: 0.2rem;
+    }
+}
+
 @media (max-width: 900px) {
     .admin-container {
         grid-template-columns: 1fr;
+    }
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+    }
+    .admin-tabs {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.4rem;
+        padding-bottom: 0.4rem;
+    }
+    .admin-tab-btn {
+        padding: 0.6rem 0.9rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    .admin-main {
+        padding: 1.2rem 1rem;
+    }
+    .panel-card {
+        padding: 1.2rem 1rem;
     }
     .admin-form-grid,
     .dynamic-cta-grid,
@@ -857,6 +955,33 @@
     }
     .admin-form-grid .full-width {
         grid-column: span 1;
+    }
+    .panel-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .panel-header .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 580px) {
+    .admin-project-item {
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        padding: 0.85rem;
+    }
+    .admin-project-thumb {
+        width: 80px;
+        height: 55px;
+    }
+    .admin-project-actions {
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 0.5rem;
+        border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        margin-top: 0.2rem;
     }
 }
 
