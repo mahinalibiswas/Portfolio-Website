@@ -1409,9 +1409,10 @@ function removeShowreelPosterImage() {
 /* --- Smart Video Duration Extractor (Auto-Detects File & URL Lengths) --- */
 function formatVideoDuration(seconds) {
     if (isNaN(seconds) || seconds <= 0) return '';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.round(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    const totalSecs = Math.floor(seconds);
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
 function getYoutubeDurationViaIframe(videoId) {

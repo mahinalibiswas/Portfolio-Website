@@ -45,7 +45,7 @@ export default async function handler(req, res) {
 
         const approxMatch = html.match(/"approxDurationMs":"(\d+)"/);
         if (approxMatch && approxMatch[1]) {
-            seconds = Math.round(parseInt(approxMatch[1], 10) / 1000);
+            seconds = Math.floor(parseInt(approxMatch[1], 10) / 1000);
         }
 
         if (seconds === null) {
