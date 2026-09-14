@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=40.0">
-    <link rel="stylesheet" href="css/admin.css?v=40.0">
+    <link rel="stylesheet" href="css/styles.css?v=42.0">
+    <link rel="stylesheet" href="css/admin.css?v=42.0">
 </head>
 <body class="admin-body">
 
@@ -413,8 +413,11 @@
                                     <textarea id="aboutBio" rows="4" placeholder="Enter full About Me description..." oninput="renderLiveAboutPreview()"></textarea>
                                 </div>
 
-                                <div class="form-section-title full-width" style="margin-top: 1.5rem;">
-                                    <h4 style="color: #ffffff; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About Me Action CTA Buttons</h4>
+                                <div class="form-section-title full-width" style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                                    <h4 style="color: #ffffff; font-weight: 700; margin: 0;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About Me Action CTA Buttons</h4>
+                                    <button type="button" class="btn btn-hero-secondary btn-sm" onclick="addNewAboutCtaButton()" style="padding: 0.35rem 0.85rem; font-size: 0.82rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.4rem;">
+                                        <i class="fa-solid fa-plus"></i> Add CTA Button
+                                    </button>
                                 </div>
                                 <div id="adminAboutCtaButtonsList" class="dynamic-cta-grid full-width" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; width: 100%; box-sizing: border-box;"></div>
 
@@ -1176,7 +1179,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=40.0"></script>
-    <script src="js/admin.js?v=40.0"></script>
+    <script src="js/siteData.js?v=42.0"></script>
+    <script src="js/admin.js?v=42.0"></script>
 </body>
 </html>

@@ -1066,7 +1066,8 @@ button {
 .about-cta-group {
     display: flex;
     align-items: center;
-    gap: 1.2rem;
+    flex-wrap: wrap;
+    gap: 0.9rem;
     margin-top: auto;
 }
 

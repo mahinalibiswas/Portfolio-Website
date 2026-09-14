@@ -1024,13 +1024,14 @@ function renderAdminAboutCtaButtons(ctaButtons) {
         });
     }
 
-    const list = (ctaButtons && Array.isArray(ctaButtons) && ctaButtons.length >= 2) ? ctaButtons.slice(0, 2) : [
+    const list = (ctaButtons && Array.isArray(ctaButtons) && ctaButtons.length > 0) ? ctaButtons : [
         { id: "about-btn-1", text: "Visit Behance Profile", link: "https://www.behance.net/mahinalibiswas", icon: "fa-brands fa-behance", iconImage: "" },
-        { id: "about-btn-2", text: "Contact Direct", link: "#contact", icon: "fa-solid fa-paper-plane", iconImage: "" }
+        { id: "about-btn-2", text: "Contact Direct", link: "#contact", icon: "fa-solid fa-paper-plane", iconImage: "" },
+        { id: "about-btn-3", text: "Download CV", link: "assets/docs/Mahin_Ali_Biswas_CV.pdf", icon: "fa-solid fa-file-arrow-down", iconImage: "" }
     ];
 
     listContainer.innerHTML = list.map((btn, index) => {
-        const defaultIcon = (index === 0) ? 'fa-brands fa-behance' : 'fa-solid fa-paper-plane';
+        const defaultIcon = (index === 0) ? 'fa-brands fa-behance' : (index === 1 ? 'fa-solid fa-paper-plane' : 'fa-solid fa-file-arrow-down');
         const activeIcon = btn.icon || defaultIcon;
         let activeIconHtml = `<i id="aboutBtnIconDisplay_${btn.id}" class="${activeIcon}"></i>`;
         if (btn.iconImage) {
@@ -1043,6 +1044,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
                     <h4 style="margin: 0; color: #ffffff; font-size: 0.98rem; font-weight: 700;">
                         <i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}
                     </h4>
+                    ${index >= 2 ? `<button type="button" onclick="deleteAboutCtaButton('${btn.id}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 8px; padding: 0.35rem 0.75rem; cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.35rem;" title="Delete this button"><i class="fa-solid fa-trash-can"></i> Delete</button>` : ''}
                 </div>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
@@ -1126,9 +1128,9 @@ function addNewAboutCtaButton() {
     
     data.about.ctaButtons.push({
         id: 'about-btn-' + Date.now(),
-        text: '',
-        link: '',
-        icon: 'fa-solid fa-link',
+        text: 'Download CV',
+        link: 'assets/docs/Mahin_Ali_Biswas_CV.pdf',
+        icon: 'fa-solid fa-file-arrow-down',
         iconImage: ''
     });
 
@@ -1137,6 +1139,7 @@ function addNewAboutCtaButton() {
         showToast('New About CTA Button added!', 'success');
     }
 }
+
 
 function deleteAboutCtaButton(btnId) {
     openDeleteConfirmModal('Are you sure you want to delete this About CTA Button?', () => {
@@ -2209,13 +2212,14 @@ function renderAdminAboutCtaButtons(ctaButtons) {
         });
     }
 
-    const list = (ctaButtons && Array.isArray(ctaButtons) && ctaButtons.length >= 2) ? ctaButtons.slice(0, 2) : [
+    const list = (ctaButtons && Array.isArray(ctaButtons) && ctaButtons.length > 0) ? ctaButtons : [
         { id: "about-btn-1", text: "Visit Behance Profile", link: "https://www.behance.net/mahinalibiswas", icon: "fa-brands fa-behance", iconImage: "" },
-        { id: "about-btn-2", text: "Contact Direct", link: "#contact", icon: "fa-solid fa-paper-plane", iconImage: "" }
+        { id: "about-btn-2", text: "Contact Direct", link: "#contact", icon: "fa-solid fa-paper-plane", iconImage: "" },
+        { id: "about-btn-3", text: "Download CV", link: "assets/docs/Mahin_Ali_Biswas_CV.pdf", icon: "fa-solid fa-file-arrow-down", iconImage: "" }
     ];
 
     listContainer.innerHTML = list.map((btn, index) => {
-        const defaultIcon = (index === 0) ? 'fa-brands fa-behance' : 'fa-solid fa-paper-plane';
+        const defaultIcon = (index === 0) ? 'fa-brands fa-behance' : (index === 1 ? 'fa-solid fa-paper-plane' : 'fa-solid fa-file-arrow-down');
         const activeIcon = btn.icon || defaultIcon;
         let activeIconHtml = `<i id="aboutBtnIconDisplay_${btn.id}" class="${activeIcon}"></i>`;
         if (btn.iconImage) {
@@ -2226,6 +2230,7 @@ function renderAdminAboutCtaButtons(ctaButtons) {
             <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); border-radius: 12px; border: 1px solid var(--border-glow); box-sizing: border-box; margin-bottom: 0;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                     <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}</h4>
+                    ${index >= 2 ? `<button type="button" onclick="deleteAboutCtaButton('${btn.id}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 6px; padding: 0.3rem 0.6rem; cursor: pointer; font-size: 0.78rem;" title="Delete this button"><i class="fa-solid fa-trash-can"></i> Delete</button>` : ''}
                 </div>
                 
                 <div style="display: flex; gap: 0.6rem; align-items: flex-end; margin-bottom: 1rem;">

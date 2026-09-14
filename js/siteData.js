@@ -70,6 +70,13 @@ const DEFAULT_SITE_DATA = {
                 link: "#contact",
                 icon: "fa-solid fa-paper-plane",
                 iconImage: ""
+            },
+            {
+                id: "about-btn-3",
+                text: "Download CV",
+                link: "assets/docs/Mahin_Ali_Biswas_CV.pdf",
+                icon: "fa-solid fa-file-arrow-down",
+                iconImage: ""
             }
         ],
         features: [
