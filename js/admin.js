@@ -1414,19 +1414,36 @@ function formatVideoDuration(seconds) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-function extractDurationFromFileOrUrl(fileOrUrl) {
+async function extractDurationFromFileOrUrl(fileOrUrl) {
+    if (!fileOrUrl) return null;
+
+    // Check if it's a YouTube URL or ID
+    if (typeof fileOrUrl === 'string') {
+        const trimmed = fileOrUrl.trim();
+        const ytId = typeof extractYoutubeId === 'function' ? extractYoutubeId(trimmed) : null;
+        if (ytId || trimmed.includes('youtube.com') || trimmed.includes('youtu.be')) {
+            try {
+                const queryParam = ytId ? `id=${encodeURIComponent(ytId)}` : `url=${encodeURIComponent(trimmed)}`;
+                const apiRes = await fetch(`/api/youtubeDuration?${queryParam}`);
+                if (apiRes.ok) {
+                    const data = await apiRes.json();
+                    if (data && data.duration) {
+                        return data.duration;
+                    }
+                }
+            } catch (e) {
+                console.warn('YouTube duration detection error:', e);
+            }
+        }
+
+        const fname = trimmed.split('/').pop().split('?')[0];
+        if (typeof KNOWN_VIDEO_DURATIONS !== 'undefined' && KNOWN_VIDEO_DURATIONS[fname]) {
+            return KNOWN_VIDEO_DURATIONS[fname];
+        }
+    }
+
     return new Promise((resolve) => {
         try {
-            if (!fileOrUrl) return resolve(null);
-
-            // Check known video filenames
-            if (typeof fileOrUrl === 'string') {
-                const fname = fileOrUrl.split('/').pop().split('?')[0];
-                if (typeof KNOWN_VIDEO_DURATIONS !== 'undefined' && KNOWN_VIDEO_DURATIONS[fname]) {
-                    return resolve(KNOWN_VIDEO_DURATIONS[fname]);
-                }
-            }
-
             const v = document.createElement('video');
             v.preload = 'metadata';
             let timer = setTimeout(() => {
@@ -1899,6 +1916,17 @@ async function onShortVideoInputChange() {
     if (extracted) {
         if (ytField) ytField.value = extracted;
         if (wrap) wrap.style.display = 'none';
+
+        // Auto-detect YouTube Shorts duration
+        if (durInput) {
+            extractDurationFromFileOrUrl(val).then(detectedDur => {
+                if (detectedDur) {
+                    durInput.value = detectedDur;
+                    showToast(`Detected duration: ${detectedDur}`, 'success');
+                }
+            }).catch(() => {});
+        }
+
         try {
             fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${extracted}`)
                 .then(r => r.json())
@@ -1965,6 +1993,17 @@ async function onProjVideoInputChange() {
     if (extracted) {
         if (ytField) ytField.value = extracted;
         if (wrap) wrap.style.display = 'none';
+
+        // Auto-detect YouTube duration
+        if (durInput) {
+            extractDurationFromFileOrUrl(val).then(detectedDur => {
+                if (detectedDur) {
+                    durInput.value = detectedDur;
+                    showToast(`Detected duration: ${detectedDur}`, 'success');
+                }
+            }).catch(() => {});
+        }
+
         try {
             fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${extracted}`)
                 .then(r => r.json())
