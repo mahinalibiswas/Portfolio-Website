@@ -1414,6 +1414,84 @@ function formatVideoDuration(seconds) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
+function getYoutubeDurationViaIframe(videoId) {
+    return new Promise((resolve) => {
+        if (!videoId) return resolve(null);
+
+        // Load YouTube IFrame API if not already present
+        if (!window.YT || !window.YT.Player) {
+            if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+                const tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                document.head.appendChild(tag);
+            }
+        }
+
+        const timeout = setTimeout(() => {
+            cleanup();
+            resolve(null);
+        }, 6000);
+
+        const tempDiv = document.createElement('div');
+        tempDiv.style.cssText = 'position:fixed; left:-9999px; top:-9999px; width:1px; height:1px; opacity:0; pointer-events:none;';
+        document.body.appendChild(tempDiv);
+
+        let player = null;
+
+        function cleanup() {
+            clearTimeout(timeout);
+            try {
+                if (player && typeof player.destroy === 'function') player.destroy();
+            } catch (e) {}
+            if (tempDiv && tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
+        }
+
+        let attempts = 0;
+        function checkReady() {
+            attempts++;
+            if (window.YT && window.YT.Player) {
+                try {
+                    player = new YT.Player(tempDiv, {
+                        height: '1',
+                        width: '1',
+                        videoId: videoId,
+                        events: {
+                            onReady: (event) => {
+                                const dur = event.target.getDuration();
+                                if (dur && dur > 0) {
+                                    cleanup();
+                                    resolve(formatVideoDuration(dur));
+                                } else {
+                                    setTimeout(() => {
+                                        const d2 = event.target.getDuration();
+                                        cleanup();
+                                        resolve(d2 > 0 ? formatVideoDuration(d2) : null);
+                                    }, 400);
+                                }
+                            },
+                            onError: () => {
+                                cleanup();
+                                resolve(null);
+                            }
+                        }
+                    });
+                } catch (e) {
+                    cleanup();
+                    resolve(null);
+                }
+            } else if (attempts < 30) {
+                setTimeout(checkReady, 100);
+            } else {
+                cleanup();
+                resolve(null);
+            }
+        }
+
+        checkReady();
+    });
+}
+window.getYoutubeDurationViaIframe = getYoutubeDurationViaIframe;
+
 async function extractDurationFromFileOrUrl(fileOrUrl) {
     if (!fileOrUrl) return null;
 
@@ -1422,6 +1500,14 @@ async function extractDurationFromFileOrUrl(fileOrUrl) {
         const trimmed = fileOrUrl.trim();
         const ytId = typeof extractYoutubeId === 'function' ? extractYoutubeId(trimmed) : null;
         if (ytId || trimmed.includes('youtube.com') || trimmed.includes('youtu.be')) {
+            const targetId = ytId || trimmed;
+            // 1. Try browser-native YouTube IFrame API first
+            if (ytId) {
+                const iframeDur = await getYoutubeDurationViaIframe(ytId);
+                if (iframeDur) return iframeDur;
+            }
+
+            // 2. Try serverless backend proxy
             try {
                 const queryParam = ytId ? `id=${encodeURIComponent(ytId)}` : `url=${encodeURIComponent(trimmed)}`;
                 const apiRes = await fetch(`/api/youtubeDuration?${queryParam}`);
