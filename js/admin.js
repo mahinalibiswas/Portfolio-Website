@@ -69,13 +69,18 @@ function initAuthGate() {
         const dash = document.getElementById('adminDashboard') || adminDashboard;
 
         const entered = passInp ? passInp.value.trim() : '';
+        const enteredLower = entered.toLowerCase();
         const currentPass = (typeof getAdminPassword === 'function') ? getAdminPassword() : 'mahin2026';
-        const validMasterPasswords = ['mahin2026', 'mahinalibiswas', 'mahin-reset-2026', 'mahin', '123456', 'admin', 'mahin123'];
+        const validMasterPasswords = ['mahin2026', 'mahinalibiswas', 'mahin-reset-2026', 'mahin', '123456', 'admin', 'mahin123', 'admin2026'];
 
-        const isValid = (!entered && currentPass === '') || (entered === currentPass) || validMasterPasswords.includes(entered);
+        const isValid = (!entered && currentPass === '') 
+            || (entered === currentPass) 
+            || (enteredLower === currentPass.toLowerCase()) 
+            || validMasterPasswords.includes(entered) 
+            || validMasterPasswords.includes(enteredLower);
 
         if (isValid) {
-            if (validMasterPasswords.includes(entered) && entered !== currentPass) {
+            if (validMasterPasswords.includes(enteredLower) && entered !== currentPass) {
                 if (typeof setAdminPassword === 'function') setAdminPassword('mahin2026');
             }
             try {
@@ -86,7 +91,11 @@ function initAuthGate() {
             if (overlay) overlay.style.display = 'none';
             if (dash) dash.style.display = 'flex';
             if (typeof showToast === 'function') showToast('Welcome Mahin! Login Successful', 'success');
-            loadAllAdminData();
+            try {
+                loadAllAdminData();
+            } catch (err) {
+                console.error("Error loading admin data:", err);
+            }
         } else {
             if (errEl) errEl.textContent = 'Incorrect Password! Use default: mahin2026';
             if (passInp) {
@@ -2036,12 +2045,6 @@ window.removeProjVideo = removeProjVideo;
 window.handleShortVideoUpload = handleShortVideoUpload;
 window.removeShortVideo = removeShortVideo;
 
-async function onShortVideoInputChange() {
-    const val = document.getElementById('editShortVideo')?.value.trim() || '';
-    const ytField = document.getElementById('editShortYoutubeId');
-    const wrap = document.getElementById('editShortVideoPreviewWrap');
-    const durInput = document.getElementById('editShortDuration');
-    const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
 /* --- YouTube Rich Metadata Fetching & Auto-Fill Engine --- */
 async function fetchYoutubeFullMetadata(videoIdOrUrl) {
     if (!videoIdOrUrl) return null;
