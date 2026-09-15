@@ -38,7 +38,7 @@ const DEFAULT_SITE_DATA = {
         youtubeUrl: "https://www.youtube.com/@mahinalibiswas",
         facebookUrl: "https://www.facebook.com/mahinalibiswas",
         ctaButtons: [
-            { id: "btn-1", text: "Watch Showreel", link: "assets/videos/main_showreel.mp4", icon: "fa-solid fa-play", isModal: true },
+            { id: "btn-1", text: "Watch Showreel", link: "https://www.youtube.com/watch?v=deQijHls--0", icon: "fa-solid fa-play", isModal: true },
             { id: "btn-2", text: "Hire Me", link: "#contact", icon: "fa-solid fa-paper-plane", isModal: false },
             { id: "btn-3", text: "About & Photo", link: "#about", icon: "fa-solid fa-user", isModal: false }
         ],

@@ -329,7 +329,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!videoModal) videoModal = document.getElementById('directVideoModal');
         if (!videoModal) return;
         const wrapper = videoModal.querySelector('.video-responsive-wrapper');
-        const raw = (videoSrc || '').trim();
+        let raw = (videoSrc || '').trim();
+
+        // If it's the heavy 258MB local showreel file, redirect to the YouTube Showreel URL for instant mobile loading
+        if (!raw || raw.includes('main_showreel.mp4') || raw.includes('hero_teaser.mp4')) {
+            const siteDataObj = (typeof getSiteData === 'function') ? getSiteData() : null;
+            if (siteDataObj && siteDataObj.showreel && (siteDataObj.showreel.videoUrl || siteDataObj.showreel.youtubeUrl)) {
+                raw = (siteDataObj.showreel.videoUrl || siteDataObj.showreel.youtubeUrl).trim();
+            } else {
+                raw = "https://www.youtube.com/watch?v=deQijHls--0";
+            }
+        }
 
         if (wrapper) {
             const isVertical = raw.includes('/shorts/') || 
@@ -362,10 +372,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ytId = extractYoutubeId(raw);
                 if (ytId) {
                     wrapper.style.cssText = wrapperStyle;
-                    wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="${iframeStyle}"></iframe>`;
+                    wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="${iframeStyle}"></iframe>`;
                 } else {
                     wrapper.style.cssText = wrapperStyle;
-                    wrapper.innerHTML = `<video id="modalHtml5Video" src="${raw || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;"></video>`;
+                    wrapper.innerHTML = `<video id="modalHtml5Video" src="${raw}" preload="metadata" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;"></video>`;
                 }
             }
         }
@@ -958,24 +968,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaLayer) {
             if (isDirectVideo) {
                 mediaLayer.innerHTML = `
-                    <video id="reelVideo" src="${rawVideo}" playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
+                    <video id="reelVideo" src="${rawVideo}" preload="metadata" playsinline muted loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
                 const soundBtn = document.getElementById('reelSoundBtn');
-                if (soundBtn) soundBtn.style.display = 'none';
+                if (soundBtn) {
+                    soundBtn.style.display = 'flex';
+                    updateReelSoundUI(true);
+                }
 
                 const v = document.getElementById('reelVideo');
                 if (v) {
-                    v.muted = false;
-                    v.volume = 1.0;
-
-                    const playPromise = v.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(err => {
-                            console.warn("Unmuted autoplay restricted by browser, fallback to muted:", err);
-                            v.muted = true;
-                            v.play().catch(e => console.log('Autoplay fallback error:', e));
-                        });
-                    }
+                    v.muted = true;
+                    v.play().catch(e => console.log('Autoplay handled:', e));
 
                     v.addEventListener('click', () => {
                         if (v.paused) v.play();
@@ -1042,25 +1046,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 _scheduleYtUnmute();
             } else if (rawVideo) {
                 mediaLayer.innerHTML = `
-                    <video id="reelVideo" src="${rawVideo}" playsinline loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
+                    <video id="reelVideo" src="${rawVideo}" preload="metadata" playsinline muted loop style="width: 100%; height: 100%; object-fit: cover; background: #000; cursor: pointer;"></video>
                 `;
                 const soundBtn = document.getElementById('reelSoundBtn');
-                if (soundBtn) soundBtn.style.display = 'none';
+                if (soundBtn) {
+                    soundBtn.style.display = 'flex';
+                    updateReelSoundUI(true);
+                }
 
                 const v = document.getElementById('reelVideo');
                 if (v) {
-                    v.muted = false;
-                    v.volume = 1.0;
-                    updateReelSoundUI(false);
-                    const playPromise = v.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(err => {
-                            console.warn("Unmuted autoplay restricted, muting:", err);
-                            v.muted = true;
-                            updateReelSoundUI(true);
-                            v.play().catch(e => console.log('Autoplay handled:', e));
-                        });
-                    }
+                    v.muted = true;
+                    updateReelSoundUI(true);
+                    v.play().catch(e => console.log('Autoplay handled:', e));
                     v.addEventListener('click', () => {
                         if (v.paused) v.play();
                         else v.pause();
@@ -1150,8 +1148,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const isEmbedCode = rawVideo.includes('<iframe');
             
             let playerHtml = '';
-            if (isDirectVideo) {
-                playerHtml = `<video src="${rawVideo}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
+            // If project has YouTube link or ID, and rawVideo is empty or placeholder local file, prioritize YouTube for fast mobile streaming
+            const hasExplicitYt = data.youtubeId || (data.youtubeUrl && extractYoutubeId(data.youtubeUrl));
+            const isPlaceholderFile = !rawVideo || rawVideo.includes('assets/videos/');
+            if (hasExplicitYt && isPlaceholderFile) {
+                const targetYt = data.youtubeId || extractYoutubeId(data.youtubeUrl);
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${targetYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else if (extractedYt) {
                 playerHtml = `<iframe src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else if (isEmbedCode) {
@@ -1160,10 +1162,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     clean = clean.replace('<iframe', '<iframe style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"');
                 }
                 playerHtml = clean;
-            } else if (data.youtubeId && (!rawVideo || rawVideo === data.youtubeUrl)) {
+            } else if (isDirectVideo) {
+                playerHtml = `<video src="${rawVideo}" preload="metadata" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
+            } else if (data.youtubeId) {
                 playerHtml = `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else {
-                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
+                playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" preload="metadata" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
             }
 
             if (body) {
