@@ -374,7 +374,7 @@ function renderSiteData(customData) {
                     <div class="card-footer">
                         <div class="card-author-info">
                             <div class="card-author-avatar">
-                                <img src="assets/images/mahin_profile.jpg" alt="${proj.client || 'Mahin Ali Biswas'}" loading="lazy" decoding="async">
+                                <img src="${proj.clientAvatar || 'assets/images/mahin_profile.jpg'}" alt="${proj.client || 'Mahin Ali Biswas'}" loading="lazy" decoding="async">
                             </div>
                             <div class="card-author-text">
                                 <span class="author-name">${proj.client || 'Mahin Ali Biswas'}</span>

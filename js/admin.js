@@ -1324,6 +1324,48 @@ function removeProjImage() {
     showToast('Project thumbnail image removed', 'info');
 }
 
+async function handleProjClientAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    showToast('Optimizing client avatar image...', 'info');
+    const dataUrl = await compressImageToDataUrl(file, 256, 256, 0.85);
+    if (!dataUrl) return;
+
+    const input = document.getElementById('editProjClientAvatar');
+    if (input) input.value = dataUrl;
+    const previewImg = document.getElementById('editProjClientAvatarPreview');
+    const previewWrap = document.getElementById('editProjClientAvatarPreviewWrap');
+    if (previewImg) previewImg.src = dataUrl;
+    if (previewWrap) previewWrap.style.display = 'flex';
+    showToast('Client avatar uploaded and optimized!', 'success');
+}
+window.handleProjClientAvatarUpload = handleProjClientAvatarUpload;
+
+function removeProjClientAvatar() {
+    const input = document.getElementById('editProjClientAvatar');
+    if (input) input.value = '';
+    const fileInput = document.getElementById('editProjClientAvatarFileInput');
+    if (fileInput) fileInput.value = '';
+    const previewWrap = document.getElementById('editProjClientAvatarPreviewWrap');
+    if (previewWrap) previewWrap.style.display = 'none';
+    showToast('Client avatar removed (reverts to default profile)', 'info');
+}
+window.removeProjClientAvatar = removeProjClientAvatar;
+
+function onProjClientAvatarInputChange() {
+    const val = document.getElementById('editProjClientAvatar')?.value.trim() || '';
+    const previewImg = document.getElementById('editProjClientAvatarPreview');
+    const previewWrap = document.getElementById('editProjClientAvatarPreviewWrap');
+    if (val && previewImg && previewWrap) {
+        previewImg.src = val;
+        previewWrap.style.display = 'flex';
+    } else if (previewWrap) {
+        previewWrap.style.display = 'none';
+    }
+}
+window.onProjClientAvatarInputChange = onProjClientAvatarInputChange;
+
 /* --- Universal Direct PC Video Upload Handler (IndexedDB Storage for Large Files) --- */
 async function processUploadedVideoFile(file, inputId, previewWrapId, fileNameId, onComplete) {
     if (!file) return;
@@ -2728,7 +2770,13 @@ function renderAdminProjectsList(projects) {
                     <span class="project-order-badge" title="Position #${idx + 1}" style="flex-shrink: 0;">#${idx + 1}</span>
                     <h4 style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;" title="${proj.title}">${proj.title}</h4>
                 </div>
-                <span style="max-width: 100%; display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${proj.categoryBadge || 'Video Project'}</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+                    <span style="max-width: 60%; display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${proj.categoryBadge || 'Video Project'}</span>
+                    <span style="font-size: 0.74rem; color: #94a3b8; display: inline-flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <img src="${proj.clientAvatar || 'assets/images/mahin_profile.jpg'}" style="width: 14px; height: 14px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent-neon);">
+                        ${proj.client || 'Mahin'}
+                    </span>
+                </div>
             </div>
             <div class="admin-project-actions">
                 <div class="order-btn-group" title="Reorder position">
@@ -2847,6 +2895,12 @@ function openAddProjectModal() {
     if (previewWrap) previewWrap.style.display = 'none';
     const videoWrap = document.getElementById('editProjVideoPreviewWrap');
     if (videoWrap) videoWrap.style.display = 'none';
+    const avatarInput = document.getElementById('editProjClientAvatar');
+    if (avatarInput) avatarInput.value = '';
+    const avatarFileInput = document.getElementById('editProjClientAvatarFileInput');
+    if (avatarFileInput) avatarFileInput.value = '';
+    const avatarPreviewWrap = document.getElementById('editProjClientAvatarPreviewWrap');
+    if (avatarPreviewWrap) avatarPreviewWrap.style.display = 'none';
     const modal = document.getElementById('projectEditModal');
     if (modal) modal.classList.add('active');
 }
@@ -2856,6 +2910,8 @@ function openEditProjectModal(projectId) {
     if (fileInput) fileInput.value = '';
     const imgFileInput = document.getElementById('editProjImageFileInput');
     if (imgFileInput) imgFileInput.value = '';
+    const avatarFileInput = document.getElementById('editProjClientAvatarFileInput');
+    if (avatarFileInput) avatarFileInput.value = '';
 
     const data = getSiteData();
     const proj = (data.projects || []).find(p => p.id === projectId);
@@ -2874,6 +2930,18 @@ function openEditProjectModal(projectId) {
         if (document.getElementById('editProjDate')) document.getElementById('editProjDate').value = proj.date || '';
         if (document.getElementById('editProjTools')) document.getElementById('editProjTools').value = (proj.tools || []).join(', ');
         if (document.getElementById('editProjDesc')) document.getElementById('editProjDesc').value = proj.desc || '';
+
+        if (document.getElementById('editProjClientAvatar')) {
+            document.getElementById('editProjClientAvatar').value = proj.clientAvatar || '';
+        }
+        const avatarPreviewImg = document.getElementById('editProjClientAvatarPreview');
+        const avatarPreviewWrap = document.getElementById('editProjClientAvatarPreviewWrap');
+        if (proj.clientAvatar) {
+            if (avatarPreviewImg) avatarPreviewImg.src = proj.clientAvatar;
+            if (avatarPreviewWrap) avatarPreviewWrap.style.display = 'flex';
+        } else {
+            if (avatarPreviewWrap) avatarPreviewWrap.style.display = 'none';
+        }
 
         if (proj.image) {
             const previewImg = document.getElementById('editProjImagePreview');
@@ -2946,6 +3014,7 @@ document.getElementById('projectEditForm')?.addEventListener('submit', async (e)
         youtubeUrl: youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '',
         duration: document.getElementById('editProjDuration')?.value || '03:00',
         client: document.getElementById('editProjClient')?.value || 'Client',
+        clientAvatar: document.getElementById('editProjClientAvatar')?.value.trim() || '',
         date: document.getElementById('editProjDate')?.value || '2026',
         tools: toolsArr.length > 0 ? toolsArr : ['Adobe Premiere Pro', 'After Effects'],
         desc: document.getElementById('editProjDesc')?.value || ''

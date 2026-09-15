@@ -921,6 +921,25 @@
                 </div>
 
                 <div class="form-group full-width">
+                    <label>Client / Brand Avatar Image (Icon on project card)</label>
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                        <input type="file" id="editProjClientAvatarFileInput" accept="image/*" style="display: none;" onchange="handleProjClientAvatarUpload(event)">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editProjClientAvatarFileInput').click()">
+                            <i class="fa-solid fa-upload"></i> Choose Avatar from PC
+                        </button>
+                        <input type="text" id="editProjClientAvatar" placeholder="Enter image URL or upload logo from PC (default: Mahin profile)..." style="flex: 1; min-width: 250px;" oninput="onProjClientAvatarInputChange()">
+                        <div id="editProjClientAvatarPreviewWrap" style="display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            <img id="editProjClientAvatarPreview" src="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent-neon);">
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0 0.2rem;" onclick="removeProjClientAvatar()" title="Remove avatar"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.76rem; color: #94a3b8; margin: 0.4rem 0 0 0; line-height: 1.4;">
+                        <i class="fa-solid fa-circle-info" style="color: var(--accent-neon);"></i> 
+                        প্রজেক্ট কার্ডের নিচে ক্লায়েন্টের নামের পাশে গোল লোগো/আইকন হিসেবে শো করবে। খালি রাখলে স্বয়ংক্রিয়ভাবে আপনার ছবি থাকবে।
+                    </p>
+                </div>
+
+                <div class="form-group full-width">
                     <label>Tools Used (Comma separated)</label>
                     <input type="text" id="editProjTools" placeholder="Adobe Premiere Pro, After Effects, Photoshop">
                 </div>
@@ -1173,7 +1192,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=46.0"></script>
-    <script src="js/admin.js?v=46.0"></script>
+    <script src="js/siteData.js?v=48.0"></script>
+    <script src="js/admin.js?v=48.0"></script>
 </body>
 </html>

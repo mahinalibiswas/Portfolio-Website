@@ -1260,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="meta-col">
                             <h4>Project Details</h4>
                             <p><i class="fa-regular fa-calendar"></i> Published: <strong>${data.date || '2026'}</strong></p>
-                            <p><i class="fa-regular fa-user"></i> Client: <strong>${data.client || 'Mahin Ali Biswas'}</strong></p>
+                            <p style="display: flex; align-items: center; gap: 6px;"><img src="${data.clientAvatar || 'assets/images/mahin_profile.jpg'}" alt="${data.client || 'Client'}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent-neon); display: inline-block; flex-shrink: 0;"> Client: <strong>${data.client || 'Mahin Ali Biswas'}</strong></p>
                         </div>
                         <div class="meta-col">
                             <h4>Tools & Software</h4>
