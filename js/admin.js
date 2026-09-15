@@ -2042,54 +2042,310 @@ async function onShortVideoInputChange() {
     const wrap = document.getElementById('editShortVideoPreviewWrap');
     const durInput = document.getElementById('editShortDuration');
     const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
+/* --- YouTube Rich Metadata Fetching & Auto-Fill Engine --- */
+async function fetchYoutubeFullMetadata(videoIdOrUrl) {
+    if (!videoIdOrUrl) return null;
+    let videoId = typeof extractYoutubeId === 'function' ? extractYoutubeId(videoIdOrUrl) : null;
+    if (!videoId) {
+        if (typeof videoIdOrUrl === 'string' && videoIdOrUrl.trim().length === 11 && !videoIdOrUrl.includes('/') && !videoIdOrUrl.includes('.')) {
+            videoId = videoIdOrUrl.trim();
+        }
+    }
+    if (!videoId) return null;
+
+    // 1. Try local serverless endpoint
+    try {
+        const localRes = await fetch(`/api/youtubeDuration?id=${encodeURIComponent(videoId)}`);
+        if (localRes.ok) {
+            const data = await localRes.json();
+            if (data && data.success && (data.title || data.duration || data.description)) {
+                return data;
+            }
+        }
+    } catch (e) {}
+
+    // 2. Try deployed production Vercel endpoint (with CORS)
+    try {
+        const remoteRes = await fetch(`https://mahinalibiswas.vercel.app/api/youtubeDuration?id=${encodeURIComponent(videoId)}`);
+        if (remoteRes.ok) {
+            const data = await remoteRes.json();
+            if (data && data.success && (data.title || data.duration || data.description)) {
+                return data;
+            }
+        }
+    } catch (e) {}
+
+    // 3. Fallback to noembed.com (CORS-friendly public service)
+    try {
+        const noembedRes = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`);
+        if (noembedRes.ok) {
+            const yt = await noembedRes.json();
+            return {
+                success: true,
+                id: videoId,
+                title: yt.title || '',
+                description: '',
+                author: yt.author_name || '',
+                channelAvatar: null,
+                thumbnail: yt.thumbnail_url || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
+                duration: null,
+                keywords: []
+            };
+        }
+    } catch (e) {}
+
+    return null;
+}
+window.fetchYoutubeFullMetadata = fetchYoutubeFullMetadata;
+
+function inferToolsAndCategoryFromYoutube(data) {
+    const text = `${data.title || ''} ${data.description || ''} ${(data.keywords || []).join(' ')}`.toLowerCase();
+    
+    // Tools inference
+    const detectedTools = [];
+    if (text.includes('premiere')) detectedTools.push('Adobe Premiere Pro');
+    if (text.includes('after effects') || text.includes('motion graphic') || text.includes('typography') || text.includes('kinetic')) {
+        detectedTools.push('After Effects');
+    }
+    if (text.includes('davinci') || text.includes('resolve') || text.includes('color grading')) {
+        detectedTools.push('DaVinci Resolve');
+    }
+    if (text.includes('blender')) detectedTools.push('Blender');
+    if (text.includes('photoshop')) detectedTools.push('Photoshop');
+    if (text.includes('illustrator')) detectedTools.push('Illustrator');
+    if (text.includes('cinema 4d') || text.includes('c4d')) detectedTools.push('Cinema 4D');
+    
+    if (detectedTools.length === 0) {
+        detectedTools.push('Adobe Premiere Pro', 'After Effects');
+    }
+
+    // Category inference
+    let categoryBadge = 'Commercial Video';
+    let categorySlug = 'commercial-ad';
+    
+    if (text.includes('motion graphics') || text.includes('motion design') || text.includes('kinetic') || text.includes('typography')) {
+        categoryBadge = 'Motion Graphics';
+        categorySlug = 'motion-graphics';
+    } else if (text.includes('saas') || text.includes('promo') || text.includes('commercial') || text.includes('advertising') || text.includes('campaign')) {
+        categoryBadge = 'Commercial Video';
+        categorySlug = 'commercial-ad';
+    } else if (text.includes('corporate') || text.includes('company') || text.includes('business')) {
+        categoryBadge = 'Corporate Video';
+        categorySlug = 'commercial-ad';
+    } else if (text.includes('vfx') || text.includes('cinematic') || text.includes('3d') || text.includes('cgi')) {
+        categoryBadge = 'Cinematic VFX';
+        categorySlug = 'cinematic-vfx';
+    } else if (text.includes('short') || text.includes('reel') || text.includes('tiktok')) {
+        categoryBadge = 'Reels / Shorts';
+        categorySlug = 'reels-shorts';
+    }
+
+    return { tools: detectedTools, categoryBadge, categorySlug };
+}
+window.inferToolsAndCategoryFromYoutube = inferToolsAndCategoryFromYoutube;
+
+async function autoFetchCurrentProjFromYoutube(forceOverwrite = false) {
+    const urlInput = document.getElementById('editProjVideo');
+    const val = urlInput?.value.trim() || '';
+    if (!val) {
+        showToast('Please enter a YouTube video URL first!', 'warning');
+        return;
+    }
+
+    const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
+    if (!extracted) {
+        showToast('Please enter a valid YouTube video link (e.g. watch?v=... or youtu.be/...)', 'warning');
+        return;
+    }
+
+    showToast('Fetching YouTube video details (title, description, avatar, duration)...', 'info');
+    const meta = await fetchYoutubeFullMetadata(extracted);
+
+    if (!meta) {
+        showToast('Could not fetch details from YouTube. Check URL or internet connection.', 'error');
+        return;
+    }
+
+    // Populate YouTube ID
+    const ytField = document.getElementById('editProjYoutubeId');
+    if (ytField) ytField.value = meta.id;
+
+    // Populate Title
+    const titleEl = document.getElementById('editProjTitle');
+    if (titleEl && (forceOverwrite || !titleEl.value.trim())) {
+        if (meta.title) titleEl.value = meta.title;
+    }
+
+    // Populate Full Description
+    const descEl = document.getElementById('editProjDesc');
+    if (descEl && (forceOverwrite || !descEl.value.trim())) {
+        if (meta.description) {
+            descEl.value = meta.description;
+        } else if (meta.title && typeof generateAiProjectDescription === 'function') {
+            descEl.value = generateAiProjectDescription({
+                title: meta.title,
+                categoryBadge: document.getElementById('editProjCategoryBadge')?.value || 'Commercial Video',
+                slug: document.getElementById('editProjCategory')?.value || 'commercial-ad',
+                client: meta.author || '',
+                tools: document.getElementById('editProjTools')?.value || '',
+                duration: meta.duration || '',
+                isShort: false
+            });
+        }
+    }
+
+    // Populate Duration
+    const durInput = document.getElementById('editProjDuration');
+    if (durInput && (forceOverwrite || !durInput.value.trim() || ['03:00', '03:22'].includes(durInput.value.trim()))) {
+        if (meta.duration) {
+            durInput.value = meta.duration;
+        } else {
+            const detected = await extractDurationFromFileOrUrl(val);
+            if (detected) durInput.value = detected;
+        }
+    }
+
+    // Populate Client Name
+    const clientEl = document.getElementById('editProjClient');
+    if (clientEl && (forceOverwrite || !clientEl.value.trim())) {
+        if (meta.author) clientEl.value = meta.author;
+    }
+
+    // Populate Client Avatar
+    const avatarInput = document.getElementById('editProjClientAvatar');
+    const avatarPreviewImg = document.getElementById('editProjClientAvatarPreview');
+    const avatarPreviewWrap = document.getElementById('editProjClientAvatarPreviewWrap');
+    if (meta.channelAvatar && avatarInput && (forceOverwrite || !avatarInput.value.trim())) {
+        avatarInput.value = meta.channelAvatar;
+        if (avatarPreviewImg) avatarPreviewImg.src = meta.channelAvatar;
+        if (avatarPreviewWrap) avatarPreviewWrap.style.display = 'flex';
+    }
+
+    // Populate Cover Image Thumbnail
+    const imgEl = document.getElementById('editProjImage');
+    const prevImg = document.getElementById('editProjImagePreview');
+    const prevWrap = document.getElementById('editProjImagePreviewWrap');
+    if (meta.thumbnail && imgEl && (forceOverwrite || !imgEl.value.trim())) {
+        imgEl.value = meta.thumbnail;
+        if (prevImg) prevImg.src = meta.thumbnail;
+        if (prevWrap) prevWrap.style.display = 'flex';
+    }
+
+    // Populate Tools & Categories
+    const inferred = inferToolsAndCategoryFromYoutube(meta);
+    const toolsInput = document.getElementById('editProjTools');
+    if (toolsInput && (forceOverwrite || !toolsInput.value.trim())) {
+        toolsInput.value = inferred.tools.join(', ');
+    }
+    const catBadge = document.getElementById('editProjCategoryBadge');
+    if (catBadge && (forceOverwrite || !catBadge.value.trim())) {
+        catBadge.value = inferred.categoryBadge;
+    }
+    const catSlug = document.getElementById('editProjCategory');
+    if (catSlug && (forceOverwrite || !catSlug.value.trim())) {
+        catSlug.value = inferred.categorySlug;
+    }
+
+    showToast('✨ YouTube metadata, description & avatar auto-filled successfully!', 'success');
+}
+window.autoFetchCurrentProjFromYoutube = autoFetchCurrentProjFromYoutube;
+
+async function fetchAndFillYoutubeDescription() {
+    const urlInput = document.getElementById('editProjVideo');
+    const val = urlInput?.value.trim() || '';
+    const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
+    if (!extracted) {
+        showToast('Please enter a YouTube video link first in Project Video field!', 'warning');
+        return;
+    }
+
+    showToast('Fetching YouTube description...', 'info');
+    const meta = await fetchYoutubeFullMetadata(extracted);
+    const descEl = document.getElementById('editProjDesc');
+    if (meta && meta.description && descEl) {
+        descEl.value = meta.description;
+        showToast('YouTube video description imported successfully!', 'success');
+    } else {
+        showToast('No detailed description found on YouTube video page.', 'warning');
+    }
+}
+window.fetchAndFillYoutubeDescription = fetchAndFillYoutubeDescription;
+
+async function autoFetchCurrentShortFromYoutube(forceOverwrite = false) {
+    const urlInput = document.getElementById('editShortVideo');
+    const val = urlInput?.value.trim() || '';
+    if (!val) {
+        showToast('Please enter a YouTube Shorts video URL first!', 'warning');
+        return;
+    }
+
+    const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
+    if (!extracted) {
+        showToast('Please enter a valid YouTube link!', 'warning');
+        return;
+    }
+
+    showToast('Fetching YouTube Shorts details...', 'info');
+    const meta = await fetchYoutubeFullMetadata(extracted);
+    if (!meta) {
+        showToast('Could not fetch details from YouTube Shorts.', 'error');
+        return;
+    }
+
+    const ytField = document.getElementById('editShortYoutubeId');
+    if (ytField) ytField.value = meta.id;
+
+    const titleEl = document.getElementById('editShortTitle');
+    if (titleEl && (forceOverwrite || !titleEl.value.trim())) {
+        if (meta.title) titleEl.value = meta.title;
+    }
+
+    const durInput = document.getElementById('editShortDuration');
+    if (durInput && (forceOverwrite || !durInput.value.trim() || ['0:58', '0:50', '0:15', '0:30', '0:45'].includes(durInput.value.trim()))) {
+        if (meta.duration) {
+            durInput.value = meta.duration;
+        } else {
+            const detected = await extractDurationFromFileOrUrl(val);
+            if (detected) durInput.value = detected;
+        }
+    }
+
+    const clientEl = document.getElementById('editShortClient');
+    if (clientEl && (forceOverwrite || !clientEl.value.trim())) {
+        if (meta.author) clientEl.value = meta.author;
+    }
+
+    const imgEl = document.getElementById('editShortImage');
+    const prevImg = document.getElementById('editShortImagePreview');
+    const prevWrap = document.getElementById('editShortImagePreviewWrap');
+    if (meta.thumbnail && imgEl && (forceOverwrite || !imgEl.value.trim())) {
+        imgEl.value = meta.thumbnail;
+        if (prevImg) prevImg.src = meta.thumbnail;
+        if (prevWrap) prevWrap.style.display = 'flex';
+    }
+
+    const platformEl = document.getElementById('editShortPlatform');
+    if (platformEl && (forceOverwrite || !platformEl.value)) {
+        platformEl.value = 'youtube';
+    }
+    const labelEl = document.getElementById('editShortPlatformLabel');
+    if (labelEl && (forceOverwrite || !labelEl.value.trim())) {
+        labelEl.value = 'Shorts';
+    }
+
+    showToast('✨ YouTube Shorts details & duration auto-filled!', 'success');
+}
+window.autoFetchCurrentShortFromYoutube = autoFetchCurrentShortFromYoutube;
+
+async function onShortVideoInputChange() {
+    const val = document.getElementById('editShortVideo')?.value.trim() || '';
+    const ytField = document.getElementById('editShortYoutubeId');
+    const wrap = document.getElementById('editShortVideoPreviewWrap');
+    const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
     if (extracted) {
         if (ytField) ytField.value = extracted;
         if (wrap) wrap.style.display = 'none';
-
-        // Auto-detect YouTube Shorts duration
-        if (durInput) {
-            extractDurationFromFileOrUrl(val).then(detectedDur => {
-                if (detectedDur) {
-                    durInput.value = detectedDur;
-                    showToast(`Detected duration: ${detectedDur}`, 'success');
-                }
-            }).catch(() => {});
-        }
-
-        try {
-            fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${extracted}`)
-                .then(r => r.json())
-                .then(yt => {
-                    const titleEl = document.getElementById('editShortTitle');
-                    const imgEl = document.getElementById('editShortImage');
-                    const prevImg = document.getElementById('editShortImagePreview');
-                    const prevWrap = document.getElementById('editShortImagePreviewWrap');
-                    const descEl = document.getElementById('editShortDesc');
-                    if (yt.title && titleEl && !titleEl.value.trim()) {
-                        titleEl.value = yt.title;
-                    }
-                    if (yt.thumbnail_url && imgEl && !imgEl.value.trim()) {
-                        imgEl.value = yt.thumbnail_url;
-                        if (prevImg) prevImg.src = yt.thumbnail_url;
-                        if (prevWrap) prevWrap.style.display = 'flex';
-                    }
-                    if (descEl && !descEl.value.trim() && yt.title) {
-                        descEl.value = generateAiProjectDescription({
-                            title: yt.title,
-                            categoryBadge: 'Reels / Shorts',
-                            slug: 'reels-shorts social-media viral',
-                            client: yt.author_name || '',
-                            tools: 'Adobe Premiere Pro, After Effects',
-                            duration: durInput?.value || '',
-                            isShort: true
-                        });
-                    }
-                    if (yt.title) {
-                        showToast(`Auto-detected YouTube details: "${yt.title.slice(0, 30)}..."`, 'success');
-                    }
-                })
-                .catch(() => {});
-        } catch (e) {}
+        autoFetchCurrentShortFromYoutube(false);
     } else if (val.includes('<iframe')) {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'none';
@@ -2102,6 +2358,7 @@ async function onShortVideoInputChange() {
         }
         if (testSrc) {
             const detected = await extractDurationFromFileOrUrl(testSrc);
+            const durInput = document.getElementById('editShortDuration');
             if (detected && durInput && (!durInput.value || ['0:58', '0:50', '0:15', '0:30', '0:45'].includes(durInput.value))) {
                 durInput.value = detected;
             }
@@ -2117,60 +2374,11 @@ async function onProjVideoInputChange() {
     const val = document.getElementById('editProjVideo')?.value.trim() || '';
     const ytField = document.getElementById('editProjYoutubeId');
     const wrap = document.getElementById('editProjVideoPreviewWrap');
-    const durInput = document.getElementById('editProjDuration');
     const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
     if (extracted) {
         if (ytField) ytField.value = extracted;
         if (wrap) wrap.style.display = 'none';
-
-        // Auto-detect YouTube duration
-        if (durInput) {
-            extractDurationFromFileOrUrl(val).then(detectedDur => {
-                if (detectedDur) {
-                    durInput.value = detectedDur;
-                    showToast(`Detected duration: ${detectedDur}`, 'success');
-                }
-            }).catch(() => {});
-        }
-
-        try {
-            fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${extracted}`)
-                .then(r => r.json())
-                .then(yt => {
-                    const titleEl = document.getElementById('editProjTitle');
-                    const clientEl = document.getElementById('editProjClient');
-                    const imgEl = document.getElementById('editProjImage');
-                    const prevImg = document.getElementById('editProjImagePreview');
-                    const prevWrap = document.getElementById('editProjImagePreviewWrap');
-                    const descEl = document.getElementById('editProjDesc');
-                    if (yt.title && titleEl && !titleEl.value.trim()) {
-                        titleEl.value = yt.title;
-                    }
-                    if (yt.author_name && clientEl && !clientEl.value.trim()) {
-                        clientEl.value = yt.author_name;
-                    }
-                    if (yt.thumbnail_url && imgEl && !imgEl.value.trim()) {
-                        imgEl.value = yt.thumbnail_url;
-                        if (prevImg) prevImg.src = yt.thumbnail_url;
-                        if (prevWrap) prevWrap.style.display = 'flex';
-                    }
-                    if (descEl && !descEl.value.trim() && yt.title) {
-                        descEl.value = generateAiProjectDescription({
-                            title: yt.title,
-                            categoryBadge: document.getElementById('editProjCategoryBadge')?.value || 'Commercial Video',
-                            slug: document.getElementById('editProjCategory')?.value || 'commercial-ad',
-                            client: yt.author_name || clientEl?.value || '',
-                            tools: document.getElementById('editProjTools')?.value || '',
-                            duration: durInput?.value || '',
-                            isShort: false
-                        });
-                    }
-                    if (yt.title) {
-                        showToast(`Auto-detected YouTube details: "${yt.title.slice(0, 30)}..."`, 'success');
-                    }
-                })
-                .catch(() => {});
-        } catch (e) {}
+        autoFetchCurrentProjFromYoutube(false);
     } else if (val.includes('<iframe')) {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'none';
@@ -2183,6 +2391,7 @@ async function onProjVideoInputChange() {
         }
         if (testSrc) {
             const detected = await extractDurationFromFileOrUrl(testSrc);
+            const durInput = document.getElementById('editProjDuration');
             if (detected && durInput && (!durInput.value || ['03:00', '03:22'].includes(durInput.value))) {
                 durInput.value = detected;
             }

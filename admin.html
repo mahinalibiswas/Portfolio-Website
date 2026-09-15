@@ -881,7 +881,12 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Project Video *</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <label style="margin: 0;">Project Video *</label>
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoFetchCurrentProjFromYoutube(true)" style="color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0.75rem; font-size: 0.78rem; font-weight: 600;" title="YouTube থেকে টাইটেল, আসল ডেসক্রিপশন, ক্লায়েন্ট লোগো ও ডিউরেশন এক ক্লিকে আনুন">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Fill from YouTube
+                        </button>
+                    </div>
                     <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                         <input type="file" id="editProjVideoFileInput" accept="video/mp4,video/webm,video/ogg,video/*" style="display: none;" onchange="handleProjVideoUpload(event)">
                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editProjVideoFileInput').click()">
@@ -945,13 +950,18 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.5rem;">
                         <label style="margin: 0;">Full Project Description</label>
-                        <button type="button" id="btnAiProjDesc" class="btn btn-hero-secondary btn-sm" onclick="generateAiProjDescription()" style="font-size: 0.75rem; padding: 0.25rem 0.65rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Auto-write project description using AI">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Auto-Generate
-                        </button>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <button type="button" class="btn btn-hero-secondary btn-sm" onclick="fetchAndFillYoutubeDescription()" style="font-size: 0.75rem; padding: 0.25rem 0.65rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="YouTube ভিডিওর আসল ডেসক্রিপশন সরাসরি ফেচ করুন">
+                                <i class="fa-brands fa-youtube"></i> Fetch YouTube Description
+                            </button>
+                            <button type="button" id="btnAiProjDesc" class="btn btn-hero-secondary btn-sm" onclick="generateAiProjDescription()" style="font-size: 0.75rem; padding: 0.25rem 0.65rem; color: #a5b4fc; border-color: rgba(165, 180, 252, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Auto-write project description using AI">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Auto-Generate
+                            </button>
+                        </div>
                     </div>
-                    <textarea id="editProjDesc" rows="3" placeholder="Enter detailed project description or click 'AI Auto-Generate'..."></textarea>
+                    <textarea id="editProjDesc" rows="4" placeholder="Enter detailed project description or click 'Auto-Fill from YouTube' / 'Fetch YouTube Description'..."></textarea>
                 </div>
 
                 <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
@@ -1006,7 +1016,12 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Reel Video *</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <label style="margin: 0;">Reel Video *</label>
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoFetchCurrentShortFromYoutube(true)" style="color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0.75rem; font-size: 0.78rem; font-weight: 600;" title="YouTube Shorts থেকে টাইটেল, কভার ও ডিউরেশন এক ক্লিকে আনুন">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Fill from Shorts
+                        </button>
+                    </div>
                     <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                         <input type="file" id="editShortVideoFileInput" accept="video/mp4,video/webm,video/ogg,video/*" style="display: none;" onchange="handleShortVideoUpload(event)">
                         <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('editShortVideoFileInput').click()">
@@ -1192,7 +1207,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=48.0"></script>
-    <script src="js/admin.js?v=48.0"></script>
+    <script src="js/siteData.js?v=49.0"></script>
+    <script src="js/admin.js?v=49.0"></script>
 </body>
 </html>
