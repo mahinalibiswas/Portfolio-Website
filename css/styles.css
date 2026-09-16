@@ -4271,7 +4271,6 @@ button {
     white-space: pre-line;
     word-break: break-word;
     margin: 0;
-    transition: max-height 0.3s ease;
 }
 
 .reel-desc-content.collapsed {

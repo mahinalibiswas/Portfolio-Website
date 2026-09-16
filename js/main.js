@@ -1265,7 +1265,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.formatReelYouTubeDesc = formatReelYouTubeDesc;
 
-    function toggleReelDesc(btn) {
+    function toggleReelDesc(btn, e) {
+        if (e) {
+            e.stopPropagation();
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+        }
         if (!btn) return;
         const card = btn.closest('.reel-youtube-desc-card');
         const content = card ? card.querySelector('.reel-desc-content') : (btn.previousElementSibling || document.getElementById('reelDescContent'));
@@ -1279,13 +1283,31 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<span>See less</span> <i class="fa-solid fa-chevron-up"></i>';
             btn.setAttribute('aria-expanded', 'true');
         } else {
+            // 1. Instantly reset scroll to top
+            content.scrollTo({ top: 0, left: 0, behavior: 'instant' });
             content.scrollTop = 0;
+
+            // 2. Force layout update with display: block so Chromium resets internal scroll offset before clamping
+            content.style.display = 'block';
+            content.style.overflow = 'hidden';
+            void content.offsetHeight;
+            content.style.display = '';
+            content.style.overflow = '';
+
+            // 3. Switch classes to collapsed
             content.classList.remove('expanded');
             content.classList.add('collapsed');
             content.scrollTop = 0;
+
             if (card) card.classList.remove('is-expanded');
             btn.innerHTML = '<span>...See more</span> <i class="fa-solid fa-chevron-down"></i>';
             btn.setAttribute('aria-expanded', 'false');
+
+            // 4. Smoothly return modal container to top if scrolled
+            const modalContainer = document.querySelector('.reel-detail-container');
+            if (modalContainer && modalContainer.scrollTop > 0) {
+                modalContainer.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
     }
     window.toggleReelDesc = toggleReelDesc;
@@ -1296,7 +1318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = card.querySelector('.reel-desc-content');
         const btn = card.querySelector('.reel-desc-toggle-btn');
         if (content && content.classList.contains('collapsed') && btn) {
-            toggleReelDesc(btn);
+            toggleReelDesc(btn, e);
         }
     }
     window.handleDescCardClick = handleDescCardClick;
@@ -1391,7 +1413,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="reel-youtube-desc-card" onclick="handleDescCardClick(event, this)">
                             <div class="reel-desc-content ${needsTruncate ? 'collapsed' : 'expanded'}" id="reelDescContent">${formattedDesc}</div>
                             ${needsTruncate ? `
-                            <button type="button" class="reel-desc-toggle-btn" id="reelDescToggleBtn" onclick="toggleReelDesc(this)" aria-expanded="false">
+                            <button type="button" class="reel-desc-toggle-btn" id="reelDescToggleBtn" onclick="toggleReelDesc(this, event)" aria-expanded="false">
                                 <span>...See more</span> <i class="fa-solid fa-chevron-down"></i>
                             </button>
                             ` : ''}
