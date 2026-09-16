@@ -37,49 +37,48 @@ export default async function handler(req, res) {
         let thumbnail = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
         let keywords = [];
 
-        let innerDebug = '';
-        // 1. YouTube official InnerTube API (Bulletproof: delivers full description, title, duration & tags without bot blocks)
-        try {
-            const playerRes = await fetch('https://www.youtube.com/youtubei/v1/player', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-                    'X-YouTube-Client-Name': '1',
-                    'X-YouTube-Client-Version': '2.20240315.00.00'
-                },
-                body: JSON.stringify({
-                    videoId: videoId,
-                    context: {
-                        client: {
-                            clientName: 'WEB',
-                            clientVersion: '2.20240315.00.00',
-                            hl: 'en',
-                            gl: 'US'
+        // 1. YouTube official InnerTube API (Using MWEB & mobile clients that never require login from datacenter IPs)
+        const innerTubeClients = [
+            { clientName: 'MWEB', clientVersion: '2.20240315.00.00' },
+            { clientName: 'ANDROID_TESTSUITE', clientVersion: '1.9' },
+            { clientName: 'WEB', clientVersion: '2.20240315.00.00' }
+        ];
+
+        for (const clientConfig of innerTubeClients) {
+            try {
+                const playerRes = await fetch('https://www.youtube.com/youtubei/v1/player', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36'
+                    },
+                    body: JSON.stringify({
+                        videoId: videoId,
+                        context: { client: clientConfig }
+                    })
+                });
+
+                if (playerRes.ok) {
+                    const playerData = await playerRes.json();
+                    const vDetails = playerData?.videoDetails;
+                    if (vDetails) {
+                        if (vDetails.title && !title) title = vDetails.title;
+                        if (vDetails.shortDescription && !description) description = vDetails.shortDescription;
+                        if (vDetails.author && !author) author = vDetails.author;
+                        if (vDetails.lengthSeconds && seconds === null) seconds = parseInt(vDetails.lengthSeconds, 10);
+                        if (vDetails.keywords && Array.isArray(vDetails.keywords) && keywords.length === 0) keywords = vDetails.keywords;
+
+                        if (vDetails.thumbnail?.thumbnails?.length) {
+                            const thumbs = vDetails.thumbnail.thumbnails;
+                            thumbnail = thumbs[thumbs.length - 1].url || thumbnail;
                         }
+
+                        if (title && description && seconds !== null) break;
                     }
-                })
-            });
-
-            innerDebug = `status: ${playerRes.status}`;
-            if (playerRes.ok) {
-                const playerData = await playerRes.json();
-                const vDetails = playerData?.videoDetails || {};
-                innerDebug += `, hasVideoDetails: ${!!playerData?.videoDetails}, status: ${playerData?.playabilityStatus?.status}`;
-
-                if (vDetails.title) title = vDetails.title;
-                if (vDetails.shortDescription) description = vDetails.shortDescription;
-                if (vDetails.author) author = vDetails.author;
-                if (vDetails.lengthSeconds) seconds = parseInt(vDetails.lengthSeconds, 10);
-                if (vDetails.keywords && Array.isArray(vDetails.keywords)) keywords = vDetails.keywords;
-
-                if (vDetails.thumbnail?.thumbnails?.length) {
-                    const thumbs = vDetails.thumbnail.thumbnails;
-                    thumbnail = thumbs[thumbs.length - 1].url || thumbnail;
                 }
+            } catch (innerErr) {
+                console.warn('InnerTube client error:', innerErr.message);
             }
-        } catch (innerErr) {
-            innerDebug = `error: ${innerErr.message}`;
         }
 
         // 2. Fetch Channel Avatar and fallback metadata from watch page with consent cookie
@@ -160,8 +159,7 @@ export default async function handler(req, res) {
             author,
             channelAvatar,
             thumbnail,
-            keywords,
-            debug: innerDebug
+            keywords
         });
     } catch (err) {
         return res.status(500).json({ error: err.message });
