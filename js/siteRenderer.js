@@ -28,6 +28,30 @@ function extractYoutubeId(url) {
     return null;
 }
 
+function formatProjectDesc(desc) {
+    if (!desc) return '';
+    // 1. Sanitize text to HTML safe
+    const div = document.createElement('div');
+    div.textContent = desc;
+    let safe = div.innerHTML;
+
+    // 2. Convert raw URLs (http://, https://) into clickable neon links
+    const urlRegex = /(https?:\/\/[^\s<]+)/g;
+    safe = safe.replace(urlRegex, (url) => {
+        let cleanUrl = url;
+        let trailing = '';
+        const match = cleanUrl.match(/[.,;:!?)]+$/);
+        if (match) {
+            trailing = match[0];
+            cleanUrl = cleanUrl.slice(0, -trailing.length);
+        }
+        return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${cleanUrl}</a>${trailing}`;
+    });
+
+    return safe;
+}
+window.formatProjectDesc = formatProjectDesc;
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Render immediate local cache
     renderSiteData();
@@ -367,8 +391,8 @@ function renderSiteData(customData) {
                     <div class="card-body">
                         <span class="card-category-pill">${proj.categoryBadge || 'Video Project'}</span>
                         <h3 class="card-title">${proj.title}</h3>
-                        <p class="card-desc">${proj.desc}</p>
-                        ${proj.desc && proj.desc.length > 80 ? `<button class="card-desc-more-btn" aria-label="Expand Description">See More <i class="fa-solid fa-chevron-down"></i></button>` : ''}
+                        <p class="card-desc">${formatProjectDesc(proj.desc)}</p>
+                        ${proj.desc && (proj.desc.length > 80 || proj.desc.includes('\n')) ? `<button class="card-desc-more-btn" aria-label="Expand Description">See More <i class="fa-solid fa-chevron-down"></i></button>` : ''}
                     </div>
                     
                     <div class="card-footer">

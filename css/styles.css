@@ -1456,7 +1456,35 @@ button {
 .card-desc.expanded {
     display: block !important;
     -webkit-line-clamp: unset !important;
-    overflow: visible !important;
+    overflow-y: auto !important;
+    max-height: 340px;
+    white-space: pre-line !important;
+    line-height: 1.65 !important;
+    margin-bottom: 0.6rem !important;
+    padding-right: 4px;
+}
+
+.card-desc.expanded::-webkit-scrollbar {
+    width: 4px;
+}
+
+.card-desc.expanded::-webkit-scrollbar-thumb {
+    background: rgba(163, 230, 53, 0.4);
+    border-radius: 4px;
+}
+
+.card-desc a,
+.detail-main-desc a {
+    color: var(--accent-neon);
+    text-decoration: underline;
+    word-break: break-all;
+    transition: var(--transition-fast);
+}
+
+.card-desc a:hover,
+.detail-main-desc a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--accent-neon);
 }
 
 .card-desc-more-btn {
@@ -3229,9 +3257,11 @@ button {
 
 .detail-main-desc {
     color: var(--text-muted);
-    font-size: 0.98rem;
-    line-height: 1.6;
-    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    line-height: 1.68;
+    margin-bottom: 1rem;
+    white-space: pre-line;
+    word-break: break-word;
 }
 
 .detail-cta-text {

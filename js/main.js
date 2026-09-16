@@ -1253,7 +1253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="detail-duration-tag"><i class="fa-regular fa-clock"></i> ${data.duration || '03:20'}</span>
                     </div>
                     
-                    <p class="detail-main-desc">${data.desc}</p>
+                    <p class="detail-main-desc">${typeof formatProjectDesc === 'function' ? formatProjectDesc(data.desc) : (data.desc || '')}</p>
                     <p class="detail-cta-text">Looking for similar work? <a href="#contact" onclick="document.getElementById('projectDetailOverlay').classList.remove('active')">Visit my services or contact me</a> to discuss your next project.</p>
 
                     <div class="detail-meta-grid">
