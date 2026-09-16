@@ -1229,6 +1229,76 @@ document.addEventListener('DOMContentLoaded', () => {
         window.lenis?.start();
     }
 
+    /* --- YouTube-Style Formatted Description & Truncate System --- */
+    function formatReelYouTubeDesc(desc) {
+        if (!desc) return '';
+        // 1. Sanitize text to HTML safe
+        const div = document.createElement('div');
+        div.textContent = desc;
+        let safe = div.innerHTML;
+
+        // 2. Convert URLs (http://, https://) into clickable neon links
+        const urlRegex = /(https?:\/\/[^\s<"']+)/g;
+        safe = safe.replace(urlRegex, (url) => {
+            let cleanUrl = url;
+            let trailing = '';
+            const match = cleanUrl.match(/[.,;:!?)]+$/);
+            if (match) {
+                trailing = match[0];
+                cleanUrl = cleanUrl.slice(0, -trailing.length);
+            }
+            return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" class="yt-desc-link" onclick="event.stopPropagation()">${cleanUrl}</a>${trailing}`;
+        });
+
+        // 3. Convert emails into clickable mailto links
+        const emailRegex = /(?<!href="|mailto:|\/)([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+        try {
+            safe = safe.replace(emailRegex, '<a href="mailto:$1" class="yt-desc-link yt-desc-email" onclick="event.stopPropagation()">$1</a>');
+        } catch (e) {
+            safe = safe.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1" class="yt-desc-link yt-desc-email" onclick="event.stopPropagation()">$1</a>');
+        }
+
+        // 4. Convert hashtags (#word) into styled tag links
+        safe = safe.replace(/(^|\s)(#[\w\u0980-\u09FF]+)/g, '$1<span class="yt-desc-hashtag">$2</span>');
+
+        return safe;
+    }
+    window.formatReelYouTubeDesc = formatReelYouTubeDesc;
+
+    function toggleReelDesc(btn) {
+        if (!btn) return;
+        const card = btn.closest('.reel-youtube-desc-card');
+        const content = card ? card.querySelector('.reel-desc-content') : (btn.previousElementSibling || document.getElementById('reelDescContent'));
+        if (!content) return;
+
+        const isCollapsed = content.classList.contains('collapsed');
+        if (isCollapsed) {
+            content.classList.remove('collapsed');
+            content.classList.add('expanded');
+            if (card) card.classList.add('is-expanded');
+            btn.innerHTML = '<span>Show less</span> <i class="fa-solid fa-chevron-up"></i>';
+            btn.setAttribute('aria-expanded', 'true');
+        } else {
+            content.classList.remove('expanded');
+            content.classList.add('collapsed');
+            if (card) card.classList.remove('is-expanded');
+            btn.innerHTML = '<span>...Show more</span> <i class="fa-solid fa-chevron-down"></i>';
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    }
+    window.toggleReelDesc = toggleReelDesc;
+
+    function handleDescCardClick(e, card) {
+        if (!card) return;
+        if (e.target.closest('a') || e.target.closest('.reel-desc-toggle-btn')) return;
+        const content = card.querySelector('.reel-desc-content');
+        const btn = card.querySelector('.reel-desc-toggle-btn');
+        if (content && content.classList.contains('collapsed') && btn) {
+            toggleReelDesc(btn);
+        }
+    }
+    window.handleDescCardClick = handleDescCardClick;
+
     function openReelDetailsModal(shortId) {
         const list = getShortsList();
         if (!list || !list.length) return;
@@ -1270,6 +1340,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const clientName = found.client || 'Social Media Client';
         const dateYear = found.date || '2026';
         const description = found.desc || 'High-retention vertical video edit engineered with kinetic motion subtitles, rapid-hook intro pacing, sound design layering, and cinematic color grading for viral social reach.';
+        const formattedDesc = formatReelYouTubeDesc(description);
+        const needsTruncate = description.length > 140 || (description.match(/\n/g) || []).length >= 3;
 
         body.innerHTML = `
             <div class="reel-detail-grid">
@@ -1298,9 +1370,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         <h2 class="reel-detail-title">${found.title || 'Viral Reel Edit'}</h2>
                         
-                        <p class="reel-detail-desc">${description}</p>
+                        <div class="reel-youtube-desc-card" onclick="handleDescCardClick(event, this)">
+                            <div class="reel-desc-content ${needsTruncate ? 'collapsed' : 'expanded'}" id="reelDescContent">${formattedDesc}</div>
+                            ${needsTruncate ? `
+                            <button type="button" class="reel-desc-toggle-btn" id="reelDescToggleBtn" onclick="toggleReelDesc(this)" aria-expanded="false">
+                                <span>...Show more</span> <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            ` : ''}
+                        </div>
 
-                        <div class="detail-meta-grid" style="margin-top: 1.4rem; margin-bottom: 0;">
+                        <div class="detail-meta-grid" style="margin-top: 1rem; margin-bottom: 0;">
                             <div class="meta-col">
                                 <h4>Reel Information</h4>
                                 <p><i class="fa-regular fa-calendar"></i> Published: <strong>${dateYear}</strong></p>

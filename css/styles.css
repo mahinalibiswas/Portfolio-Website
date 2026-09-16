@@ -4199,8 +4199,114 @@ button {
 .reel-detail-desc {
     color: var(--text-muted);
     font-size: 0.92rem;
-    line-height: 1.6;
+    line-height: 1.65;
+    white-space: pre-line;
+    word-break: break-word;
     margin: 0;
+}
+
+/* --- YouTube-Style Reel Description Card --- */
+.reel-youtube-desc-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 0.95rem 1.15rem;
+    margin: 0.5rem 0 1rem 0;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.reel-youtube-desc-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.reel-desc-content {
+    color: #cbd5e1;
+    font-size: 0.91rem;
+    line-height: 1.65;
+    white-space: pre-line;
+    word-break: break-word;
+    margin: 0;
+    transition: max-height 0.3s ease;
+}
+
+.reel-desc-content.collapsed {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.reel-desc-content.expanded {
+    display: block;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 0.4rem;
+}
+
+.reel-desc-content::-webkit-scrollbar {
+    width: 5px;
+}
+
+.reel-desc-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+
+.reel-desc-content::-webkit-scrollbar-thumb {
+    background: rgba(163, 230, 53, 0.35);
+    border-radius: 10px;
+}
+
+.reel-desc-content::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-neon);
+}
+
+.reel-desc-toggle-btn {
+    background: none;
+    border: none;
+    padding: 0.45rem 0 0 0;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: color 0.2s ease;
+}
+
+.reel-desc-toggle-btn:hover {
+    color: var(--accent-neon);
+}
+
+.reel-desc-toggle-btn i {
+    font-size: 0.72rem;
+    transition: transform 0.2s ease;
+}
+
+.yt-desc-link {
+    color: var(--accent-neon);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s ease, text-decoration 0.2s ease;
+    word-break: break-all;
+}
+
+.yt-desc-link:hover {
+    text-decoration: underline;
+    opacity: 0.85;
+}
+
+.yt-desc-hashtag {
+    color: #38bdf8;
+    font-weight: 500;
+    margin-right: 0.2rem;
+    display: inline-block;
 }
 
 .reel-detail-actions-row {
