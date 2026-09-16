@@ -1313,14 +1313,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
 
                     <div class="reel-detail-actions-row">
-                        <button type="button" class="btn btn-primary" onclick="closeReelDetailModal(); openReelModal('${found.id}');" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.4rem; border-radius: var(--radius-full);">
-                            <i class="fa-solid fa-play"></i> Watch Video
-                        </button>
                         ${found.youtubeUrl ? `
-                        <a href="${found.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-hero-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.2rem; border-radius: var(--radius-full);">
+                        <a href="${found.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-hero-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.3rem; border-radius: var(--radius-full);">
                             <i class="fa-brands fa-youtube"></i> Watch on YouTube
                         </a>` : ''}
-                        <a href="#contact" onclick="closeReelDetailModal();" class="btn btn-hero-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.2rem; border-radius: var(--radius-full);">
+                        <a href="#contact" onclick="closeReelDetailModal();" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.4rem; border-radius: var(--radius-full);">
                             <i class="fa-solid fa-paper-plane"></i> Hire for Similar Reel
                         </a>
                     </div>
