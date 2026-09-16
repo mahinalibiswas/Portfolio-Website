@@ -60,13 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 0.5 Silky-Smooth Momentum Scrolling Engine for Card Descriptions --- */
+    /* --- 0.5 Silky-Smooth Momentum Scrolling Engine for Card Descriptions (Lenis-Grade Physics) --- */
     const cardDescAnimMap = new WeakMap();
 
     function smoothScrollCardDesc(descEl, delta, maxScroll) {
         let state = cardDescAnimMap.get(descEl);
         if (!state) {
-            state = { target: descEl.scrollTop, rafId: null };
+            state = { target: descEl.scrollTop, rafId: null, lastTime: 0 };
             cardDescAnimMap.set(descEl, state);
         }
 
@@ -75,18 +75,23 @@ document.addEventListener('DOMContentLoaded', () => {
             state.target = descEl.scrollTop;
         }
 
-        // Add smooth delta to target
-        state.target = Math.max(0, Math.min(maxScroll, state.target + delta));
+        // Graceful step scaling so it glides softly without jumping
+        state.target = Math.max(0, Math.min(maxScroll, state.target + delta * 0.72));
 
         if (!state.rafId) {
-            const animate = () => {
+            state.lastTime = performance.now();
+            const animate = (time) => {
+                const dt = Math.min(32, time - (state.lastTime || time));
+                state.lastTime = time;
+
                 const diff = state.target - descEl.scrollTop;
-                if (Math.abs(diff) < 0.5) {
+                if (Math.abs(diff) < 0.4) {
                     descEl.scrollTop = state.target;
                     state.rafId = null;
                 } else {
-                    // 0.18 ease gives a buttery, natural momentum glide
-                    descEl.scrollTop += diff * 0.18;
+                    // Framerate-independent Lenis-grade exponential decay (0.085 at 60fps)
+                    const factor = 1 - Math.pow(1 - 0.085, dt / 16.67);
+                    descEl.scrollTop += diff * factor;
                     state.rafId = requestAnimationFrame(animate);
                 }
             };
