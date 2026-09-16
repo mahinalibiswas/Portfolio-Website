@@ -1456,21 +1456,12 @@ button {
 .card-desc.expanded {
     display: block !important;
     -webkit-line-clamp: unset !important;
-    overflow-y: auto !important;
-    max-height: 340px;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
     white-space: pre-line !important;
     line-height: 1.65 !important;
-    margin-bottom: 0.6rem !important;
-    padding-right: 4px;
-}
-
-.card-desc.expanded::-webkit-scrollbar {
-    width: 4px;
-}
-
-.card-desc.expanded::-webkit-scrollbar-thumb {
-    background: rgba(163, 230, 53, 0.4);
-    border-radius: 4px;
+    margin-bottom: 0.8rem !important;
 }
 
 .card-desc a,
