@@ -1229,8 +1229,118 @@ document.addEventListener('DOMContentLoaded', () => {
         window.lenis?.start();
     }
 
+    function openReelDetailsModal(shortId) {
+        const list = getShortsList();
+        if (!list || !list.length) return;
+
+        let found = null;
+        if (shortId) {
+            found = list.find(s => s.id === shortId || 'short-' + s.id === shortId || s.id === 'short-' + shortId);
+            if (!found) {
+                found = list.find(s => s.id == shortId || s.youtubeId === shortId);
+            }
+        }
+        if (!found) found = list[0];
+        if (!found) return;
+
+        window.lenis?.stop();
+        const modal = document.getElementById('reelDetailModal');
+        const body = document.getElementById('reelDetailBody');
+        if (!modal || !body) return;
+
+        const platformClass = (found.platform || 'instagram').toLowerCase();
+        let defaultIcon = 'fa-brands fa-instagram';
+        let defaultLabel = 'Instagram Reels';
+        if (platformClass === 'youtube') {
+            defaultIcon = 'fa-brands fa-youtube';
+            defaultLabel = 'YouTube Shorts';
+        } else if (platformClass === 'tiktok') {
+            defaultIcon = 'fa-brands fa-tiktok';
+            defaultLabel = 'TikTok Video';
+        }
+        const icon = found.platformIcon || defaultIcon;
+        const label = found.platformLabel || defaultLabel;
+
+        const tools = Array.isArray(found.tools) && found.tools.length > 0 
+            ? found.tools 
+            : ['Adobe Premiere Pro', 'After Effects', 'CapCut Pro', 'DaVinci Resolve'];
+        const toolsHtml = tools.map(t => `<span class="detail-tool-pill">${t}</span>`).join(' ');
+
+        const duration = found.duration || '01:24';
+        const clientName = found.client || 'Social Media Client';
+        const dateYear = found.date || '2026';
+        const description = found.desc || 'High-retention vertical video edit engineered with kinetic motion subtitles, rapid-hook intro pacing, sound design layering, and cinematic color grading for viral social reach.';
+
+        body.innerHTML = `
+            <div class="reel-detail-grid">
+                <!-- Left Poster Preview -->
+                <div class="reel-detail-poster-col">
+                    <div class="reel-detail-poster-frame">
+                        <img src="${found.image || 'assets/images/project_reels_shorts.jpg'}" alt="${found.title || 'Reel'}" onerror="this.onerror=null; this.src='assets/images/project_reels_shorts.jpg';">
+                        <button type="button" class="reel-detail-poster-play" onclick="closeReelDetailModal(); openReelModal('${found.id}');" title="Play Full Video">
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+                        <div class="reel-detail-poster-badge">
+                            <i class="fa-regular fa-clock"></i> ${duration}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Info Column -->
+                <div class="reel-detail-info-col">
+                    <div class="reel-detail-top-row">
+                        <span class="admin-short-badge ${platformClass}" style="font-size: 0.78rem; padding: 0.25rem 0.75rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <i class="${icon}"></i> ${label}
+                        </span>
+                        <span class="detail-duration-tag"><i class="fa-regular fa-clock"></i> ${duration}</span>
+                    </div>
+
+                    <h2 class="reel-detail-title">${found.title || 'Viral Reel Edit'}</h2>
+                    
+                    <p class="reel-detail-desc">${description}</p>
+
+                    <div class="detail-meta-grid" style="margin-top: 1.2rem; margin-bottom: 1.2rem;">
+                        <div class="meta-col">
+                            <h4>Reel Information</h4>
+                            <p><i class="fa-regular fa-calendar"></i> Published: <strong>${dateYear}</strong></p>
+                            <p><i class="fa-solid fa-user-check"></i> Client: <strong>${clientName}</strong></p>
+                            <p><i class="fa-solid fa-mobile-screen"></i> Format: <strong>9:16 Vertical HD</strong></p>
+                        </div>
+                        <div class="meta-col">
+                            <h4>Tools & Software</h4>
+                            <div class="tools-pills-row">${toolsHtml}</div>
+                        </div>
+                    </div>
+
+                    <div class="reel-detail-actions-row">
+                        <button type="button" class="btn btn-primary" onclick="closeReelDetailModal(); openReelModal('${found.id}');" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.4rem; border-radius: var(--radius-full);">
+                            <i class="fa-solid fa-play"></i> Watch Video
+                        </button>
+                        ${found.youtubeUrl ? `
+                        <a href="${found.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-hero-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.2rem; border-radius: var(--radius-full);">
+                            <i class="fa-brands fa-youtube"></i> Watch on YouTube
+                        </a>` : ''}
+                        <a href="#contact" onclick="closeReelDetailModal();" class="btn btn-hero-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.2rem; border-radius: var(--radius-full);">
+                            <i class="fa-solid fa-paper-plane"></i> Hire for Similar Reel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        modal.classList.add('active');
+    }
+
+    function closeReelDetailModal() {
+        const modal = document.getElementById('reelDetailModal');
+        if (modal) modal.classList.remove('active');
+        window.lenis?.start();
+    }
+
     window.openReelModal = openReelModal;
     window.closeReelModal = closeReelModal;
+    window.openReelDetailsModal = openReelDetailsModal;
+    window.closeReelDetailModal = closeReelDetailModal;
     window.showReelAtIndex = showReelAtIndex;
     window.transitionReel = transitionReel;
 
@@ -1484,8 +1594,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 2. Reel Trigger on Cards (play button, details, or thumbnail)
-        const openReelTrigger = e.target.closest('.open-reel-btn, .short-play-btn, .short-reel-details-btn');
+        if (e.target.id === 'reelDetailModal' || e.target.closest('#closeReelDetailModalBtn')) {
+            closeReelDetailModal();
+            return;
+        }
+
+        // 2a. Reel Details Trigger
+        const reelDetailsTrigger = e.target.closest('.short-reel-details-btn');
+        if (reelDetailsTrigger) {
+            e.preventDefault();
+            e.stopPropagation();
+            const shortCard = reelDetailsTrigger.closest('.short-card');
+            const shortId = reelDetailsTrigger.getAttribute('data-short-id') || 
+                            reelDetailsTrigger.getAttribute('data-id') || 
+                            shortCard?.getAttribute('data-short-id') || 
+                            shortCard?.id;
+            openReelDetailsModal(shortId);
+            return;
+        }
+
+        // 2b. Reel Video Play Trigger on Cards (play button or thumbnail)
+        const openReelTrigger = e.target.closest('.open-reel-btn, .short-play-btn');
         if (openReelTrigger) {
             e.preventDefault();
             e.stopPropagation();
@@ -1583,6 +1712,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Keyboard listener for Reel and Project Video modals
     document.addEventListener('keydown', (e) => {
+        const reelDetailModal = document.getElementById('reelDetailModal');
+        if (reelDetailModal && reelDetailModal.classList.contains('active') && e.key === 'Escape') {
+            closeReelDetailModal();
+        }
         const reelModal = document.getElementById('reelModal');
         if (reelModal && reelModal.classList.contains('active')) {
             if (e.key === 'Escape') closeReelModal();
