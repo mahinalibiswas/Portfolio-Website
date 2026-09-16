@@ -4086,33 +4086,38 @@ button {
 
 .reel-detail-grid {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 2rem;
-    align-items: start;
+    grid-template-columns: 260px 1fr;
+    gap: 2.2rem;
+    align-items: stretch;
 }
 
 .reel-detail-poster-col {
     position: relative;
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .reel-detail-poster-frame {
     position: relative;
     width: 100%;
-    aspect-ratio: 9 / 16;
-    border-radius: 16px;
+    height: 100%;
+    min-height: 420px;
+    border-radius: 18px;
     overflow: hidden;
     background: #020817;
-    border: 1px solid rgba(163, 230, 53, 0.3);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(163, 230, 53, 0.15);
+    border: 1px solid rgba(163, 230, 53, 0.35);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), 0 0 30px rgba(163, 230, 53, 0.15);
 }
 
 .reel-detail-poster-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     display: block;
-    transition: transform 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reel-detail-poster-frame:hover img {
@@ -4124,8 +4129,8 @@ button {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: var(--accent-neon);
     color: #020817;
@@ -4133,36 +4138,44 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     cursor: pointer;
-    box-shadow: 0 0 25px rgba(163, 230, 53, 0.6);
+    box-shadow: 0 0 25px rgba(163, 230, 53, 0.7);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reel-detail-poster-play:hover {
     transform: translate(-50%, -50%) scale(1.15);
-    box-shadow: 0 0 35px rgba(163, 230, 53, 0.9);
+    box-shadow: 0 0 35px rgba(163, 230, 53, 0.95);
 }
 
 .reel-detail-poster-badge {
     position: absolute;
-    bottom: 0.8rem;
+    bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(2, 8, 23, 0.85);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(2, 8, 23, 0.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    font-size: 0.75rem;
-    padding: 0.3rem 0.8rem;
+    font-size: 0.78rem;
+    padding: 0.35rem 0.9rem;
     border-radius: 20px;
     white-space: nowrap;
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
 .reel-detail-info-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.reel-detail-main-content {
     display: flex;
     flex-direction: column;
 }
@@ -4180,7 +4193,7 @@ button {
     font-weight: 700;
     color: #ffffff;
     margin-bottom: 0.8rem;
-    line-height: 1.3;
+    line-height: 1.35;
 }
 
 .reel-detail-desc {
@@ -4192,23 +4205,31 @@ button {
 
 .reel-detail-actions-row {
     display: flex;
-    gap: 0.8rem;
+    gap: 0.9rem;
     flex-wrap: wrap;
     align-items: center;
-    margin-top: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
-@media (max-width: 680px) {
+@media (max-width: 768px) {
     .reel-detail-grid {
         grid-template-columns: 1fr;
-        gap: 1.4rem;
+        gap: 1.5rem;
+        align-items: start;
+    }
+    .reel-detail-poster-col {
+        height: auto;
     }
     .reel-detail-poster-frame {
         max-width: 220px;
+        min-height: unset;
+        aspect-ratio: 9 / 16;
         margin: 0 auto;
     }
     .reel-detail-container {
-        padding: 1.5rem;
+        padding: 1.6rem;
     }
 }
 

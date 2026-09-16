@@ -1288,27 +1288,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- Right Info Column -->
                 <div class="reel-detail-info-col">
-                    <div class="reel-detail-top-row">
-                        <span class="admin-short-badge ${platformClass}" style="font-size: 0.78rem; padding: 0.25rem 0.75rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                            <i class="${icon}"></i> ${label}
-                        </span>
-                        <span class="detail-duration-tag"><i class="fa-regular fa-clock"></i> ${duration}</span>
-                    </div>
-
-                    <h2 class="reel-detail-title">${found.title || 'Viral Reel Edit'}</h2>
-                    
-                    <p class="reel-detail-desc">${description}</p>
-
-                    <div class="detail-meta-grid" style="margin-top: 1.2rem; margin-bottom: 1.2rem;">
-                        <div class="meta-col">
-                            <h4>Reel Information</h4>
-                            <p><i class="fa-regular fa-calendar"></i> Published: <strong>${dateYear}</strong></p>
-                            <p><i class="fa-solid fa-user-check"></i> Client: <strong>${clientName}</strong></p>
-                            <p><i class="fa-solid fa-mobile-screen"></i> Format: <strong>9:16 Vertical HD</strong></p>
+                    <div class="reel-detail-main-content">
+                        <div class="reel-detail-top-row">
+                            <span class="admin-short-badge ${platformClass}" style="font-size: 0.78rem; padding: 0.25rem 0.75rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <i class="${icon}"></i> ${label}
+                            </span>
+                            <span class="detail-duration-tag"><i class="fa-regular fa-clock"></i> ${duration}</span>
                         </div>
-                        <div class="meta-col">
-                            <h4>Tools & Software</h4>
-                            <div class="tools-pills-row">${toolsHtml}</div>
+
+                        <h2 class="reel-detail-title">${found.title || 'Viral Reel Edit'}</h2>
+                        
+                        <p class="reel-detail-desc">${description}</p>
+
+                        <div class="detail-meta-grid" style="margin-top: 1.4rem; margin-bottom: 0;">
+                            <div class="meta-col">
+                                <h4>Reel Information</h4>
+                                <p><i class="fa-regular fa-calendar"></i> Published: <strong>${dateYear}</strong></p>
+                                <p><i class="fa-solid fa-user-check"></i> Client: <strong>${clientName}</strong></p>
+                                <p><i class="fa-solid fa-mobile-screen"></i> Format: <strong>9:16 Vertical HD</strong></p>
+                            </div>
+                            <div class="meta-col">
+                                <h4>Tools & Software</h4>
+                                <div class="tools-pills-row">${toolsHtml}</div>
+                            </div>
                         </div>
                     </div>
 
