@@ -455,6 +455,12 @@
     margin-left: auto;
 }
 
+.admin-project-actions .action-btn,
+.admin-project-actions .action-btn.edit-btn,
+.admin-project-actions .action-btn.delete-btn,
+.admin-short-actions .action-btn,
+.admin-short-actions .action-btn.edit-btn,
+.admin-short-actions .action-btn.delete-btn,
 .action-btn {
     width: 30px !important;
     height: 30px !important;
@@ -463,6 +469,7 @@
     min-height: 30px !important;
     max-height: 30px !important;
     padding: 0 !important;
+    margin: 0 !important;
     border-radius: 8px !important;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
@@ -471,7 +478,7 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0.82rem !important;
+    font-size: 0.85rem !important;
     line-height: 1 !important;
     transition: var(--transition-fast);
     flex-shrink: 0 !important;
@@ -750,7 +757,7 @@
 }
 
 /* --- Sleek Luxury Glassmorphic Trash Delete Buttons (Icon Only) --- */
-.delete-btn, .admin-delete-btn {
+.delete-btn:not(.action-btn), .admin-delete-btn {
     width: 40px !important;
     height: 40px !important;
     min-width: 40px !important;
@@ -771,7 +778,7 @@
     line-height: 1 !important;
 }
 
-.delete-btn:hover, .admin-delete-btn:hover {
+.delete-btn:not(.action-btn):hover, .admin-delete-btn:hover {
     background: rgba(239, 68, 68, 0.95) !important;
     color: #ffffff !important;
     border-color: #ef4444 !important;

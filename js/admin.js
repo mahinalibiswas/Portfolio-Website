@@ -2990,10 +2990,10 @@ function renderAdminProjectsList(projects) {
                 </div>
             </div>
             <div class="admin-project-actions">
-                <button class="action-btn edit-btn" onclick="openEditProjectModal('${proj.id}')" title="Edit Project">
+                <button class="action-btn edit-btn" onclick="openEditProjectModal('${proj.id}')" title="Edit Project" style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 8px; padding: 0;">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-                <button class="action-btn delete-btn" onclick="deleteProject('${proj.id}')" title="Delete Project">
+                <button class="action-btn delete-btn" onclick="deleteProject('${proj.id}')" title="Delete Project" style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 8px; padding: 0;">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
@@ -3367,10 +3367,10 @@ function renderAdminShortsList(shorts) {
                 </div>
             </div>
             <div class="admin-short-actions">
-                <button class="action-btn edit-btn" onclick="openEditShortModal('${short.id}')" title="Edit Reel">
+                <button class="action-btn edit-btn" onclick="openEditShortModal('${short.id}')" title="Edit Reel" style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 8px; padding: 0;">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-                <button class="action-btn delete-btn" onclick="deleteShort('${short.id}')" title="Delete Reel">
+                <button class="action-btn delete-btn" onclick="deleteShort('${short.id}')" title="Delete Reel" style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 8px; padding: 0;">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
