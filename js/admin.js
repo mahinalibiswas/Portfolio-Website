@@ -2248,6 +2248,14 @@ async function autoFetchCurrentProjFromYoutube(forceOverwrite = false) {
         catSlug.value = inferred.categorySlug;
     }
 
+    // Populate Description
+    const projDescEl = document.getElementById('editProjDesc');
+    if (projDescEl && (forceOverwrite || !projDescEl.value.trim())) {
+        if (meta.description && meta.description.trim()) {
+            projDescEl.value = meta.description.trim();
+        }
+    }
+
     showToast('✨ YouTube metadata, description & avatar auto-filled successfully!', 'success');
 }
 window.autoFetchCurrentProjFromYoutube = autoFetchCurrentProjFromYoutube;
@@ -2265,7 +2273,7 @@ async function fetchAndFillYoutubeDescription() {
     const meta = await fetchYoutubeFullMetadata(extracted);
     const descEl = document.getElementById('editProjDesc');
     if (meta && meta.description && descEl) {
-        descEl.value = meta.description;
+        descEl.value = meta.description.trim();
         showToast('YouTube video description imported successfully!', 'success');
     } else {
         showToast('No detailed description found on YouTube video page.', 'warning');
@@ -2335,9 +2343,45 @@ async function autoFetchCurrentShortFromYoutube(forceOverwrite = false) {
         labelEl.value = 'Shorts';
     }
 
-    showToast('✨ YouTube Shorts details & duration auto-filled!', 'success');
+    // Populate Description from YouTube or smart AI generator if empty
+    const descEl = document.getElementById('editShortDesc');
+    if (descEl && (forceOverwrite || !descEl.value.trim())) {
+        if (meta.description && meta.description.trim()) {
+            descEl.value = meta.description.trim();
+        } else if (typeof generateAiShortDescription === 'function') {
+            generateAiShortDescription();
+        }
+    }
+
+    showToast('✨ YouTube Shorts details, duration & description auto-filled!', 'success');
 }
 window.autoFetchCurrentShortFromYoutube = autoFetchCurrentShortFromYoutube;
+
+async function fetchAndFillYoutubeShortDescription() {
+    const urlInput = document.getElementById('editShortVideo');
+    const val = urlInput?.value.trim() || '';
+    const extracted = (typeof extractYoutubeId === 'function') ? extractYoutubeId(val) : null;
+    if (!extracted) {
+        showToast('Please enter a YouTube Shorts video link first in Reel Video field!', 'warning');
+        return;
+    }
+
+    showToast('Fetching YouTube Shorts description...', 'info');
+    const meta = await fetchYoutubeFullMetadata(extracted);
+    const descEl = document.getElementById('editShortDesc');
+    if (meta && meta.description && meta.description.trim() && descEl) {
+        descEl.value = meta.description.trim();
+        showToast('YouTube Shorts description imported successfully!', 'success');
+    } else if (descEl) {
+        if (typeof generateAiShortDescription === 'function') {
+            generateAiShortDescription();
+            showToast('YouTube description not found. Generated high-retention reel description with AI!', 'info');
+        } else {
+            showToast('No detailed description found on YouTube video.', 'warning');
+        }
+    }
+}
+window.fetchAndFillYoutubeShortDescription = fetchAndFillYoutubeShortDescription;
 
 async function onShortVideoInputChange() {
     const val = document.getElementById('editShortVideo')?.value.trim() || '';

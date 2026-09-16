@@ -116,12 +116,53 @@ export default async function handler(req, res) {
                     if (dm && !dm[1].startsWith('Enjoy the videos')) description = dm[1];
                 }
 
+                if (!description) {
+                    const sdMatch = html.match(/"shortDescription":"(.*?)"/);
+                    if (sdMatch && sdMatch[1]) {
+                        try {
+                            description = JSON.parse(`"${sdMatch[1]}"`);
+                        } catch(e) {
+                            description = sdMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+                        }
+                    }
+                }
+
                 if (!author) {
                     const am = html.match(/"author":"([^"]*)"/) || html.match(/<link\s+itemprop="name"\s+content="([^"]*)"/i);
                     if (am) author = am[1];
                 }
             }
         } catch (e) {}
+
+        // 2b. Fallback check specifically on YouTube Shorts URL if description is still missing
+        if (!description) {
+            try {
+                const shortsRes = await fetch(`https://www.youtube.com/shorts/${videoId}`, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                        'Accept-Language': 'en-US,en;q=0.9',
+                        'Cookie': 'SOCS=CAESEwgDEgk2OTc3OTM3MjQaAmVuIAEaBgiA_LyaBg; CONSENT=PENDING+999; PREF=tz=UTC&hl=en'
+                    }
+                });
+                if (shortsRes.ok) {
+                    const sHtml = await shortsRes.text();
+                    const sdm = sHtml.match(/<meta\s+property="og:description"\s+content="([^"]*)"/i) || sHtml.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
+                    if (sdm && !sdm[1].startsWith('Enjoy the videos')) {
+                        description = sdm[1];
+                    }
+                    if (!description) {
+                        const ssdMatch = sHtml.match(/"shortDescription":"(.*?)"/);
+                        if (ssdMatch && ssdMatch[1]) {
+                            try {
+                                description = JSON.parse(`"${ssdMatch[1]}"`);
+                            } catch(e) {
+                                description = ssdMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+                            }
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
 
         // 3. Guaranteed fallback for Title and Author via official YouTube oEmbed API
         if (!title || !author) {
