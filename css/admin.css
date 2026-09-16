@@ -508,26 +508,29 @@
 
 /* --- Short Video & Reels Admin Cards --- */
 .admin-shorts-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-}
-
-@media (max-width: 900px) {
-    .admin-shorts-list {
-        grid-template-columns: 1fr;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .admin-short-item {
     background: rgba(2, 8, 23, 0.6);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 1.2rem;
+    padding: 1rem 1.2rem;
     display: flex;
-    gap: 1.2rem;
+    gap: 1.1rem;
     align-items: center;
     transition: var(--transition-fast);
+    cursor: grab;
+    user-select: none;
+    position: relative;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .admin-short-item:hover {
