@@ -343,6 +343,35 @@
     letter-spacing: 0.02em;
 }
 
+.admin-modal-section-divider {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.75rem;
+    margin-bottom: -0.35rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.admin-modal-section-divider.first-section {
+    margin-top: 0;
+}
+
+.admin-modal-section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.28rem 0.7rem;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* --- Project List Admin Cards --- */
 .admin-projects-list {
     display: grid;

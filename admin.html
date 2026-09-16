@@ -857,6 +857,13 @@
             <form id="projectEditForm" class="admin-form-grid">
                 <input type="hidden" id="editProjectId">
                 
+                <!-- Section 1: Overview & Details -->
+                <div class="admin-modal-section-divider first-section">
+                    <span class="admin-modal-section-badge" style="color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.3);">
+                        <i class="fa-solid fa-layer-group"></i> Project Overview
+                    </span>
+                </div>
+
                 <div class="form-group full-width">
                     <label>Project Title *</label>
                     <input type="text" id="editProjTitle" placeholder="Enter project title..." required>
@@ -870,6 +877,38 @@
                 <div class="form-group">
                     <label>Category Space-Separated Filter Slug *</label>
                     <input type="text" id="editProjCategory" placeholder="Enter category filter tags..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Client Name</label>
+                    <input type="text" id="editProjClient" placeholder="e.g. Mahin Ali Biswas / Agency">
+                </div>
+
+                <div class="form-group">
+                    <label>Year / Date</label>
+                    <input type="text" id="editProjDate" placeholder="2026">
+                </div>
+
+                <div class="form-group">
+                    <label>Duration Tag (e.g. 03:22)</label>
+                    <div style="position: relative; width: 100%;">
+                        <input type="text" id="editProjDuration" placeholder="e.g. 03:22" style="width: 100%; padding-right: 115px;">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentProjDuration()" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 0.72rem; padding: 0.28rem 0.6rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Detect video length">
+                            <i class="fa-solid fa-stopwatch"></i> Auto-Detect
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tools Used (Comma separated)</label>
+                    <input type="text" id="editProjTools" placeholder="Adobe Premiere Pro, After Effects, Photoshop">
+                </div>
+
+                <!-- Section 2: Media & Assets -->
+                <div class="admin-modal-section-divider">
+                    <span class="admin-modal-section-badge" style="color: #60a5fa; border-color: rgba(96, 165, 250, 0.3);">
+                        <i class="fa-solid fa-photo-film"></i> Media & Video Files
+                    </span>
                 </div>
 
                 <div class="form-group full-width">
@@ -908,26 +947,6 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Duration Tag (e.g. 03:22)</label>
-                    <div style="position: relative; width: 100%;">
-                        <input type="text" id="editProjDuration" placeholder="e.g. 03:22" style="width: 100%; padding-right: 115px;">
-                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentProjDuration()" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 0.72rem; padding: 0.28rem 0.6rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Detect video length">
-                            <i class="fa-solid fa-stopwatch"></i> Auto-Detect
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Client Name</label>
-                    <input type="text" id="editProjClient" placeholder="e.g. Mahin Ali Biswas / Agency">
-                </div>
-
-                <div class="form-group">
-                    <label>Year / Date</label>
-                    <input type="text" id="editProjDate" placeholder="2026">
-                </div>
-
                 <div class="form-group full-width">
                     <label>Client / Brand Avatar Image (Icon on project card)</label>
                     <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
@@ -943,9 +962,11 @@
                     </div>
                 </div>
 
-                <div class="form-group full-width">
-                    <label>Tools Used (Comma separated)</label>
-                    <input type="text" id="editProjTools" placeholder="Adobe Premiere Pro, After Effects, Photoshop">
+                <!-- Section 3: Story & Description -->
+                <div class="admin-modal-section-divider">
+                    <span class="admin-modal-section-badge" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.3);">
+                        <i class="fa-solid fa-feather-pointed"></i> Project Story & Description
+                    </span>
                 </div>
 
                 <div class="form-group full-width">
@@ -987,6 +1008,13 @@
             <form id="shortEditForm" class="admin-form-grid">
                 <input type="hidden" id="editShortId">
                 
+                <!-- Section 1: Overview & Details -->
+                <div class="admin-modal-section-divider first-section">
+                    <span class="admin-modal-section-badge" style="color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.3);">
+                        <i class="fa-solid fa-layer-group"></i> Short / Reel Overview
+                    </span>
+                </div>
+
                 <div class="form-group full-width">
                     <label>Reel / Short Title *</label>
                     <input type="text" id="editShortTitle" placeholder="e.g. Viral Reels & TikToks" required>
@@ -1004,6 +1032,38 @@
                 <div class="form-group">
                     <label>Platform Badge Label *</label>
                     <input type="text" id="editShortPlatformLabel" placeholder="e.g. Reels, Shorts, TikTok" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Client Name</label>
+                    <input type="text" id="editShortClient" placeholder="e.g. Social Media Client">
+                </div>
+
+                <div class="form-group">
+                    <label>Year / Date</label>
+                    <input type="text" id="editShortDate" placeholder="2026">
+                </div>
+
+                <div class="form-group">
+                    <label>YouTube Video ID (e.g. kJQP7kiw5Fk)</label>
+                    <input type="text" id="editShortYoutubeId" placeholder="e.g. kJQP7kiw5Fk">
+                </div>
+
+                <div class="form-group">
+                    <label>Duration (e.g. 1:24)</label>
+                    <div style="position: relative; width: 100%;">
+                        <input type="text" id="editShortDuration" placeholder="e.g. 1:24" style="width: 100%; padding-right: 115px;">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentShortDuration()" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 0.72rem; padding: 0.28rem 0.6rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Detect video length">
+                            <i class="fa-solid fa-stopwatch"></i> Auto-Detect
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 2: Media Assets -->
+                <div class="admin-modal-section-divider">
+                    <span class="admin-modal-section-badge" style="color: #60a5fa; border-color: rgba(96, 165, 250, 0.3);">
+                        <i class="fa-solid fa-photo-film"></i> Media Files
+                    </span>
                 </div>
 
                 <div class="form-group full-width">
@@ -1042,29 +1102,11 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>YouTube Video ID (e.g. kJQP7kiw5Fk)</label>
-                    <input type="text" id="editShortYoutubeId" placeholder="e.g. kJQP7kiw5Fk">
-                </div>
-
-                <div class="form-group">
-                    <label>Duration (e.g. 1:24)</label>
-                    <div style="position: relative; width: 100%;">
-                        <input type="text" id="editShortDuration" placeholder="e.g. 1:24" style="width: 100%; padding-right: 115px;">
-                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="autoDetectCurrentShortDuration()" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 0.72rem; padding: 0.28rem 0.6rem; color: var(--accent-neon); border-color: rgba(163, 230, 53, 0.4); display: inline-flex; align-items: center; gap: 0.35rem;" title="Detect video length">
-                            <i class="fa-solid fa-stopwatch"></i> Auto-Detect
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Client Name</label>
-                    <input type="text" id="editShortClient" placeholder="e.g. Social Media Client">
-                </div>
-
-                <div class="form-group">
-                    <label>Year / Date</label>
-                    <input type="text" id="editShortDate" placeholder="2026">
+                <!-- Section 3: Description -->
+                <div class="admin-modal-section-divider">
+                    <span class="admin-modal-section-badge" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.3);">
+                        <i class="fa-solid fa-feather-pointed"></i> Description
+                    </span>
                 </div>
 
                 <div class="form-group full-width">
@@ -1209,7 +1251,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=63.0"></script>
-    <script src="js/admin.js?v=63.0"></script>
+    <script src="js/siteData.js?v=64.0"></script>
+    <script src="js/admin.js?v=64.0"></script>
 </body>
 </html>
