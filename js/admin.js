@@ -2650,45 +2650,57 @@ function renderAdminAboutCtaButtons(ctaButtons) {
         }
 
         return `
-            <div class="admin-card-row" style="padding: 1.2rem; background: rgba(2, 8, 23, 0.6); border-radius: 12px; border: 1px solid var(--border-glow); box-sizing: border-box; margin-bottom: 0;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-                    <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;"><i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}</h4>
-                    ${index >= 2 ? `<button type="button" onclick="deleteAboutCtaButton('${btn.id}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 6px; padding: 0.3rem 0.6rem; cursor: pointer; font-size: 0.78rem;" title="Delete this button"><i class="fa-solid fa-trash-can"></i> Delete</button>` : ''}
+            <div class="admin-card-row" style="padding: 1.35rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box; margin-bottom: 0; display: flex; flex-direction: column; gap: 0.95rem; overflow: hidden;">
+                <!-- Card Header with Title & Delete -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 0.65rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                    <h4 style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 700;">
+                        <i class="fa-solid fa-link" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> About CTA Button #${index + 1}
+                    </h4>
+                    ${index >= 2 ? `
+                    <button type="button" onclick="deleteAboutCtaButton('${btn.id}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 6px; padding: 0.28rem 0.65rem; cursor: pointer; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 0.35rem;" title="Delete this button">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>` : ''}
                 </div>
                 
-                <div style="display: flex; gap: 0.6rem; align-items: flex-end; margin-bottom: 1rem;">
-                    <!-- Dedicated Active Icon Preview Badge -->
-                    <div style="display: flex; flex-direction: column; gap: 0.3rem;">
-                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block;">Icon</label>
-                        <div id="aboutBtnIconBadge_${btn.id}" title="Current Active Icon" style="width: 44px; height: 44px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 12px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
+                <!-- Row 1: Button Text -->
+                <div>
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.35rem;">Button Text</label>
+                    <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" oninput="renderLiveAboutPreview()" placeholder="Enter button text..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.85rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                </div>
+
+                <!-- Row 2: Icon Selection (Badge + Pick Icon + Upload) -->
+                <div>
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.35rem;">Button Icon</label>
+                    <div style="display: flex; align-items: center; gap: 0.6rem; width: 100%;">
+                        <!-- Dedicated Active Icon Preview Badge -->
+                        <div id="aboutBtnIconBadge_${btn.id}" title="Current Active Icon" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); box-shadow: 0 0 10px rgba(163, 230, 53, 0.2); flex-shrink: 0;">
                             ${activeIconHtml}
                         </div>
-                    </div>
 
-                    <div style="width: 260px; min-width: 180px;">
-                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Button Text</label>
-                        <input type="text" id="aboutBtnText_${btn.id}" value="${btn.text || ''}" oninput="renderLiveAboutPreview()" placeholder="Enter button text..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
-                    </div>
-
-                    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.4rem; height: 44px;">
-                        <button type="button" class="btn btn-hero-secondary" onclick="openIconPickerModal('aboutBtnIconClass_${btn.id}', 'aboutBtnIconBadge_${btn.id}', 'about')" style="height: 44px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                        <!-- Pick Icon Button -->
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="openIconPickerModal('aboutBtnIconClass_${btn.id}', 'aboutBtnIconBadge_${btn.id}', 'about')" style="flex: 1; height: 42px; padding: 0 0.65rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
                             <i class="fa-solid fa-icons"></i> Pick Icon
                         </button>
+
+                        <!-- Upload Custom Image Button -->
                         <input type="file" id="aboutBtnFileInput_${btn.id}" accept="image/*" style="display: none;" onchange="handleAboutCtaIconUpload(event, '${btn.id}')">
-                        <button type="button" class="btn btn-hero-secondary" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="height: 44px; padding: 0 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 10px; font-size: 0.82rem; white-space: nowrap;">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="document.getElementById('aboutBtnFileInput_${btn.id}').click()" style="flex: 1; height: 42px; padding: 0 0.65rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; border-radius: 10px; font-size: 0.8rem; white-space: nowrap;">
                             <i class="fa-solid fa-upload"></i> Upload
                         </button>
-                        <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; gap: 0.3rem; background: rgba(239, 68, 68, 0.15); padding: 0 0.5rem; height: 44px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.4); box-sizing: border-box;">
-                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.82rem;" title="Remove uploaded custom icon image" onclick="removeAboutCtaIconImage('${btn.id}', '${defaultIcon}')"><i class="fa-solid fa-trash-can"></i></button>
+
+                        <!-- Delete Custom Icon Image (if active) -->
+                        <div id="aboutIconPreviewWrap_${btn.id}" style="display: ${btn.iconImage ? 'flex' : 'none'}; align-items: center; justify-content: center; width: 40px; height: 42px; background: rgba(239, 68, 68, 0.15); border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.4); box-sizing: border-box; flex-shrink: 0;">
+                            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem;" title="Remove uploaded custom icon image" onclick="removeAboutCtaIconImage('${btn.id}', '${defaultIcon}')"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </div>
                     <input type="hidden" id="aboutBtnIconClass_${btn.id}" value="${btn.icon || defaultIcon}">
                     <input type="hidden" id="aboutBtnIconImage_${btn.id}" value="${btn.iconImage || ''}">
                 </div>
 
+                <!-- Row 3: Target URL -->
                 <div>
-                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.3rem;">Target URL</label>
-                    <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" oninput="renderLiveAboutPreview()" placeholder="Enter your target URL..." style="width: 100%; height: 44px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.35rem;">Target URL</label>
+                    <input type="text" id="aboutBtnLink_${btn.id}" value="${btn.link || ''}" oninput="renderLiveAboutPreview()" placeholder="Enter your target URL..." style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.85rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
                 </div>
             </div>
         `;
