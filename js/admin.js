@@ -3094,24 +3094,64 @@ async function moveProjectOrder(projectId, direction) {
 window.moveProjectOrder = moveProjectOrder;
 window.initProjectsDragAndDrop = initProjectsDragAndDrop;
 
+function clearProjectEditForm(notify = true) {
+    const form = document.getElementById('projectEditForm');
+    if (form) form.reset();
+
+    const fields = [
+        'editProjTitle',
+        'editProjCategoryBadge',
+        'editProjCategory',
+        'editProjImage',
+        'editProjVideo',
+        'editProjYoutubeId',
+        'editProjDuration',
+        'editProjClient',
+        'editProjDate',
+        'editProjClientAvatar',
+        'editProjTools',
+        'editProjDesc'
+    ];
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    const fileInputs = [
+        'editProjVideoFileInput',
+        'editProjImageFileInput',
+        'editProjClientAvatarFileInput'
+    ];
+    fileInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    const previewWraps = [
+        'editProjImagePreviewWrap',
+        'editProjVideoPreviewWrap',
+        'editProjClientAvatarPreviewWrap'
+    ];
+    previewWraps.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    const imgPrev = document.getElementById('editProjImagePreview');
+    if (imgPrev) imgPrev.src = '';
+    const avatarPrev = document.getElementById('editProjClientAvatarPreview');
+    if (avatarPrev) avatarPrev.src = '';
+
+    if (notify && typeof showToast === 'function') {
+        showToast('All fields in this project form have been cleared!', 'info');
+    }
+}
+window.clearProjectEditForm = clearProjectEditForm;
+
 function openAddProjectModal() {
     if (document.getElementById('projectModalTitle')) document.getElementById('projectModalTitle').textContent = 'Add New Video Project';
-    if (document.getElementById('projectEditForm')) document.getElementById('projectEditForm').reset();
+    clearProjectEditForm(false);
     if (document.getElementById('editProjectId')) document.getElementById('editProjectId').value = '';
-    const fileInput = document.getElementById('editProjVideoFileInput');
-    if (fileInput) fileInput.value = '';
-    const imgFileInput = document.getElementById('editProjImageFileInput');
-    if (imgFileInput) imgFileInput.value = '';
-    const previewWrap = document.getElementById('editProjImagePreviewWrap');
-    if (previewWrap) previewWrap.style.display = 'none';
-    const videoWrap = document.getElementById('editProjVideoPreviewWrap');
-    if (videoWrap) videoWrap.style.display = 'none';
-    const avatarInput = document.getElementById('editProjClientAvatar');
-    if (avatarInput) avatarInput.value = '';
-    const avatarFileInput = document.getElementById('editProjClientAvatarFileInput');
-    if (avatarFileInput) avatarFileInput.value = '';
-    const avatarPreviewWrap = document.getElementById('editProjClientAvatarPreviewWrap');
-    if (avatarPreviewWrap) avatarPreviewWrap.style.display = 'none';
     const modal = document.getElementById('projectEditModal');
     if (modal) modal.classList.add('active');
 }
@@ -3447,16 +3487,59 @@ function onShortPlatformChange(platform) {
     }
 }
 
-function openAddShortModal() {
-    if (document.getElementById('shortModalTitle')) document.getElementById('shortModalTitle').textContent = 'Add New Short Video / Reel';
-    if (document.getElementById('shortEditForm')) document.getElementById('shortEditForm').reset();
-    if (document.getElementById('editShortId')) document.getElementById('editShortId').value = '';
+function clearShortEditForm(notify = true) {
+    const form = document.getElementById('shortEditForm');
+    if (form) form.reset();
+
+    const fields = [
+        'editShortTitle',
+        'editShortImage',
+        'editShortVideo',
+        'editShortYoutubeId',
+        'editShortDuration',
+        'editShortClient',
+        'editShortDate',
+        'editShortDesc'
+    ];
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
     if (document.getElementById('editShortPlatform')) document.getElementById('editShortPlatform').value = 'instagram';
     if (document.getElementById('editShortPlatformLabel')) document.getElementById('editShortPlatformLabel').value = 'Reels';
-    const previewWrap = document.getElementById('editShortImagePreviewWrap');
-    if (previewWrap) previewWrap.style.display = 'none';
-    const videoWrap = document.getElementById('editShortVideoPreviewWrap');
-    if (videoWrap) videoWrap.style.display = 'none';
+
+    const fileInputs = [
+        'editShortVideoFileInput',
+        'editShortImageFileInput'
+    ];
+    fileInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    const previewWraps = [
+        'editShortImagePreviewWrap',
+        'editShortVideoPreviewWrap'
+    ];
+    previewWraps.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    const imgPrev = document.getElementById('editShortImagePreview');
+    if (imgPrev) imgPrev.src = '';
+
+    if (notify && typeof showToast === 'function') {
+        showToast('All fields in this short/reel form have been cleared!', 'info');
+    }
+}
+window.clearShortEditForm = clearShortEditForm;
+
+function openAddShortModal() {
+    if (document.getElementById('shortModalTitle')) document.getElementById('shortModalTitle').textContent = 'Add New Short Video / Reel';
+    clearShortEditForm(false);
+    if (document.getElementById('editShortId')) document.getElementById('editShortId').value = '';
     const modal = document.getElementById('shortEditModal');
     if (modal) modal.classList.add('active');
 }

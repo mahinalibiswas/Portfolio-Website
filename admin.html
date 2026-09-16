@@ -845,7 +845,12 @@
     <div class="modal-backdrop" id="projectEditModal">
         <div class="modal-content admin-project-modal-card">
             <button class="modal-close" onclick="closeProjectEditModal()"><i class="fa-solid fa-xmark"></i></button>
-            <h3 id="projectModalTitle">Add New Video Project</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; padding-right: 2.8rem; flex-wrap: wrap; gap: 0.6rem;">
+                <h3 id="projectModalTitle" style="margin: 0;">Add New Video Project</h3>
+                <button type="button" class="btn btn-hero-secondary btn-sm" onclick="clearProjectEditForm()" style="color: #f87171; border-color: rgba(248, 113, 113, 0.4); display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.85rem; font-size: 0.78rem; font-weight: 600; border-radius: 8px; background: rgba(239, 68, 68, 0.08);" title="সব তথ্য এক ক্লিকে ক্লিয়ার করুন">
+                    <i class="fa-solid fa-eraser"></i> Clear All Fields
+                </button>
+            </div>
             
             <form id="projectEditForm" class="admin-form-grid" style="margin-top: 1.5rem;">
                 <input type="hidden" id="editProjectId">
@@ -964,9 +969,14 @@
                     <textarea id="editProjDesc" rows="4" placeholder="Enter detailed project description or click 'Auto-Fill from YouTube' / 'Fetch YouTube Description'..."></textarea>
                 </div>
 
-                <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
-                    <button type="button" class="btn btn-hero-secondary" onclick="closeProjectEditModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Project</button>
+                <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-hero-secondary btn-sm" onclick="clearProjectEditForm()" style="color: #f87171; border-color: rgba(248, 113, 113, 0.35); display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem;" title="সব তথ্য এক ক্লিকে খালি করুন">
+                        <i class="fa-solid fa-eraser"></i> Clear All Fields
+                    </button>
+                    <div style="display: flex; gap: 0.8rem;">
+                        <button type="button" class="btn btn-hero-secondary" onclick="closeProjectEditModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Project</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -976,7 +986,12 @@
     <div class="modal-backdrop" id="shortEditModal">
         <div class="modal-content admin-project-modal-card">
             <button class="modal-close" onclick="closeShortEditModal()"><i class="fa-solid fa-xmark"></i></button>
-            <h3 id="shortModalTitle">Add New Short Video / Reel</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; padding-right: 2.8rem; flex-wrap: wrap; gap: 0.6rem;">
+                <h3 id="shortModalTitle" style="margin: 0;">Add New Short Video / Reel</h3>
+                <button type="button" class="btn btn-hero-secondary btn-sm" onclick="clearShortEditForm()" style="color: #f87171; border-color: rgba(248, 113, 113, 0.4); display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.85rem; font-size: 0.78rem; font-weight: 600; border-radius: 8px; background: rgba(239, 68, 68, 0.08);" title="সব তথ্য এক ক্লিকে ক্লিয়ার করুন">
+                    <i class="fa-solid fa-eraser"></i> Clear All Fields
+                </button>
+            </div>
             
             <form id="shortEditForm" class="admin-form-grid" style="margin-top: 1.5rem;">
                 <input type="hidden" id="editShortId">
@@ -1075,9 +1090,14 @@
                     <textarea id="editShortDesc" rows="3" placeholder="Enter short video description or click 'AI Auto-Generate'..."></textarea>
                 </div>
 
-                <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
-                    <button type="button" class="btn btn-hero-secondary" onclick="closeShortEditModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Reel / Short</button>
+                <div class="modal-btn-row full-width" style="display: flex; gap: 1rem; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-hero-secondary btn-sm" onclick="clearShortEditForm()" style="color: #f87171; border-color: rgba(248, 113, 113, 0.35); display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem;" title="সব তথ্য এক ক্লিকে খালি করুন">
+                        <i class="fa-solid fa-eraser"></i> Clear All Fields
+                    </button>
+                    <div style="display: flex; gap: 0.8rem;">
+                        <button type="button" class="btn btn-hero-secondary" onclick="closeShortEditModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Reel / Short</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -1207,7 +1227,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=52.0"></script>
-    <script src="js/admin.js?v=52.0"></script>
+    <script src="js/siteData.js?v=60.0"></script>
+    <script src="js/admin.js?v=60.0"></script>
 </body>
 </html>
