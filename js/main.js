@@ -60,6 +60,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /* --- 0.5 Smart Nested Scroll Chaining for Card Descriptions --- */
+    window.addEventListener('wheel', (e) => {
+        const descEl = e.target.closest('.card-desc.expanded');
+        if (!descEl) return;
+
+        const maxScroll = descEl.scrollHeight - descEl.clientHeight;
+        if (maxScroll <= 1) return; // Not scrollable, let normal page scroll handle it
+
+        let delta = e.deltaY;
+        if (e.deltaMode === 1) delta *= 24;
+        else if (e.deltaMode === 2) delta *= descEl.clientHeight;
+
+        const atTop = descEl.scrollTop <= 0;
+        const atBottom = descEl.scrollTop >= maxScroll - 1;
+
+        // If scrolling DOWN and not at bottom yet: scroll description, keep page still
+        if (delta > 0 && !atBottom) {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            descEl.scrollTop = Math.min(maxScroll, descEl.scrollTop + delta);
+            return;
+        }
+
+        // If scrolling UP and not at top yet: scroll description up, keep page still
+        if (delta < 0 && !atTop) {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            descEl.scrollTop = Math.max(0, descEl.scrollTop + delta);
+            return;
+        }
+
+        // When boundary is reached (atBottom while scrolling down, or atTop while scrolling up),
+        // we deliberately let the wheel event pass through to Lenis/page so the whole page scrolls!
+    }, { capture: true, passive: false });
+
+    // Mobile touch scroll chaining
+    let cardTouchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+        const descEl = e.target.closest('.card-desc.expanded');
+        if (descEl && e.touches && e.touches.length > 0) {
+            cardTouchStartY = e.touches[0].clientY;
+        }
+    }, { capture: true, passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+        const descEl = e.target.closest('.card-desc.expanded');
+        if (!descEl || !e.touches || e.touches.length === 0) return;
+
+        const maxScroll = descEl.scrollHeight - descEl.clientHeight;
+        if (maxScroll <= 1) return;
+
+        const currentY = e.touches[0].clientY;
+        const deltaY = cardTouchStartY - currentY;
+
+        const atTop = descEl.scrollTop <= 0;
+        const atBottom = descEl.scrollTop >= maxScroll - 1;
+
+        if ((deltaY > 0 && !atBottom) || (deltaY < 0 && !atTop)) {
+            e.stopPropagation();
+        }
+    }, { capture: true, passive: false });
+
     /* --- 1. Custom Glowing Cursor (Perfect Dead-Center Alignment) --- */
     const cursorDot = document.getElementById('cursorDot');
     const cursorOutline = document.getElementById('cursorOutline');
@@ -1404,6 +1468,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const cardDesc = cardBody ? cardBody.querySelector('.card-desc') : null;
             if (cardDesc) {
                 const isExpanded = cardDesc.classList.toggle('expanded');
+                if (isExpanded) {
+                    cardDesc.scrollTop = 0;
+                }
                 moreBtn.innerHTML = isExpanded 
                     ? 'See Less <i class="fa-solid fa-chevron-up"></i>' 
                     : 'See More <i class="fa-solid fa-chevron-down"></i>';

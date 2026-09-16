@@ -1456,12 +1456,34 @@ button {
 .card-desc.expanded {
     display: block !important;
     -webkit-line-clamp: unset !important;
-    overflow: visible !important;
-    height: auto !important;
-    max-height: none !important;
+    overflow-y: auto !important;
+    max-height: 250px !important;
     white-space: pre-line !important;
     line-height: 1.65 !important;
-    margin-bottom: 0.8rem !important;
+    margin-bottom: 0.6rem !important;
+    padding-right: 6px;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-neon) rgba(255, 255, 255, 0.05);
+}
+
+.card-desc.expanded::-webkit-scrollbar {
+    width: 4px;
+}
+
+.card-desc.expanded::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 4px;
+}
+
+.card-desc.expanded::-webkit-scrollbar-thumb {
+    background: var(--accent-neon);
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(163, 230, 53, 0.35);
+}
+
+.card-desc.expanded::-webkit-scrollbar-thumb:hover {
+    background: #ffffff;
 }
 
 .card-desc a,
