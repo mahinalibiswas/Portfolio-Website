@@ -2990,14 +2990,6 @@ function renderAdminProjectsList(projects) {
                 </div>
             </div>
             <div class="admin-project-actions">
-                <div class="order-btn-group" title="Reorder position">
-                    <button type="button" class="order-btn" onclick="moveProjectOrder('${proj.id}', -1)" title="Move up / earlier" ${idx === 0 ? 'disabled' : ''}>
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
-                    <button type="button" class="order-btn" onclick="moveProjectOrder('${proj.id}', 1)" title="Move down / later" ${idx === projects.length - 1 ? 'disabled' : ''}>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                </div>
                 <button class="action-btn edit-btn" onclick="openEditProjectModal('${proj.id}')" title="Edit Project">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
@@ -3375,14 +3367,6 @@ function renderAdminShortsList(shorts) {
                 </div>
             </div>
             <div class="admin-short-actions">
-                <div class="order-btn-group" title="Reorder position">
-                    <button type="button" class="order-btn" onclick="moveShortOrder('${short.id}', -1)" title="Move earlier / towards 1st" ${idx === 0 ? 'disabled' : ''}>
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
-                    <button type="button" class="order-btn" onclick="moveShortOrder('${short.id}', 1)" title="Move later" ${idx === shorts.length - 1 ? 'disabled' : ''}>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                </div>
                 <button class="action-btn edit-btn" onclick="openEditShortModal('${short.id}')" title="Edit Reel">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
