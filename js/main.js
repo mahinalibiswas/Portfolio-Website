@@ -1392,6 +1392,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delegated Global Event Listeners for statically AND dynamically rendered cards
     document.addEventListener('click', (e) => {
+        // 0. Auto-close expanded card descriptions when clicking outside
+        if (!e.target.closest('.card-desc') && !e.target.closest('.card-desc-more-btn')) {
+            const allExpanded = document.querySelectorAll('.card-desc.expanded');
+            if (allExpanded.length > 0) {
+                allExpanded.forEach(desc => {
+                    desc.classList.remove('expanded');
+                    const btn = desc.closest('.card-body')?.querySelector('.card-desc-more-btn');
+                    if (btn) {
+                        btn.innerHTML = 'See More <i class="fa-solid fa-chevron-down"></i>';
+                    }
+                    const st = cardDescAnimMap.get(desc);
+                    if (st && st.rafId) {
+                        cancelAnimationFrame(st.rafId);
+                        st.rafId = null;
+                    }
+                });
+            }
+        }
+
         // 1. Reel Modal Controls
         const reelClose = e.target.closest('#closeReelModal');
         if (reelClose) {
@@ -1508,8 +1527,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const cardBody = moreBtn.closest('.card-body');
             const cardDesc = cardBody ? cardBody.querySelector('.card-desc') : null;
             if (cardDesc) {
-                const isExpanded = cardDesc.classList.toggle('expanded');
-                if (isExpanded) {
+                const willExpand = !cardDesc.classList.contains('expanded');
+
+                // Close any other open descriptions so only one is open at a time
+                document.querySelectorAll('.card-desc.expanded').forEach(other => {
+                    if (other !== cardDesc) {
+                        other.classList.remove('expanded');
+                        const otherBtn = other.closest('.card-body')?.querySelector('.card-desc-more-btn');
+                        if (otherBtn) {
+                            otherBtn.innerHTML = 'See More <i class="fa-solid fa-chevron-down"></i>';
+                        }
+                    }
+                });
+
+                if (willExpand) {
+                    cardDesc.classList.add('expanded');
                     cardDesc.scrollTop = 0;
                     const st = cardDescAnimMap.get(cardDesc);
                     if (st) {
@@ -1517,10 +1549,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         st.target = 0;
                         st.rafId = null;
                     }
+                    moreBtn.innerHTML = 'See Less <i class="fa-solid fa-chevron-up"></i>';
+                } else {
+                    cardDesc.classList.remove('expanded');
+                    moreBtn.innerHTML = 'See More <i class="fa-solid fa-chevron-down"></i>';
                 }
-                moreBtn.innerHTML = isExpanded 
-                    ? 'See Less <i class="fa-solid fa-chevron-up"></i>' 
-                    : 'See More <i class="fa-solid fa-chevron-down"></i>';
             }
             return;
         }
@@ -1557,6 +1590,13 @@ document.addEventListener('DOMContentLoaded', () => {
             projModal.classList.remove('active');
             const body = document.getElementById('projectModalBody');
             if (body) body.innerHTML = '';
+        }
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.card-desc.expanded').forEach(desc => {
+                desc.classList.remove('expanded');
+                const btn = desc.closest('.card-body')?.querySelector('.card-desc-more-btn');
+                if (btn) btn.innerHTML = 'See More <i class="fa-solid fa-chevron-down"></i>';
+            });
         }
     });
 
