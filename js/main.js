@@ -1276,13 +1276,15 @@ document.addEventListener('DOMContentLoaded', () => {
             content.classList.remove('collapsed');
             content.classList.add('expanded');
             if (card) card.classList.add('is-expanded');
-            btn.innerHTML = '<span>Show less</span> <i class="fa-solid fa-chevron-up"></i>';
+            btn.innerHTML = '<span>See less</span> <i class="fa-solid fa-chevron-up"></i>';
             btn.setAttribute('aria-expanded', 'true');
         } else {
+            content.scrollTop = 0;
             content.classList.remove('expanded');
             content.classList.add('collapsed');
+            content.scrollTop = 0;
             if (card) card.classList.remove('is-expanded');
-            btn.innerHTML = '<span>...Show more</span> <i class="fa-solid fa-chevron-down"></i>';
+            btn.innerHTML = '<span>...See more</span> <i class="fa-solid fa-chevron-down"></i>';
             btn.setAttribute('aria-expanded', 'false');
         }
     }
@@ -1390,7 +1392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="reel-desc-content ${needsTruncate ? 'collapsed' : 'expanded'}" id="reelDescContent">${formattedDesc}</div>
                             ${needsTruncate ? `
                             <button type="button" class="reel-desc-toggle-btn" id="reelDescToggleBtn" onclick="toggleReelDesc(this)" aria-expanded="false">
-                                <span>...Show more</span> <i class="fa-solid fa-chevron-down"></i>
+                                <span>...See more</span> <i class="fa-solid fa-chevron-down"></i>
                             </button>
                             ` : ''}
                         </div>
@@ -1415,6 +1417,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `;
+
+        const descContent = body.querySelector('#reelDescContent');
+        if (descContent) descContent.scrollTop = 0;
 
         modal.classList.add('active');
     }
