@@ -2001,60 +2001,87 @@ document.addEventListener('DOMContentLoaded', () => {
     const priceDisplay = document.getElementById('priceDisplay');
     const sendEstimateBtn = document.getElementById('sendEstimateBtn');
 
-    const rates = {
-        'youtube_edit': { base: 60, perMin: 20 },
-        'reels_shorts': { base: 35, perMin: 15 },
-        'talking_head': { base: 50, perMin: 15 },
-        'motion_logo': { base: 80, perMin: 25 }
-    };
-
     function calculateEstimate() {
         if (!durationRange || !priceDisplay) return;
+
+        const data = (typeof getSiteData === 'function') ? getSiteData() : null;
+        const estConfig = data?.estimator;
 
         const selectedTypeInput = document.querySelector('input[name="projectType"]:checked');
         const selectedSpeedInput = document.querySelector('input[name="speed"]:checked');
 
-        const type = selectedTypeInput ? selectedTypeInput.value : 'youtube_edit';
-        const speed = selectedSpeedInput ? selectedSpeedInput.value : 'standard';
+        const typeId = selectedTypeInput ? selectedTypeInput.value : 'youtube_edit';
+        const speedId = selectedSpeedInput ? selectedSpeedInput.value : 'standard';
         const mins = parseInt(durationRange.value) || 5;
 
         if (durationVal) durationVal.textContent = `${mins} Minute${mins > 1 ? 's' : ''}`;
 
-        const rate = rates[type] || rates['youtube_edit'];
-        let baseCost = rate.base + (mins * rate.perMin);
+        let baseCost = 60 + (mins * 20);
+        if (estConfig && Array.isArray(estConfig.types) && estConfig.types.length > 0) {
+            const foundType = estConfig.types.find(t => t.id === typeId) || estConfig.types[0];
+            if (foundType) {
+                const base = parseFloat(foundType.basePrice) || 0;
+                const perMin = parseFloat(foundType.perMinPrice) || 0;
+                baseCost = base + (mins * perMin);
+            }
+        } else {
+            const fallbackRates = {
+                'youtube_edit': { base: 60, perMin: 20 },
+                'reels_shorts': { base: 35, perMin: 15 },
+                'talking_head': { base: 50, perMin: 15 },
+                'motion_logo': { base: 80, perMin: 25 }
+            };
+            const rate = fallbackRates[typeId] || fallbackRates['youtube_edit'];
+            baseCost = rate.base + (mins * rate.perMin);
+        }
 
-        if (speed === 'express') baseCost *= 1.4;
+        let multiplier = 1.0;
+        if (estConfig && Array.isArray(estConfig.speeds) && estConfig.speeds.length > 0) {
+            const foundSpeed = estConfig.speeds.find(s => s.id === speedId);
+            if (foundSpeed && foundSpeed.multiplier !== undefined) {
+                multiplier = parseFloat(foundSpeed.multiplier) || 1.0;
+            }
+        } else {
+            if (speedId === 'express') multiplier = 1.4;
+        }
+
+        baseCost *= multiplier;
 
         const minPrice = Math.round(baseCost * 0.9);
         const maxPrice = Math.round(baseCost * 1.2);
 
         priceDisplay.textContent = `$${minPrice} - $${maxPrice} USD`;
     }
+    window.triggerEstimatorRecalculate = calculateEstimate;
 
     durationRange?.addEventListener('input', calculateEstimate);
 
-    document.querySelectorAll('input[name="projectType"], input[name="speed"]').forEach(input => {
-        input.addEventListener('change', (e) => {
-            const parentGroup = e.target.closest('.option-grid');
-            if (parentGroup) {
-                parentGroup.querySelectorAll('.option-card').forEach(card => card.classList.remove('active'));
-                e.target.closest('.option-card')?.classList.add('active');
+    // Use event delegation on form to handle dynamically rendered option-cards
+    if (estimatorForm) {
+        estimatorForm.addEventListener('change', (e) => {
+            if (e.target.matches('input[name="projectType"], input[name="speed"]')) {
+                const parentGroup = e.target.closest('.option-grid');
+                if (parentGroup) {
+                    parentGroup.querySelectorAll('.option-card').forEach(card => card.classList.remove('active'));
+                    e.target.closest('.option-card')?.classList.add('active');
+                }
+                calculateEstimate();
             }
-            calculateEstimate();
         });
-    });
+    }
 
     sendEstimateBtn?.addEventListener('click', () => {
         const contactSection = document.getElementById('contact');
         const clientSubject = document.getElementById('clientSubject');
         const clientMessage = document.getElementById('clientMessage');
 
-        const selectedType = document.querySelector('input[name="projectType"]:checked')?.value || 'youtube_edit';
+        const selectedTypeEl = document.querySelector('input[name="projectType"]:checked');
+        const typeLabel = selectedTypeEl?.closest('.option-card')?.querySelector('span')?.textContent?.trim() || 'Video Edit';
         const mins = durationRange?.value || 5;
         const estPrice = priceDisplay?.textContent || '';
 
-        if (clientSubject) clientSubject.value = `Video Inquiry (${selectedType.replace('_', ' ').toUpperCase()} - ${mins} Mins)`;
-        if (clientMessage) clientMessage.value = `Hi Mahin,\n\nI calculated an estimated project budget of ${estPrice} for a ${mins}-minute ${selectedType.replace('_', ' ')} video.\n\nHere are additional details about my project: `;
+        if (clientSubject) clientSubject.value = `Video Inquiry (${typeLabel} - ${mins} Mins)`;
+        if (clientMessage) clientMessage.value = `Hi Mahin,\n\nI calculated an estimated project budget of ${estPrice} for a ${mins}-minute ${typeLabel} video.\n\nHere are additional details about my project: `;
 
         contactSection?.scrollIntoView({ behavior: 'smooth' });
         showToast('Estimator details copied to contact form!');

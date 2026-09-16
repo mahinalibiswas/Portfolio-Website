@@ -526,4 +526,90 @@ function renderSiteData(customData) {
         const locVal = document.querySelectorAll('.method-val')[2];
         if (locVal) locVal.textContent = data.contact.location || "Dhaka, Bangladesh (Available Worldwide)";
     }
+
+    // 8. Render Project Estimator Section
+    const estimatorSec = document.getElementById('estimator');
+    if (estimatorSec) {
+        const estData = data.estimator || {
+            enabled: true,
+            titleTop: "Calculate Your Video",
+            titleHighlight: "Scope & Budget",
+            subtitle: "Select your video requirements below to calculate an instant cost estimate and send a direct inquiry to Mahin Ali Biswas.",
+            types: [
+                { id: "youtube_edit", name: "YouTube Video Edit", icon: "fa-brands fa-youtube", basePrice: 60, perMinPrice: 20 },
+                { id: "reels_shorts", name: "Reels / Shorts (Vertical)", icon: "fa-solid fa-mobile-screen", basePrice: 35, perMinPrice: 15 },
+                { id: "talking_head", name: "Talking Head / Course", icon: "fa-solid fa-user-tie", basePrice: 50, perMinPrice: 15 },
+                { id: "motion_logo", name: "Motion Graphics & Logo", icon: "fa-solid fa-wand-magic-sparkles", basePrice: 80, perMinPrice: 25 }
+            ],
+            speeds: [
+                { id: "standard", name: "Standard (3-5 Days)", icon: "fa-solid fa-calendar", multiplier: 1.0 },
+                { id: "express", name: "Express Rush (24-48 Hours)", icon: "fa-solid fa-gauge-high", multiplier: 1.4 }
+            ],
+            buttonText: "Book Video Project With Mahin",
+            buttonIcon: "fa-solid fa-paper-plane"
+        };
+
+        if (estData.enabled === false) {
+            estimatorSec.style.display = 'none';
+            document.querySelectorAll('a[href="#estimator"]').forEach(el => el.style.display = 'none');
+        } else {
+            estimatorSec.style.display = '';
+            document.querySelectorAll('a[href="#estimator"]').forEach(el => el.style.display = '');
+
+            // Title & Subtitle
+            const estTitle = estimatorSec.querySelector('.section-title');
+            if (estTitle) {
+                estTitle.innerHTML = `${estData.titleTop || "Calculate Your Video"} <span class="gradient-text">${estData.titleHighlight || "Scope & Budget"}</span>`;
+            }
+            const estDesc = estimatorSec.querySelector('.section-desc');
+            if (estDesc) {
+                estDesc.textContent = estData.subtitle || "";
+            }
+
+            // Render Types
+            const typeOptionsContainer = document.getElementById('typeOptions');
+            if (typeOptionsContainer && Array.isArray(estData.types) && estData.types.length > 0) {
+                const curSelected = typeOptionsContainer.querySelector('input[name="projectType"]:checked')?.value || estData.types[0].id;
+                typeOptionsContainer.innerHTML = estData.types.map((type, idx) => {
+                    const isChecked = (type.id === curSelected) || (!curSelected && idx === 0);
+                    return `
+                        <label class="option-card ${isChecked ? 'active' : ''}">
+                            <input type="radio" name="projectType" value="${type.id}" ${isChecked ? 'checked' : ''}>
+                            <i class="${type.icon || 'fa-solid fa-film'}"></i>
+                            <span>${type.name}</span>
+                        </label>
+                    `;
+                }).join('');
+            }
+
+            // Render Speeds
+            const speedOptionsContainer = document.getElementById('speedOptions');
+            if (speedOptionsContainer && Array.isArray(estData.speeds) && estData.speeds.length > 0) {
+                const curSpeed = speedOptionsContainer.querySelector('input[name="speed"]:checked')?.value || estData.speeds[0].id;
+                speedOptionsContainer.innerHTML = estData.speeds.map((speed, idx) => {
+                    const isChecked = (speed.id === curSpeed) || (!curSpeed && idx === 0);
+                    return `
+                        <label class="option-card ${isChecked ? 'active' : ''}">
+                            <input type="radio" name="speed" value="${speed.id}" ${isChecked ? 'checked' : ''}>
+                            <i class="${speed.icon || 'fa-solid fa-clock'}"></i>
+                            <span>${speed.name}</span>
+                        </label>
+                    `;
+                }).join('');
+            }
+
+            // Button Text & Icon
+            const sendBtn = document.getElementById('sendEstimateBtn');
+            if (sendBtn) {
+                const btnIcon = estData.buttonIcon || 'fa-solid fa-paper-plane';
+                const btnText = estData.buttonText || 'Book Video Project With Mahin';
+                sendBtn.innerHTML = `<i class="${btnIcon}"></i> ${btnText}`;
+            }
+
+            // Trigger recalculate if available
+            if (typeof window.triggerEstimatorRecalculate === 'function') {
+                window.triggerEstimatorRecalculate();
+            }
+        }
+    }
 }

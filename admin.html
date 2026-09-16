@@ -110,6 +110,10 @@
                         <i class="fa-solid fa-laptop-code"></i>
                         <span>Software & Toolkit</span>
                     </button>
+                    <button class="admin-tab-btn" data-tab="tab-estimator">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>Scope Estimator</span>
+                    </button>
                     <button class="admin-tab-btn" data-tab="tab-contact">
                         <i class="fa-solid fa-paper-plane"></i>
                         <span>Contact & Socials</span>
@@ -782,6 +786,152 @@
                         </div>
                     </div>
                 </section>
+ 
+                <!-- TAB: SCOPE & BUDGET ESTIMATOR -->
+                <section class="admin-tab-content" id="tab-estimator">
+                    <div class="admin-split-layout">
+                        <!-- Top Sticky Live Preview Pane -->
+                        <div class="admin-preview-pane">
+                            <div class="admin-preview-header">
+                                <h4><i class="fa-solid fa-eye" style="color: var(--accent-neon);"></i> Estimator &amp; Budget Live Preview</h4>
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span class="live-status-pill"><i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> LIVE PREVIEW</span>
+                                    <button type="button" class="btn-preview-toggle" onclick="toggleLivePreviewCollapse(this)" title="Minimize Live Preview"><i class="fa-solid fa-chevron-up"></i></button>
+                                </div>
+                            </div>
+                            <div class="admin-preview-canvas" id="previewEstimatorCanvas">
+                                <!-- Dynamically rendered by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Bottom Form Options Panel -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Project Scope &amp; Budget Estimator</h3>
+                                    <p>Customize project types, base pricing, per-minute rates, turnaround speeds, and section texts.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-save" onclick="saveEstimatorSection()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Estimator Changes
+                                </button>
+                            </div>
+
+                            <form id="estimatorAdminForm" class="full-width" onsubmit="event.preventDefault(); saveEstimatorSection();">
+                                <!-- General Settings Card -->
+                                <div class="admin-card-row" style="padding: 1.5rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box; margin-bottom: 1.5rem;">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                        <h4 style="margin: 0; color: #ffffff; font-size: 0.98rem; font-weight: 700;">
+                                            <i class="fa-solid fa-sliders" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Section Header &amp; Visibility
+                                        </h4>
+                                        <label style="display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; font-size: 0.85rem; color: #e2e8f0; font-weight: 600;">
+                                            <input type="checkbox" id="estimatorEnabled" checked onchange="renderLiveEstimatorPreview()" style="width: 18px; height: 18px; accent-color: var(--accent-neon); cursor: pointer;">
+                                            <span>Show Estimator on Website</span>
+                                        </label>
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                                        <div>
+                                            <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.35rem;">Title (White Part)</label>
+                                            <input type="text" id="estimatorTitleTop" value="Calculate Your Video" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.85rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                        </div>
+                                        <div>
+                                            <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.35rem;">Title Highlight (Neon Gradient Part)</label>
+                                            <input type="text" id="estimatorTitleHighlight" value="Scope &amp; Budget" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.85rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 1rem;">
+                                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.35rem;">Section Subtitle / Description</label>
+                                        <textarea id="estimatorSubtitle" rows="2" oninput="renderLiveEstimatorPreview()" style="width: 100%; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0.65rem 0.85rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box; resize: vertical;">Select your video requirements below to calculate an instant cost estimate and send a direct inquiry to Mahin Ali Biswas.</textarea>
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                                        <div>
+                                            <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.35rem;">CTA Action Button Text</label>
+                                            <input type="text" id="estimatorButtonText" value="Book Video Project With Mahin" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 42px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.85rem; border-radius: 10px; font-size: 0.88rem; outline: none; box-sizing: border-box;">
+                                        </div>
+                                        <div>
+                                            <label style="color: #94a3b8; font-weight: 600; font-size: 0.78rem; display: block; margin-bottom: 0.35rem;">CTA Button Icon</label>
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div id="estBtnIconBadge" style="width: 42px; height: 42px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-neon); flex-shrink: 0;">
+                                                    <i class="fa-solid fa-paper-plane"></i>
+                                                </div>
+                                                <input type="hidden" id="estimatorButtonIcon" value="fa-solid fa-paper-plane">
+                                                <button type="button" class="btn btn-hero-secondary btn-sm" onclick="openIconPickerModal('estimatorButtonIcon', 'estBtnIconBadge', 'estimator')" style="flex: 1; height: 42px; border-radius: 10px; font-size: 0.8rem;">
+                                                    <i class="fa-solid fa-icons"></i> Pick
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Service Types & Pricing Rates -->
+                                <div class="admin-card-row" style="padding: 1.5rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box; margin-bottom: 1.5rem;">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                        <div>
+                                            <h4 style="margin: 0; color: #ffffff; font-size: 0.98rem; font-weight: 700;">
+                                                <i class="fa-solid fa-film" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Video Types &amp; Pricing Rates
+                                            </h4>
+                                            <p style="margin: 0.2rem 0 0 0; font-size: 0.76rem; color: #94a3b8;">Set base project starting price and additional cost per minute for each video style.</p>
+                                        </div>
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="addEstimatorType()" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                                            <i class="fa-solid fa-plus"></i> Add Project Type
+                                        </button>
+                                    </div>
+
+                                    <div id="adminEstimatorTypesList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                                        <!-- Rendered dynamically by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Turnaround Speeds & Multipliers -->
+                                <div class="admin-card-row" style="padding: 1.5rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box;">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                                        <h4 style="margin: 0; color: #ffffff; font-size: 0.98rem; font-weight: 700;">
+                                            <i class="fa-solid fa-gauge-high" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Delivery Speeds &amp; Price Multipliers
+                                        </h4>
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem;">
+                                        <!-- Standard Delivery -->
+                                        <div style="padding: 1.2rem; background: rgba(2, 6, 23, 0.7); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 0.8rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <i class="fa-solid fa-calendar" style="color: var(--accent-neon); font-size: 1.1rem;"></i>
+                                                <h5 style="margin: 0; color: #ffffff; font-size: 0.9rem; font-weight: 700;">Standard Delivery</h5>
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block; margin-bottom: 0.3rem;">Speed Label</label>
+                                                <input type="text" id="estSpeedStandardName" value="Standard (3-5 Days)" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 40px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                                                <input type="hidden" id="estSpeedStandardIcon" value="fa-solid fa-calendar">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block; margin-bottom: 0.3rem;">Price Multiplier (1.0 = Normal Price)</label>
+                                                <input type="number" id="estSpeedStandardMulti" value="1.0" step="0.1" min="0.5" max="5.0" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 40px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                        </div>
+
+                                        <!-- Express Rush Delivery -->
+                                        <div style="padding: 1.2rem; background: rgba(2, 6, 23, 0.7); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 0.8rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <i class="fa-solid fa-gauge-high" style="color: var(--accent-neon); font-size: 1.1rem;"></i>
+                                                <h5 style="margin: 0; color: #ffffff; font-size: 0.9rem; font-weight: 700;">Express Rush Delivery</h5>
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block; margin-bottom: 0.3rem;">Speed Label</label>
+                                                <input type="text" id="estSpeedExpressName" value="Express Rush (24-48 Hours)" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 40px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                                                <input type="hidden" id="estSpeedExpressIcon" value="fa-solid fa-gauge-high">
+                                            </div>
+                                            <div>
+                                                <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block; margin-bottom: 0.3rem;">Price Multiplier (1.4 = +40% Express Fee)</label>
+                                                <input type="number" id="estSpeedExpressMulti" value="1.4" step="0.1" min="0.5" max="5.0" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 40px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- TAB 7: BACKUP & SECURITY -->
                 <section class="admin-tab-content" id="tab-settings">
@@ -1256,7 +1406,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=73.0"></script>
-    <script src="js/admin.js?v=79.0"></script>
+    <script src="js/siteData.js?v=80.0"></script>
+    <script src="js/admin.js?v=80.0"></script>
 </body>
 </html>

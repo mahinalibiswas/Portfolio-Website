@@ -417,7 +417,33 @@ const DEFAULT_SITE_DATA = {
         { icon: "fa-solid fa-wand-magic-sparkles", text: "2D/3D TITLE ANIMATION" }
     ],
 
-    // 8. Contact & Socials
+    // 8. Scope & Budget Estimator
+    estimator: {
+        enabled: true,
+        titleTop: "Calculate Your Video",
+        titleHighlight: "Scope & Budget",
+        subtitle: "Select your video requirements below to calculate an instant cost estimate and send a direct inquiry to Mahin Ali Biswas.",
+        types: [
+            { id: "youtube_edit", name: "YouTube Video Edit", icon: "fa-brands fa-youtube", basePrice: 60, perMinPrice: 20 },
+            { id: "reels_shorts", name: "Reels / Shorts (Vertical)", icon: "fa-solid fa-mobile-screen", basePrice: 35, perMinPrice: 15 },
+            { id: "talking_head", name: "Talking Head / Course", icon: "fa-solid fa-user-tie", basePrice: 50, perMinPrice: 15 },
+            { id: "motion_logo", name: "Motion Graphics & Logo", icon: "fa-solid fa-wand-magic-sparkles", basePrice: 80, perMinPrice: 25 }
+        ],
+        duration: {
+            min: 1,
+            max: 30,
+            step: 1,
+            defaultVal: 5
+        },
+        speeds: [
+            { id: "standard", name: "Standard (3-5 Days)", icon: "fa-solid fa-calendar", multiplier: 1.0 },
+            { id: "express", name: "Express Rush (24-48 Hours)", icon: "fa-solid fa-gauge-high", multiplier: 1.4 }
+        ],
+        buttonText: "Book Video Project With Mahin",
+        buttonIcon: "fa-solid fa-paper-plane"
+    },
+
+    // 9. Contact & Socials
     contact: {
         email: "mahinali2322@gmail.com",
         whatsapp: "+8801700000000",

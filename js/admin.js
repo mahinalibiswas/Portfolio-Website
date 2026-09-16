@@ -467,6 +467,37 @@ function renderAdminFormsWithData(data) {
         if (document.getElementById('contactFacebook')) document.getElementById('contactFacebook').value = data.contact.facebookUrl || '';
     }
 
+    // 7. Load Estimator Section Data
+    const est = data.estimator || {
+        enabled: true,
+        titleTop: 'Calculate Your Video',
+        titleHighlight: 'Scope & Budget',
+        subtitle: 'Select your video requirements below to calculate an instant cost estimate and send a direct inquiry to Mahin Ali Biswas.',
+        buttonText: 'Book Video Project With Mahin',
+        buttonIcon: 'fa-solid fa-paper-plane',
+        types: [
+            { id: "youtube_edit", name: "YouTube Video Edit", icon: "fa-brands fa-youtube", basePrice: 60, perMinPrice: 20 },
+            { id: "reels_shorts", name: "Reels / Shorts (Vertical)", icon: "fa-solid fa-mobile-screen", basePrice: 35, perMinPrice: 15 },
+            { id: "talking_head", name: "Talking Head / Course", icon: "fa-solid fa-user-tie", basePrice: 50, perMinPrice: 15 },
+            { id: "motion_logo", name: "Motion Graphics & Logo", icon: "fa-solid fa-wand-magic-sparkles", basePrice: 80, perMinPrice: 25 }
+        ],
+        speeds: [
+            { id: "standard", name: "Standard (3-5 Days)", icon: "fa-solid fa-calendar", multiplier: 1.0 },
+            { id: "express", name: "Express Rush (24-48 Hours)", icon: "fa-solid fa-gauge-high", multiplier: 1.4 }
+        ]
+    };
+    if (document.getElementById('estimatorEnabled')) document.getElementById('estimatorEnabled').checked = est.enabled !== false;
+    if (document.getElementById('estimatorTitleTop')) document.getElementById('estimatorTitleTop').value = est.titleTop || 'Calculate Your Video';
+    if (document.getElementById('estimatorTitleHighlight')) document.getElementById('estimatorTitleHighlight').value = est.titleHighlight || 'Scope & Budget';
+    if (document.getElementById('estimatorSubtitle')) document.getElementById('estimatorSubtitle').value = est.subtitle || '';
+    if (document.getElementById('estimatorButtonText')) document.getElementById('estimatorButtonText').value = est.buttonText || 'Book Video Project With Mahin';
+    if (document.getElementById('estimatorButtonIcon')) document.getElementById('estimatorButtonIcon').value = est.buttonIcon || 'fa-solid fa-paper-plane';
+    const estBtnBadge = document.getElementById('estBtnIconBadge');
+    if (estBtnBadge) estBtnBadge.innerHTML = `<i class="${est.buttonIcon || 'fa-solid fa-paper-plane'}"></i>`;
+    
+    renderAdminEstimatorTypes(est.types);
+    renderAdminEstimatorSpeeds(est.speeds);
+
     // Render All Live Preview Panes
     renderAllLivePreviews();
 }
@@ -939,6 +970,7 @@ function renderAllLivePreviews() {
     renderLiveAboutPreview();
     renderLiveServicesPreview();
     renderLiveSoftwarePreview();
+    renderLiveEstimatorPreview();
     renderLiveContactPreview();
 }
 
@@ -2967,9 +2999,255 @@ function removeShowreelPosterImage() {
     showToast('Showreel cover image removed', 'info');
 }
 
-window.saveShowreelSection = saveShowreelSection;
-window.handleShowreelPosterUpload = handleShowreelPosterUpload;
-window.removeShowreelPosterImage = removeShowreelPosterImage;
+/* --- Scope & Budget Estimator Manager --- */
+let tempEstimatorTypes = null;
+
+function renderAdminEstimatorTypes(types) {
+    const listContainer = document.getElementById('adminEstimatorTypesList');
+    if (!listContainer) return;
+
+    if (!tempEstimatorTypes || !Array.isArray(tempEstimatorTypes)) {
+        tempEstimatorTypes = (Array.isArray(types) && types.length > 0) ? JSON.parse(JSON.stringify(types)) : [
+            { id: "youtube_edit", name: "YouTube Video Edit", icon: "fa-brands fa-youtube", basePrice: 60, perMinPrice: 20 },
+            { id: "reels_shorts", name: "Reels / Shorts (Vertical)", icon: "fa-solid fa-mobile-screen", basePrice: 35, perMinPrice: 15 },
+            { id: "talking_head", name: "Talking Head / Course", icon: "fa-solid fa-user-tie", basePrice: 50, perMinPrice: 15 },
+            { id: "motion_logo", name: "Motion Graphics & Logo", icon: "fa-solid fa-wand-magic-sparkles", basePrice: 80, perMinPrice: 25 }
+        ];
+    }
+
+    listContainer.innerHTML = tempEstimatorTypes.map((t, index) => {
+        return `
+            <div class="admin-card-row" style="padding: 1.25rem; background: rgba(2, 8, 23, 0.6); border-radius: 14px; border: 1px solid var(--border-glow); box-sizing: border-box; display: flex; flex-direction: column; gap: 0.85rem; overflow: hidden;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 0.6rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1);">
+                    <h4 style="margin: 0; color: #ffffff; font-size: 0.92rem; font-weight: 700;">
+                        <i class="fa-solid fa-layer-group" style="color: var(--accent-neon); margin-right: 0.4rem;"></i> Project Type #${index + 1}
+                    </h4>
+                    ${tempEstimatorTypes.length > 1 ? `
+                        <button type="button" onclick="deleteEstimatorType('${t.id}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 8px; padding: 0.3rem 0.65rem; cursor: pointer; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.35rem;" title="Delete this type">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                    ` : ''}
+                </div>
+
+                <!-- Type Name -->
+                <div>
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block; margin-bottom: 0.3rem;">Type Name / Title</label>
+                    <input type="text" id="estTypeName_${t.id}" value="${t.name || ''}" oninput="renderLiveEstimatorPreview()" placeholder="e.g. YouTube Video Edit" style="width: 100%; height: 40px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                </div>
+
+                <!-- Icon Picker -->
+                <div>
+                    <label style="color: #94a3b8; font-weight: 600; font-size: 0.76rem; display: block; margin-bottom: 0.3rem;">Type Icon</label>
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <div id="estTypeBadge_${t.id}" style="width: 40px; height: 40px; background: rgba(163, 230, 53, 0.12); border: 1px solid var(--accent-neon); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; color: var(--accent-neon); flex-shrink: 0;">
+                            <i class="${t.icon || 'fa-solid fa-film'}"></i>
+                        </div>
+                        <input type="hidden" id="estTypeIcon_${t.id}" value="${t.icon || 'fa-solid fa-film'}">
+                        <button type="button" class="btn btn-hero-secondary btn-sm" onclick="openIconPickerModal('estTypeIcon_${t.id}', 'estTypeBadge_${t.id}', 'estimator')" style="flex: 1; height: 40px; border-radius: 10px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-icons"></i> Pick Icon
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pricing: Base Price & Per Minute Rate -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem;">
+                    <div>
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.74rem; display: block; margin-bottom: 0.3rem;">Base Starting ($)</label>
+                        <input type="number" id="estTypeBase_${t.id}" value="${t.basePrice ?? 60}" min="0" step="1" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 40px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="color: #94a3b8; font-weight: 600; font-size: 0.74rem; display: block; margin-bottom: 0.3rem;">Per Minute ($/min)</label>
+                        <input type="number" id="estTypePerMin_${t.id}" value="${t.perMinPrice ?? 20}" min="0" step="1" oninput="renderLiveEstimatorPreview()" style="width: 100%; height: 40px; background: rgba(2, 6, 23, 0.8); color: #ffffff; border: 1px solid var(--border-glow); padding: 0 0.8rem; border-radius: 10px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderAdminEstimatorSpeeds(speeds) {
+    if (!speeds || !Array.isArray(speeds)) return;
+    const std = speeds.find(s => s.id === 'standard') || speeds[0];
+    const exp = speeds.find(s => s.id === 'express') || speeds[1];
+
+    if (std) {
+        if (document.getElementById('estSpeedStandardName')) document.getElementById('estSpeedStandardName').value = std.name || 'Standard (3-5 Days)';
+        if (document.getElementById('estSpeedStandardIcon')) document.getElementById('estSpeedStandardIcon').value = std.icon || 'fa-solid fa-calendar';
+        if (document.getElementById('estSpeedStandardMulti')) document.getElementById('estSpeedStandardMulti').value = std.multiplier ?? 1.0;
+    }
+    if (exp) {
+        if (document.getElementById('estSpeedExpressName')) document.getElementById('estSpeedExpressName').value = exp.name || 'Express Rush (24-48 Hours)';
+        if (document.getElementById('estSpeedExpressIcon')) document.getElementById('estSpeedExpressIcon').value = exp.icon || 'fa-solid fa-gauge-high';
+        if (document.getElementById('estSpeedExpressMulti')) document.getElementById('estSpeedExpressMulti').value = exp.multiplier ?? 1.4;
+    }
+}
+
+function addEstimatorType() {
+    if (!tempEstimatorTypes) tempEstimatorTypes = [];
+    const newId = 'type_' + Date.now();
+    tempEstimatorTypes.push({
+        id: newId,
+        name: 'New Video Service',
+        icon: 'fa-solid fa-video',
+        basePrice: 50,
+        perMinPrice: 15
+    });
+    renderAdminEstimatorTypes(tempEstimatorTypes);
+    renderLiveEstimatorPreview();
+    showToast('New project type added! Configure its rates below.', 'info');
+}
+
+function deleteEstimatorType(id) {
+    if (!tempEstimatorTypes) return;
+    openDeleteConfirmModal('Are you sure you want to delete this project type from the estimator?', () => {
+        tempEstimatorTypes = tempEstimatorTypes.filter(t => t.id !== id);
+        renderAdminEstimatorTypes(tempEstimatorTypes);
+        renderLiveEstimatorPreview();
+        showToast('Project type removed.', 'info');
+    });
+}
+
+function renderLiveEstimatorPreview() {
+    const canvas = document.getElementById('previewEstimatorCanvas');
+    if (!canvas) return;
+
+    const isEnabled = document.getElementById('estimatorEnabled')?.checked ?? true;
+    const titleTop = document.getElementById('estimatorTitleTop')?.value || 'Calculate Your Video';
+    const titleHighlight = document.getElementById('estimatorTitleHighlight')?.value || 'Scope & Budget';
+    const subtitle = document.getElementById('estimatorSubtitle')?.value || 'Select your video requirements below to calculate an instant cost estimate and send a direct inquiry to Mahin Ali Biswas.';
+    const btnText = document.getElementById('estimatorButtonText')?.value || 'Book Video Project With Mahin';
+    const btnIcon = document.getElementById('estimatorButtonIcon')?.value || 'fa-solid fa-paper-plane';
+
+    const types = (tempEstimatorTypes && tempEstimatorTypes.length > 0) ? tempEstimatorTypes.map(t => ({
+        id: t.id,
+        name: document.getElementById(`estTypeName_${t.id}`)?.value || t.name || 'Video Edit',
+        icon: document.getElementById(`estTypeIcon_${t.id}`)?.value || t.icon || 'fa-solid fa-film',
+        basePrice: parseFloat(document.getElementById(`estTypeBase_${t.id}`)?.value) || 0,
+        perMinPrice: parseFloat(document.getElementById(`estTypePerMin_${t.id}`)?.value) || 0
+    })) : [
+        { id: "youtube_edit", name: "YouTube Video Edit", icon: "fa-brands fa-youtube", basePrice: 60, perMinPrice: 20 },
+        { id: "reels_shorts", name: "Reels / Shorts (Vertical)", icon: "fa-solid fa-mobile-screen", basePrice: 35, perMinPrice: 15 },
+        { id: "talking_head", name: "Talking Head / Course", icon: "fa-solid fa-user-tie", basePrice: 50, perMinPrice: 15 },
+        { id: "motion_logo", name: "Motion Graphics & Logo", icon: "fa-solid fa-wand-magic-sparkles", basePrice: 80, perMinPrice: 25 }
+    ];
+
+    const firstType = types[0] || { basePrice: 60, perMinPrice: 20 };
+    const est5Min = firstType.basePrice + (5 * firstType.perMinPrice);
+    const minP = Math.round(est5Min * 0.9);
+    const maxP = Math.round(est5Min * 1.2);
+
+    canvas.innerHTML = `
+        <div style="width: 100%; max-width: 780px; margin: 0 auto; background: rgba(2, 6, 23, 0.85); border: 1px solid var(--border-glow); border-radius: 20px; padding: 1.8rem; box-sizing: border-box; opacity: ${isEnabled ? '1' : '0.5'};">
+            ${!isEnabled ? `<div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; text-align: center; margin-bottom: 1rem;"><i class="fa-solid fa-eye-slash"></i> Section is currently HIDDEN on live website</div>` : ''}
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.45rem; font-weight: 800; color: #fff; margin: 0 0 0.4rem 0;">
+                    ${titleTop} <span class="gradient-text">${titleHighlight}</span>
+                </h3>
+                <p style="color: #94a3b8; font-size: 0.82rem; margin: 0 auto; max-width: 520px; line-height: 1.4;">${subtitle}</p>
+            </div>
+
+            <div style="margin-bottom: 1.2rem;">
+                <div style="color: #e2e8f0; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.6rem;">1. What type of video editing do you need?</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.6rem;">
+                    ${types.map((t, idx) => `
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.75rem 0.5rem; background: ${idx === 0 ? 'rgba(163, 230, 53, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${idx === 0 ? 'var(--accent-neon)' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 12px; text-align: center; color: ${idx === 0 ? 'var(--accent-neon)' : '#cbd5e1'}; font-size: 0.75rem; font-weight: 600;">
+                            <i class="${t.icon}" style="font-size: 1.15rem;"></i>
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">${t.name}</span>
+                            <span style="font-size: 0.68rem; color: #94a3b8; opacity: 0.85;">$${t.basePrice} + $${t.perMinPrice}/m</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                    <span style="color: #e2e8f0; font-size: 0.8rem; font-weight: 700;">2. Estimated Video Length:</span>
+                    <span style="color: var(--accent-neon); font-size: 0.82rem; font-weight: 700;">5 Minutes</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.15); border-radius: 3px; position: relative;">
+                    <div style="width: 30%; height: 100%; background: var(--accent-neon); border-radius: 3px;"></div>
+                </div>
+            </div>
+
+            <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(163, 230, 53, 0.25); border-radius: 14px; padding: 1rem 1.2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;">
+                <div>
+                    <span style="font-size: 0.72rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Estimated Range:</span>
+                    <div style="font-size: 1.3rem; font-weight: 800; color: var(--accent-neon); font-family: 'Outfit', sans-serif;">$${minP} - $${maxP} USD</div>
+                </div>
+                <div style="background: var(--accent-neon); color: #000; font-weight: 700; font-size: 0.82rem; padding: 0.5rem 1.1rem; border-radius: 30px; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="${btnIcon}"></i> ${btnText}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Save Scope & Budget Estimator
+async function saveEstimatorSection() {
+    const saveBtn = document.querySelector('#tab-estimator .btn-save');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Live Cloud...';
+    }
+
+    const data = getSiteData();
+    const types = (tempEstimatorTypes || data.estimator?.types || []).map((t, idx) => {
+        return {
+            id: t.id || `type_${Date.now()}_${idx}`,
+            name: document.getElementById(`estTypeName_${t.id}`)?.value || t.name || 'Video Edit',
+            icon: document.getElementById(`estTypeIcon_${t.id}`)?.value || t.icon || 'fa-solid fa-film',
+            basePrice: parseFloat(document.getElementById(`estTypeBase_${t.id}`)?.value) || 0,
+            perMinPrice: parseFloat(document.getElementById(`estTypePerMin_${t.id}`)?.value) || 0
+        };
+    });
+
+    const speeds = [
+        {
+            id: "standard",
+            name: document.getElementById('estSpeedStandardName')?.value || 'Standard (3-5 Days)',
+            icon: document.getElementById('estSpeedStandardIcon')?.value || 'fa-solid fa-calendar',
+            multiplier: parseFloat(document.getElementById('estSpeedStandardMulti')?.value) || 1.0
+        },
+        {
+            id: "express",
+            name: document.getElementById('estSpeedExpressName')?.value || 'Express Rush (24-48 Hours)',
+            icon: document.getElementById('estSpeedExpressIcon')?.value || 'fa-solid fa-gauge-high',
+            multiplier: parseFloat(document.getElementById('estSpeedExpressMulti')?.value) || 1.4
+        }
+    ];
+
+    data.estimator = {
+        ...(data.estimator || {}),
+        enabled: document.getElementById('estimatorEnabled')?.checked ?? true,
+        titleTop: document.getElementById('estimatorTitleTop')?.value || 'Calculate Your Video',
+        titleHighlight: document.getElementById('estimatorTitleHighlight')?.value || 'Scope & Budget',
+        subtitle: document.getElementById('estimatorSubtitle')?.value || '',
+        buttonText: document.getElementById('estimatorButtonText')?.value || 'Book Video Project With Mahin',
+        buttonIcon: document.getElementById('estimatorButtonIcon')?.value || 'fa-solid fa-paper-plane',
+        types: types,
+        speeds: speeds
+    };
+
+    tempEstimatorTypes = types;
+
+    await saveSiteData(data);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Estimator Changes';
+    }
+
+    if (typeof renderSiteData === 'function') renderSiteData();
+    renderLiveEstimatorPreview();
+    showToast('Scope & Budget Estimator updated live across all devices!', 'success');
+}
+
+window.renderAdminEstimatorTypes = renderAdminEstimatorTypes;
+window.renderAdminEstimatorSpeeds = renderAdminEstimatorSpeeds;
+window.addEstimatorType = addEstimatorType;
+window.deleteEstimatorType = deleteEstimatorType;
+window.renderLiveEstimatorPreview = renderLiveEstimatorPreview;
+window.saveEstimatorSection = saveEstimatorSection;
 
 // Save Contact
 async function saveContactSection() {
@@ -4090,6 +4368,7 @@ function selectIconFromPicker(iconClass) {
     // Trigger live preview update
     if (currentIconTargetSection === 'about') renderLiveAboutPreview();
     if (currentIconTargetSection === 'hero') renderLiveHeroPreview();
+    if (currentIconTargetSection === 'estimator') renderLiveEstimatorPreview();
 
     showToast('Icon selected!', 'success');
 }
