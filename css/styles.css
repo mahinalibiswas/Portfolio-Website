@@ -4271,6 +4271,7 @@ button {
     white-space: pre-line;
     word-break: break-word;
     margin: 0;
+    overscroll-behavior: contain;
 }
 
 .reel-desc-content.collapsed {
@@ -4287,6 +4288,8 @@ button {
     max-height: 155px;
     overflow-y: auto;
     padding-right: 0.4rem;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .reel-desc-content::-webkit-scrollbar {

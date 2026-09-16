@@ -100,7 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('wheel', (e) => {
-        const descEl = e.target.closest('.card-desc.expanded');
+        let descEl = e.target.closest('.card-desc.expanded, .reel-desc-content.expanded');
+        if (!descEl) {
+            const reelCard = e.target.closest('.reel-youtube-desc-card.is-expanded');
+            if (reelCard) {
+                descEl = reelCard.querySelector('.reel-desc-content.expanded');
+            }
+        }
         if (!descEl) return;
 
         const maxScroll = descEl.scrollHeight - descEl.clientHeight;
@@ -115,6 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const atTop = descEl.scrollTop <= 1 && currentTarget <= 0;
         const atBottom = descEl.scrollTop >= maxScroll - 1 && currentTarget >= maxScroll;
+
+        const isReelDesc = descEl.classList.contains('reel-desc-content');
 
         // If scrolling DOWN and not at bottom yet: scroll description smoothly, keep page still
         if (delta > 0 && !atBottom) {
@@ -134,21 +142,35 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // When boundary is reached (atBottom while scrolling down, or atTop while scrolling up),
+        // Inside the reel detail modal, contain scroll when boundary is reached so modal doesn't jump
+        if (isReelDesc) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        // When boundary is reached on main page card-desc (atBottom while scrolling down, or atTop while scrolling up),
         // let the event pass to Lenis so the whole page scrolls smoothly!
     }, { capture: true, passive: false });
 
     // Mobile touch scroll chaining
     let cardTouchStartY = 0;
     window.addEventListener('touchstart', (e) => {
-        const descEl = e.target.closest('.card-desc.expanded');
+        let descEl = e.target.closest('.card-desc.expanded, .reel-desc-content.expanded');
+        if (!descEl) {
+            const reelCard = e.target.closest('.reel-youtube-desc-card.is-expanded');
+            if (reelCard) descEl = reelCard.querySelector('.reel-desc-content.expanded');
+        }
         if (descEl && e.touches && e.touches.length > 0) {
             cardTouchStartY = e.touches[0].clientY;
         }
     }, { capture: true, passive: true });
 
     window.addEventListener('touchmove', (e) => {
-        const descEl = e.target.closest('.card-desc.expanded');
+        let descEl = e.target.closest('.card-desc.expanded, .reel-desc-content.expanded');
+        if (!descEl) {
+            const reelCard = e.target.closest('.reel-youtube-desc-card.is-expanded');
+            if (reelCard) descEl = reelCard.querySelector('.reel-desc-content.expanded');
+        }
         if (!descEl || !e.touches || e.touches.length === 0) return;
 
         const maxScroll = descEl.scrollHeight - descEl.clientHeight;
@@ -1283,6 +1305,14 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<span>See less</span> <i class="fa-solid fa-chevron-up"></i>';
             btn.setAttribute('aria-expanded', 'true');
         } else {
+            // 0. Cancel any active momentum scrolling animation
+            const st = cardDescAnimMap.get(content);
+            if (st) {
+                if (st.rafId) cancelAnimationFrame(st.rafId);
+                st.target = 0;
+                st.rafId = null;
+            }
+
             // 1. Instantly reset scroll to top
             content.scrollTo({ top: 0, left: 0, behavior: 'instant' });
             content.scrollTop = 0;
@@ -1449,6 +1479,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeReelDetailModal() {
         const modal = document.getElementById('reelDetailModal');
         if (modal) modal.classList.remove('active');
+        const expandedCard = document.querySelector('.reel-youtube-desc-card.is-expanded');
+        if (expandedCard) {
+            const btn = expandedCard.querySelector('.reel-desc-toggle-btn');
+            if (btn) toggleReelDesc(btn);
+        }
         window.lenis?.start();
     }
 
@@ -1641,6 +1676,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // 0. Auto-close expanded card descriptions when clicking outside
         if (!e.target.closest('.card-desc') && !e.target.closest('.card-desc-more-btn')) {
             document.querySelectorAll('.card-desc.expanded').forEach(collapseCardDesc);
+        }
+
+        // Auto-close expanded reel YouTube description when clicking outside
+        if (!e.target.closest('.reel-youtube-desc-card')) {
+            const expandedCard = document.querySelector('.reel-youtube-desc-card.is-expanded');
+            if (expandedCard) {
+                const btn = expandedCard.querySelector('.reel-desc-toggle-btn');
+                if (btn) toggleReelDesc(btn);
+            }
         }
 
         // 1. Reel Modal Controls
