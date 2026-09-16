@@ -29,94 +29,125 @@ export default async function handler(req, res) {
     }
 
     try {
-        const ytRes = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                'Accept-Language': 'en-US,en;q=0.9'
-            }
-        });
-
-        if (!ytRes.ok) {
-            return res.status(502).json({ error: 'Failed to fetch YouTube page' });
-        }
-
-        const html = await ytRes.text();
-
-        let playerResponse = null;
-        const playerMatch = html.match(/ytInitialPlayerResponse\s*=\s*({.+?});(?:var|<\/script>)/s);
-        if (playerMatch) {
-            try { playerResponse = JSON.parse(playerMatch[1]); } catch(e){}
-        }
-
-        const vDetails = playerResponse?.videoDetails || {};
-
-        // 1. Title
-        let title = vDetails.title || '';
-        if (!title) {
-            const tm = html.match(/<meta\s+property="og:title"\s+content="([^"]*)"/i) || html.match(/<title>([^<]*)<\/title>/i);
-            if (tm) title = tm[1].replace(/ - YouTube$/, '').trim();
-        }
-
-        // 2. Full Description
-        let description = vDetails.shortDescription || '';
-        if (!description) {
-            const dm = html.match(/<meta\s+property="og:description"\s+content="([^"]*)"/i) || html.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
-            if (dm) description = dm[1];
-        }
-
-        // 3. Author / Channel Name
-        let author = vDetails.author || '';
-        if (!author) {
-            const am = html.match(/"author":"([^"]*)"/) || html.match(/<link\s+itemprop="name"\s+content="([^"]*)"/i);
-            if (am) author = am[1];
-        }
-
-        // 4. Duration & Seconds
+        let title = '';
+        let description = '';
+        let author = '';
         let seconds = null;
-        if (vDetails.lengthSeconds) {
-            seconds = parseInt(vDetails.lengthSeconds, 10);
-        } else {
-            const approxMatch = html.match(/"approxDurationMs":"(\d+)"/);
-            if (approxMatch && approxMatch[1]) {
-                seconds = Math.floor(parseInt(approxMatch[1], 10) / 1000);
+        let channelAvatar = null;
+        let thumbnail = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+        let keywords = [];
+
+        // 1. Fetch YouTube Watch Page with consent bypass cookies
+        try {
+            const ytRes = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Cookie': 'SOCS=CAESEwgDEgk2OTc3OTM3MjQaAmVuIAEaBgiA_LyaBg; CONSENT=PENDING+999; PREF=tz=UTC&hl=en'
+                }
+            });
+
+            if (ytRes.ok) {
+                const html = await ytRes.text();
+
+                let playerResponse = null;
+                const playerMatch = html.match(/ytInitialPlayerResponse\s*=\s*({.+?});(?:var|<\/script>)/s);
+                if (playerMatch) {
+                    try { playerResponse = JSON.parse(playerMatch[1]); } catch(e){}
+                }
+
+                const vDetails = playerResponse?.videoDetails || {};
+
+                // Title
+                title = vDetails.title || '';
+                if (!title) {
+                    const tm = html.match(/<meta\s+property="og:title"\s+content="([^"]*)"/i) || html.match(/<title>([^<]*)<\/title>/i);
+                    if (tm) title = tm[1].replace(/ - YouTube$/, '').trim();
+                }
+
+                // Description
+                description = vDetails.shortDescription || '';
+                if (!description) {
+                    const dm = html.match(/<meta\s+property="og:description"\s+content="([^"]*)"/i) || html.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
+                    if (dm) description = dm[1];
+                }
+
+                // Check if description is YouTube generic boilerplate
+                if (description && (description.startsWith('Enjoy the videos and music you love') || description.startsWith('Experience the world of YouTube'))) {
+                    description = '';
+                }
+
+                // Author
+                author = vDetails.author || '';
+                if (!author) {
+                    const am = html.match(/"author":"([^"]*)"/) || html.match(/<link\s+itemprop="name"\s+content="([^"]*)"/i);
+                    if (am) author = am[1];
+                }
+
+                // Length & Duration
+                if (vDetails.lengthSeconds) {
+                    seconds = parseInt(vDetails.lengthSeconds, 10);
+                } else {
+                    const approxMatch = html.match(/"approxDurationMs":"(\d+)"/);
+                    if (approxMatch && approxMatch[1]) {
+                        seconds = Math.floor(parseInt(approxMatch[1], 10) / 1000);
+                    }
+                }
+
+                if (seconds === null) {
+                    const isoMatch = html.match(/itemprop="duration"\s+content="PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?"/i);
+                    if (isoMatch) {
+                        const hours = parseInt(isoMatch[1] || '0', 10);
+                        const mins = parseInt(isoMatch[2] || '0', 10);
+                        const secs = parseInt(isoMatch[3] || '0', 10);
+                        seconds = (hours * 3600) + (mins * 60) + secs;
+                    }
+                }
+
+                // Channel Avatar
+                const ownerMatch = html.match(/"videoOwnerRenderer":\s*\{.*?"thumbnail":\s*\{\s*"thumbnails":\s*\[\s*\{\s*"url":\s*"([^"]+)"/s);
+                if (ownerMatch && ownerMatch[1]) {
+                    channelAvatar = ownerMatch[1].replace(/=s\d+[^"]*/, '=s176-c-k-c0x00ffffff-no-rj');
+                } else {
+                    const avatarRegex = /https:\/\/yt3\.(?:ggpht|googleusercontent)\.com\/[a-zA-Z0-9_\-\/=]+/g;
+                    const match = html.match(avatarRegex);
+                    if (match && match[0]) {
+                        channelAvatar = match[0].replace(/=s\d+[^"]*/, '=s176-c-k-c0x00ffffff-no-rj');
+                    }
+                }
+
+                // Keywords
+                keywords = vDetails.keywords || [];
             }
+        } catch (e) {
+            console.warn('Watch page fetch warning:', e.message);
         }
 
-        if (seconds === null) {
-            const isoMatch = html.match(/itemprop="duration"\s+content="PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?"/i);
-            if (isoMatch) {
-                const hours = parseInt(isoMatch[1] || '0', 10);
-                const mins = parseInt(isoMatch[2] || '0', 10);
-                const secs = parseInt(isoMatch[3] || '0', 10);
-                seconds = (hours * 3600) + (mins * 60) + secs;
-            }
+        // 2. Guaranteed fallback for Title and Author via official YouTube oEmbed API
+        if (!title || !author) {
+            try {
+                const oembedRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+                if (oembedRes.ok) {
+                    const oData = await oembedRes.json();
+                    if (!title && oData.title) title = oData.title;
+                    if (!author && oData.author_name) author = oData.author_name;
+                    if (!thumbnail && oData.thumbnail_url) thumbnail = oData.thumbnail_url;
+                }
+            } catch (e) {}
         }
 
+        // Format duration mm:ss or hh:mm:ss
         let formatted = '03:00';
         if (seconds !== null && !isNaN(seconds)) {
-            const mins = Math.floor(seconds / 60);
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
             const remSec = seconds % 60;
-            formatted = `${mins < 10 ? '0' : ''}${mins}:${remSec < 10 ? '0' : ''}${remSec}`;
-        }
-
-        // 5. Channel Avatar / Logo
-        let channelAvatar = null;
-        const ownerMatch = html.match(/"videoOwnerRenderer":\s*\{.*?"thumbnail":\s*\{\s*"thumbnails":\s*\[\s*\{\s*"url":\s*"([^"]+)"/s);
-        if (ownerMatch && ownerMatch[1]) {
-            channelAvatar = ownerMatch[1].replace(/=s\d+[^"]*/, '=s176-c-k-c0x00ffffff-no-rj');
-        } else {
-            const avatarRegex = /https:\/\/yt3\.(?:ggpht|googleusercontent)\.com\/[a-zA-Z0-9_\-\/=]+/g;
-            const match = html.match(avatarRegex);
-            if (match && match[0]) {
-                channelAvatar = match[0].replace(/=s\d+[^"]*/, '=s176-c-k-c0x00ffffff-no-rj');
+            if (hrs > 0) {
+                formatted = `${hrs}:${mins < 10 ? '0' : ''}${mins}:${remSec < 10 ? '0' : ''}${remSec}`;
+            } else {
+                formatted = `${mins < 10 ? '0' : ''}${mins}:${remSec < 10 ? '0' : ''}${remSec}`;
             }
         }
-
-        // 6. Thumbnail
-        const thumbnail = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
-
-        // 7. Keywords / Tags
-        const keywords = vDetails.keywords || [];
 
         return res.status(200).json({
             success: true,

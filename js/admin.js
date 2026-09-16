@@ -2056,48 +2056,47 @@ async function fetchYoutubeFullMetadata(videoIdOrUrl) {
     }
     if (!videoId) return null;
 
+    let result = null;
+
     // 1. Try local serverless endpoint
     try {
         const localRes = await fetch(`/api/youtubeDuration?id=${encodeURIComponent(videoId)}`);
         if (localRes.ok) {
             const data = await localRes.json();
-            if (data && data.success && (data.title || data.duration || data.description)) {
-                return data;
+            if (data && data.success) {
+                result = data;
             }
         }
     } catch (e) {}
 
     // 2. Try deployed production Vercel endpoint (with CORS)
-    try {
-        const remoteRes = await fetch(`https://mahinalibiswas.vercel.app/api/youtubeDuration?id=${encodeURIComponent(videoId)}`);
-        if (remoteRes.ok) {
-            const data = await remoteRes.json();
-            if (data && data.success && (data.title || data.duration || data.description)) {
-                return data;
+    if (!result || !result.title || !result.description) {
+        try {
+            const remoteRes = await fetch(`https://mahinalibiswas.vercel.app/api/youtubeDuration?id=${encodeURIComponent(videoId)}`);
+            if (remoteRes.ok) {
+                const data = await remoteRes.json();
+                if (data && data.success) {
+                    result = { ...(result || {}), ...data };
+                }
             }
-        }
-    } catch (e) {}
+        } catch (e) {}
+    }
 
-    // 3. Fallback to noembed.com (CORS-friendly public service)
-    try {
-        const noembedRes = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`);
-        if (noembedRes.ok) {
-            const yt = await noembedRes.json();
-            return {
-                success: true,
-                id: videoId,
-                title: yt.title || '',
-                description: '',
-                author: yt.author_name || '',
-                channelAvatar: null,
-                thumbnail: yt.thumbnail_url || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
-                duration: null,
-                keywords: []
-            };
-        }
-    } catch (e) {}
+    // 3. Fallback / supplementary query to noembed.com to GUARANTEE Title, Author & Thumbnail
+    if (!result || !result.title || !result.author) {
+        try {
+            const noembedRes = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`);
+            if (noembedRes.ok) {
+                const yt = await noembedRes.json();
+                result = result || { success: true, id: videoId, keywords: [] };
+                if ((!result.title || result.title.trim() === '') && yt.title) result.title = yt.title;
+                if ((!result.author || result.author.trim() === '') && yt.author_name) result.author = yt.author_name;
+                if (!result.thumbnail && yt.thumbnail_url) result.thumbnail = yt.thumbnail_url;
+            }
+        } catch (e) {}
+    }
 
-    return null;
+    return result;
 }
 window.fetchYoutubeFullMetadata = fetchYoutubeFullMetadata;
 
@@ -2348,7 +2347,7 @@ async function onShortVideoInputChange() {
     if (extracted) {
         if (ytField) ytField.value = extracted;
         if (wrap) wrap.style.display = 'none';
-        autoFetchCurrentShortFromYoutube(false);
+        autoFetchCurrentShortFromYoutube(true);
     } else if (val.includes('<iframe')) {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'none';
@@ -2381,7 +2380,7 @@ async function onProjVideoInputChange() {
     if (extracted) {
         if (ytField) ytField.value = extracted;
         if (wrap) wrap.style.display = 'none';
-        autoFetchCurrentProjFromYoutube(false);
+        autoFetchCurrentProjFromYoutube(true);
     } else if (val.includes('<iframe')) {
         if (ytField) ytField.value = '';
         if (wrap) wrap.style.display = 'none';
