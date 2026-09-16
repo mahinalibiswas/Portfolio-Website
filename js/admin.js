@@ -3350,20 +3350,21 @@ function renderAdminShortsList(shorts) {
                 <i class="fa-solid fa-grip-vertical"></i>
             </div>
             <img src="${short.image || 'assets/images/project_reels_shorts.jpg'}" alt="${short.title || 'Short'}" class="admin-short-thumb" onerror="this.onerror=null; this.src='assets/images/project_reels_shorts.jpg';">
-            <div class="admin-short-info">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
-                    <span class="short-order-badge" title="Position #${idx + 1}">#${idx + 1}</span>
-                    <h4 style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${short.title || 'Untitled Reel'}</h4>
+            <div class="admin-short-info" style="flex: 1 1 0%; min-width: 0; overflow: hidden;">
+                <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.25rem; min-width: 0; overflow: hidden;">
+                    <span class="short-order-badge" title="Position #${idx + 1}" style="flex-shrink: 0;">#${idx + 1}</span>
+                    <h4 style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1 1 0%; font-size: 0.95rem;">${short.title || 'Untitled Reel'}</h4>
                 </div>
-                <div class="admin-short-meta-row">
-                    <span class="admin-short-badge ${platformClass}">
+                <div class="admin-short-meta-row" style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: nowrap; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-bottom: 0.25rem;">
+                    <span class="admin-short-badge ${platformClass}" style="flex-shrink: 0;">
                         <i class="${icon}"></i> ${label}
                     </span>
-                    <span class="admin-short-meta"><i class="fa-regular fa-clock"></i> ${(typeof resolveShortDuration === 'function' ? resolveShortDuration(short, idx) : short.duration) || '1:24'}</span>
-                    <span class="admin-short-meta">• ${short.client || 'Client'}</span>
+                    <span class="admin-short-meta" style="white-space: nowrap; flex-shrink: 0;"><i class="fa-regular fa-clock"></i> ${(typeof resolveShortDuration === 'function' ? resolveShortDuration(short, idx) : short.duration) || '1:24'}</span>
+                    <span class="admin-short-meta" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">• ${short.client || 'Client'}</span>
                 </div>
-                <div style="font-size: 0.76rem; color: var(--accent-neon); display: flex; align-items: center; gap: 0.35rem;">
-                    <i class="fa-solid fa-circle-play" style="font-size: 0.72rem;"></i> ${short.youtubeId ? `YouTube ID: ${short.youtubeId}` : (short.video ? (short.video.includes('/') ? short.video.split('/').pop() : 'Direct Video') : 'Custom Video')}
+                <div style="font-size: 0.74rem; color: var(--accent-neon); display: flex; align-items: center; gap: 0.35rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <i class="fa-solid fa-circle-play" style="font-size: 0.72rem; flex-shrink: 0;"></i>
+                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${short.youtubeId ? `YouTube ID: ${short.youtubeId}` : (short.video ? (short.video.includes('/') ? short.video.split('/').pop() : 'Direct Video') : 'Custom Video')}</span>
                 </div>
             </div>
             <div class="admin-short-actions">
