@@ -1395,6 +1395,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!desc) return;
         desc.classList.remove('expanded');
         desc.scrollTop = 0; // Ensure preview always displays from the top
+        const card = desc.closest('.work-card');
+        if (card) {
+            card.classList.remove('has-expanded-desc');
+        }
         const btn = desc.closest('.card-body')?.querySelector('.card-desc-more-btn');
         if (btn) {
             btn.innerHTML = 'See More <i class="fa-solid fa-chevron-down"></i>';
@@ -1540,6 +1544,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (willExpand) {
                     cardDesc.classList.add('expanded');
                     cardDesc.scrollTop = 0;
+                    const card = moreBtn.closest('.work-card');
+                    if (card) {
+                        card.classList.add('has-expanded-desc');
+                    }
                     const st = cardDescAnimMap.get(cardDesc);
                     if (st) {
                         if (st.rafId) cancelAnimationFrame(st.rafId);

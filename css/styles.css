@@ -1336,6 +1336,7 @@ button {
     backdrop-filter: blur(16px);
     transition: var(--transition-smooth);
     box-shadow: 0 10px 30px rgba(2, 8, 23, 0.5);
+    position: relative;
 }
 
 .work-card:hover {
@@ -1408,6 +1409,7 @@ button {
     gap: 0.2rem;
     margin-bottom: 0.65rem;
     flex-grow: 1;
+    min-height: 135px;
 }
 
 .card-category-pill {
@@ -1454,19 +1456,45 @@ button {
 }
 
 .card-desc.expanded {
+    position: absolute !important;
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    bottom: 0.75rem !important;
+    top: auto !important;
+    max-height: 235px !important;
+    height: 235px !important;
     display: block !important;
     -webkit-line-clamp: unset !important;
     overflow-y: auto !important;
-    max-height: 250px !important;
     white-space: pre-line !important;
     line-height: 1.65 !important;
-    margin-bottom: 0.6rem !important;
-    padding-right: 6px;
+    font-size: 0.83rem !important;
+    color: #f1f5f9 !important;
+    padding: 0.95rem 0.9rem 2.85rem 0.9rem !important;
+    background: rgba(10, 16, 30, 0.97) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border: 1px solid rgba(163, 230, 53, 0.45) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.94), 0 0 25px rgba(163, 230, 53, 0.16) !important;
+    z-index: 25 !important;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: auto !important;
     scrollbar-width: thin;
     scrollbar-color: var(--accent-neon) rgba(255, 255, 255, 0.05);
+    animation: cardDescFloatIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardDescFloatIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .card-desc.expanded::-webkit-scrollbar {
@@ -1522,6 +1550,33 @@ button {
 .card-desc-more-btn:hover {
     text-decoration: underline;
     color: #ffffff;
+}
+
+/* Floating See Less Action Pill */
+.work-card.has-expanded-desc .card-desc-more-btn {
+    position: absolute !important;
+    bottom: 1.15rem !important;
+    right: 1.15rem !important;
+    z-index: 30 !important;
+    background: rgba(15, 23, 42, 0.94) !important;
+    border: 1px solid rgba(163, 230, 53, 0.5) !important;
+    border-radius: 20px !important;
+    padding: 0.26rem 0.75rem !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    color: var(--accent-neon) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+    margin: 0 !important;
+    text-decoration: none !important;
+}
+
+.work-card.has-expanded-desc .card-desc-more-btn:hover {
+    background: var(--accent-neon) !important;
+    color: #020817 !important;
+    border-color: var(--accent-neon) !important;
+    box-shadow: 0 0 16px rgba(163, 230, 53, 0.6) !important;
+    text-decoration: none !important;
 }
 
 /* Bottom Compact Footer Row */
