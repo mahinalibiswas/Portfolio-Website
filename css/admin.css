@@ -539,8 +539,8 @@
 }
 
 .admin-short-thumb {
-    width: 55px;
-    height: 82px;
+    width: 48px;
+    height: 68px;
     border-radius: 8px;
     object-fit: cover;
     flex-shrink: 0;
