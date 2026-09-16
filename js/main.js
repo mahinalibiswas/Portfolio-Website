@@ -1345,7 +1345,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         body.innerHTML = `
             <div class="reel-detail-grid">
-                <!-- Left Poster Preview -->
+                <!-- Left Poster & Specs Column -->
                 <div class="reel-detail-poster-col">
                     <div class="reel-detail-poster-frame">
                         <img src="${found.image || 'assets/images/project_reels_shorts.jpg'}" alt="${found.title || 'Reel'}" onerror="this.onerror=null; this.src='assets/images/project_reels_shorts.jpg';">
@@ -1354,6 +1354,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         </button>
                         <div class="reel-detail-poster-badge">
                             <i class="fa-regular fa-clock"></i> ${duration}
+                        </div>
+                    </div>
+
+                    <!-- Left Specs Card (Seamlessly fills the vertical space below poster) -->
+                    <div class="reel-detail-specs-card">
+                        <div class="reel-spec-item">
+                            <span class="reel-spec-label"><i class="fa-regular fa-calendar"></i> Published</span>
+                            <span class="reel-spec-value">${dateYear}</span>
+                        </div>
+                        <div class="reel-spec-item">
+                            <span class="reel-spec-label"><i class="fa-solid fa-user-check"></i> Client</span>
+                            <span class="reel-spec-value" title="${clientName}">${clientName}</span>
+                        </div>
+                        <div class="reel-spec-item">
+                            <span class="reel-spec-label"><i class="fa-solid fa-mobile-screen"></i> Format</span>
+                            <span class="reel-spec-value">9:16 Vertical HD</span>
                         </div>
                     </div>
                 </div>
@@ -1379,17 +1395,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             ` : ''}
                         </div>
 
-                        <div class="detail-meta-grid" style="margin-top: 1rem; margin-bottom: 0;">
-                            <div class="meta-col">
-                                <h4>Reel Information</h4>
-                                <p><i class="fa-regular fa-calendar"></i> Published: <strong>${dateYear}</strong></p>
-                                <p><i class="fa-solid fa-user-check"></i> Client: <strong>${clientName}</strong></p>
-                                <p><i class="fa-solid fa-mobile-screen"></i> Format: <strong>9:16 Vertical HD</strong></p>
-                            </div>
-                            <div class="meta-col">
-                                <h4>Tools & Software</h4>
-                                <div class="tools-pills-row">${toolsHtml}</div>
-                            </div>
+                        <div class="reel-detail-tools-box" style="margin-top: 0.8rem;">
+                            <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin: 0 0 0.55rem 0; display: flex; align-items: center; gap: 0.45rem;">
+                                <i class="fa-solid fa-layer-group" style="color: var(--accent-neon);"></i> Tools & Software
+                            </h4>
+                            <div class="tools-pills-row">${toolsHtml}</div>
                         </div>
                     </div>
 
