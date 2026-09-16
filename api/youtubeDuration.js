@@ -37,7 +37,45 @@ export default async function handler(req, res) {
         let thumbnail = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
         let keywords = [];
 
-        // 1. Fetch YouTube Watch Page with consent bypass cookies
+        // 1. YouTube official InnerTube API (Bulletproof: delivers full description, title, duration & tags without bot blocks)
+        try {
+            const playerRes = await fetch('https://www.youtube.com/youtubei/v1/player', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+                },
+                body: JSON.stringify({
+                    videoId: videoId,
+                    context: {
+                        client: {
+                            clientName: 'WEB',
+                            clientVersion: '2.20240315.00.00'
+                        }
+                    }
+                })
+            });
+
+            if (playerRes.ok) {
+                const playerData = await playerRes.json();
+                const vDetails = playerData?.videoDetails || {};
+
+                if (vDetails.title) title = vDetails.title;
+                if (vDetails.shortDescription) description = vDetails.shortDescription;
+                if (vDetails.author) author = vDetails.author;
+                if (vDetails.lengthSeconds) seconds = parseInt(vDetails.lengthSeconds, 10);
+                if (vDetails.keywords && Array.isArray(vDetails.keywords)) keywords = vDetails.keywords;
+
+                if (vDetails.thumbnail?.thumbnails?.length) {
+                    const thumbs = vDetails.thumbnail.thumbnails;
+                    thumbnail = thumbs[thumbs.length - 1].url || thumbnail;
+                }
+            }
+        } catch (innerErr) {
+            console.warn('InnerTube API warning:', innerErr.message);
+        }
+
+        // 2. Fetch Channel Avatar and fallback metadata from watch page with consent cookie
         try {
             const ytRes = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
                 headers: {
@@ -49,60 +87,6 @@ export default async function handler(req, res) {
 
             if (ytRes.ok) {
                 const html = await ytRes.text();
-
-                let playerResponse = null;
-                const playerMatch = html.match(/ytInitialPlayerResponse\s*=\s*({.+?});(?:var|<\/script>)/s);
-                if (playerMatch) {
-                    try { playerResponse = JSON.parse(playerMatch[1]); } catch(e){}
-                }
-
-                const vDetails = playerResponse?.videoDetails || {};
-
-                // Title
-                title = vDetails.title || '';
-                if (!title) {
-                    const tm = html.match(/<meta\s+property="og:title"\s+content="([^"]*)"/i) || html.match(/<title>([^<]*)<\/title>/i);
-                    if (tm) title = tm[1].replace(/ - YouTube$/, '').trim();
-                }
-
-                // Description
-                description = vDetails.shortDescription || '';
-                if (!description) {
-                    const dm = html.match(/<meta\s+property="og:description"\s+content="([^"]*)"/i) || html.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
-                    if (dm) description = dm[1];
-                }
-
-                // Check if description is YouTube generic boilerplate
-                if (description && (description.startsWith('Enjoy the videos and music you love') || description.startsWith('Experience the world of YouTube'))) {
-                    description = '';
-                }
-
-                // Author
-                author = vDetails.author || '';
-                if (!author) {
-                    const am = html.match(/"author":"([^"]*)"/) || html.match(/<link\s+itemprop="name"\s+content="([^"]*)"/i);
-                    if (am) author = am[1];
-                }
-
-                // Length & Duration
-                if (vDetails.lengthSeconds) {
-                    seconds = parseInt(vDetails.lengthSeconds, 10);
-                } else {
-                    const approxMatch = html.match(/"approxDurationMs":"(\d+)"/);
-                    if (approxMatch && approxMatch[1]) {
-                        seconds = Math.floor(parseInt(approxMatch[1], 10) / 1000);
-                    }
-                }
-
-                if (seconds === null) {
-                    const isoMatch = html.match(/itemprop="duration"\s+content="PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?"/i);
-                    if (isoMatch) {
-                        const hours = parseInt(isoMatch[1] || '0', 10);
-                        const mins = parseInt(isoMatch[2] || '0', 10);
-                        const secs = parseInt(isoMatch[3] || '0', 10);
-                        seconds = (hours * 3600) + (mins * 60) + secs;
-                    }
-                }
 
                 // Channel Avatar
                 const ownerMatch = html.match(/"videoOwnerRenderer":\s*\{.*?"thumbnail":\s*\{\s*"thumbnails":\s*\[\s*\{\s*"url":\s*"([^"]+)"/s);
@@ -116,14 +100,24 @@ export default async function handler(req, res) {
                     }
                 }
 
-                // Keywords
-                keywords = vDetails.keywords || [];
-            }
-        } catch (e) {
-            console.warn('Watch page fetch warning:', e.message);
-        }
+                if (!title) {
+                    const tm = html.match(/<meta\s+property="og:title"\s+content="([^"]*)"/i) || html.match(/<title>([^<]*)<\/title>/i);
+                    if (tm) title = tm[1].replace(/ - YouTube$/, '').trim();
+                }
 
-        // 2. Guaranteed fallback for Title and Author via official YouTube oEmbed API
+                if (!description) {
+                    const dm = html.match(/<meta\s+property="og:description"\s+content="([^"]*)"/i) || html.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
+                    if (dm && !dm[1].startsWith('Enjoy the videos')) description = dm[1];
+                }
+
+                if (!author) {
+                    const am = html.match(/"author":"([^"]*)"/) || html.match(/<link\s+itemprop="name"\s+content="([^"]*)"/i);
+                    if (am) author = am[1];
+                }
+            }
+        } catch (e) {}
+
+        // 3. Guaranteed fallback for Title and Author via official YouTube oEmbed API
         if (!title || !author) {
             try {
                 const oembedRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
