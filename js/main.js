@@ -60,7 +60,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 0.5 Smart Nested Scroll Chaining for Card Descriptions --- */
+    /* --- 0.5 Silky-Smooth Momentum Scrolling Engine for Card Descriptions --- */
+    const cardDescAnimMap = new WeakMap();
+
+    function smoothScrollCardDesc(descEl, delta, maxScroll) {
+        let state = cardDescAnimMap.get(descEl);
+        if (!state) {
+            state = { target: descEl.scrollTop, rafId: null };
+            cardDescAnimMap.set(descEl, state);
+        }
+
+        // Re-sync if user manually dragged the scrollbar thumb
+        if (Math.abs(state.target - descEl.scrollTop) > 80) {
+            state.target = descEl.scrollTop;
+        }
+
+        // Add smooth delta to target
+        state.target = Math.max(0, Math.min(maxScroll, state.target + delta));
+
+        if (!state.rafId) {
+            const animate = () => {
+                const diff = state.target - descEl.scrollTop;
+                if (Math.abs(diff) < 0.5) {
+                    descEl.scrollTop = state.target;
+                    state.rafId = null;
+                } else {
+                    // 0.18 ease gives a buttery, natural momentum glide
+                    descEl.scrollTop += diff * 0.18;
+                    state.rafId = requestAnimationFrame(animate);
+                }
+            };
+            state.rafId = requestAnimationFrame(animate);
+        }
+    }
+
     window.addEventListener('wheel', (e) => {
         const descEl = e.target.closest('.card-desc.expanded');
         if (!descEl) return;
@@ -69,32 +102,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (maxScroll <= 1) return; // Not scrollable, let normal page scroll handle it
 
         let delta = e.deltaY;
-        if (e.deltaMode === 1) delta *= 24;
+        if (e.deltaMode === 1) delta *= 22;
         else if (e.deltaMode === 2) delta *= descEl.clientHeight;
 
-        const atTop = descEl.scrollTop <= 0;
-        const atBottom = descEl.scrollTop >= maxScroll - 1;
+        const animState = cardDescAnimMap.get(descEl);
+        const currentTarget = animState ? animState.target : descEl.scrollTop;
 
-        // If scrolling DOWN and not at bottom yet: scroll description, keep page still
+        const atTop = descEl.scrollTop <= 1 && currentTarget <= 0;
+        const atBottom = descEl.scrollTop >= maxScroll - 1 && currentTarget >= maxScroll;
+
+        // If scrolling DOWN and not at bottom yet: scroll description smoothly, keep page still
         if (delta > 0 && !atBottom) {
             e.stopPropagation();
             e.stopImmediatePropagation();
             e.preventDefault();
-            descEl.scrollTop = Math.min(maxScroll, descEl.scrollTop + delta);
+            smoothScrollCardDesc(descEl, delta, maxScroll);
             return;
         }
 
-        // If scrolling UP and not at top yet: scroll description up, keep page still
+        // If scrolling UP and not at top yet: scroll description smoothly up, keep page still
         if (delta < 0 && !atTop) {
             e.stopPropagation();
             e.stopImmediatePropagation();
             e.preventDefault();
-            descEl.scrollTop = Math.max(0, descEl.scrollTop + delta);
+            smoothScrollCardDesc(descEl, delta, maxScroll);
             return;
         }
 
         // When boundary is reached (atBottom while scrolling down, or atTop while scrolling up),
-        // we deliberately let the wheel event pass through to Lenis/page so the whole page scrolls!
+        // let the event pass to Lenis so the whole page scrolls smoothly!
     }, { capture: true, passive: false });
 
     // Mobile touch scroll chaining
@@ -1470,6 +1506,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isExpanded = cardDesc.classList.toggle('expanded');
                 if (isExpanded) {
                     cardDesc.scrollTop = 0;
+                    const st = cardDescAnimMap.get(cardDesc);
+                    if (st) {
+                        if (st.rafId) cancelAnimationFrame(st.rafId);
+                        st.target = 0;
+                        st.rafId = null;
+                    }
                 }
                 moreBtn.innerHTML = isExpanded 
                     ? 'See Less <i class="fa-solid fa-chevron-up"></i>' 

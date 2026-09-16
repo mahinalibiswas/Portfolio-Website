@@ -1463,6 +1463,8 @@ button {
     margin-bottom: 0.6rem !important;
     padding-right: 6px;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto !important;
     scrollbar-width: thin;
     scrollbar-color: var(--accent-neon) rgba(255, 255, 255, 0.05);
 }
