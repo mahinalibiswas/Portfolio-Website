@@ -425,6 +425,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /* --- 4b. Hero Video Autoplay & Sound Toggle Handler --- */
+    window.initHeroSoundToggle = function() {
+        const soundBtn = document.getElementById('heroSoundToggleBtn');
+        const heroCard = document.getElementById('heroMainCard');
+        if (!heroCard) return;
+
+        const ifr = heroCard.querySelector('iframe');
+        const vid = heroCard.querySelector('video');
+
+        // Ensure video is playing automatically
+        if (ifr) {
+            const triggerAutoplay = () => {
+                try {
+                    if (ifr.contentWindow) {
+                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                        if (typeof suppressIframeCaptions === 'function') suppressIframeCaptions(ifr);
+                    }
+                } catch(e) {}
+            };
+            triggerAutoplay();
+            ifr.addEventListener('load', triggerAutoplay, { once: true });
+            setTimeout(triggerAutoplay, 400);
+            setTimeout(triggerAutoplay, 1200);
+        }
+        if (vid && vid.paused) {
+            vid.muted = true;
+            vid.play().catch(() => {});
+        }
+
+        if (!soundBtn) return;
+        let isMuted = true;
+
+        soundBtn.onclick = function(e) {
+            e.stopPropagation();
+            isMuted = !isMuted;
+            if (ifr && ifr.contentWindow) {
+                try {
+                    const func = isMuted ? 'mute' : 'unMute';
+                    ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: '' }), '*');
+                    ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                } catch(err) {}
+            }
+            if (vid) {
+                vid.muted = isMuted;
+                if (!isMuted && vid.paused) vid.play();
+            }
+            soundBtn.innerHTML = isMuted 
+                ? '<i class="fa-solid fa-volume-xmark"></i> <span>Unmute</span>'
+                : '<i class="fa-solid fa-volume-high"></i> <span>Mute</span>';
+            soundBtn.classList.toggle('active', !isMuted);
+        };
+    };
+
+    window.initHeroSoundToggle();
+    setTimeout(() => {
+        if (typeof window.initHeroSoundToggle === 'function') window.initHeroSoundToggle();
+    }, 600);
+
     /* --- 5. Direct HTML5 Video Modal Lightbox --- */
     const videoModal = document.getElementById('videoModal');
     const closeVideoModal = document.getElementById('closeVideoModal');

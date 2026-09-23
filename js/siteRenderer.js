@@ -120,31 +120,51 @@ function renderSiteData(customData) {
                 const iframeStart = rawInput.indexOf('<iframe');
                 let cleanIframe = rawInput.substring(iframeStart);
                 cleanIframe = cleanIframe.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
+                cleanIframe = cleanIframe.replace(/src="([^"]+)"/, (match, srcVal) => {
+                    let newSrc = srcVal;
+                    const delim = newSrc.includes('?') ? '&' : '?';
+                    if (!newSrc.includes('autoplay=1')) newSrc += delim + 'autoplay=1';
+                    if (!newSrc.includes('mute=1')) newSrc += '&mute=1';
+                    if (!newSrc.includes('playsinline=1')) newSrc += '&playsinline=1';
+                    if (!newSrc.includes('enablejsapi=1')) newSrc += '&enablejsapi=1';
+                    if (!newSrc.includes('loop=1')) newSrc += '&loop=1';
+                    if (!newSrc.includes('cc_load_policy=3')) newSrc += '&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3';
+                    return `src="${newSrc}"`;
+                });
                 if (!cleanIframe.includes('style=')) {
-                    cleanIframe = cleanIframe.replace('<iframe', '<iframe style="width:100%; height:100%; border:none; border-radius:20px;"');
+                    cleanIframe = cleanIframe.replace('<iframe', '<iframe style="width:100%; height:100%; border:none; border-radius:inherit; display:block;"');
                 }
-                heroMainCard.innerHTML = cleanIframe;
+                heroMainCard.innerHTML = cleanIframe + `
+                    <button type="button" class="hero-sound-toggle-btn" id="heroSoundToggleBtn" aria-label="Toggle Sound" title="Click to Unmute / Mute">
+                        <i class="fa-solid fa-volume-xmark"></i> <span>Unmute</span>
+                    </button>
+                `;
+                if (typeof window.initHeroSoundToggle === 'function') window.initHeroSoundToggle();
             } else {
                 const ytId = extractYoutubeId(rawInput);
                 if (ytId) {
                     heroMainCard.innerHTML = `
-                        <iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" 
+                        <iframe id="heroShowreelIframe"
+                                src="https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&playsinline=1&enablejsapi=1&loop=1&playlist=${ytId}&rel=0&modestbranding=1&controls=0&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" 
                                 title="Hero Showreel Video" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                                 referrerpolicy="strict-origin-when-cross-origin"
                                 allowfullscreen 
-                                style="width: 100%; height: 100%; border: none; border-radius: 20px;">
+                                style="width: 100%; height: 100%; border: none; border-radius: inherit; display: block;">
                         </iframe>
+                        <button type="button" class="hero-sound-toggle-btn" id="heroSoundToggleBtn" aria-label="Toggle Sound" title="Click to Unmute / Mute">
+                            <i class="fa-solid fa-volume-xmark"></i> <span>Unmute</span>
+                        </button>
                     `;
+                    if (typeof window.initHeroSoundToggle === 'function') window.initHeroSoundToggle();
                 } else {
                     heroMainCard.innerHTML = `
                         <video id="heroMainVideo" src="${rawInput}" class="main-card-video" autoplay loop muted playsinline poster="${posterUrl}"></video>
-                        <div class="main-card-overlay">
-                            <button class="hero-big-play-btn" id="heroBigPlayBtn" aria-label="Play Video Reel">
-                                <i class="fa-solid fa-play"></i>
-                            </button>
-                        </div>
+                        <button type="button" class="hero-sound-toggle-btn" id="heroSoundToggleBtn" aria-label="Toggle Sound" title="Click to Unmute / Mute">
+                            <i class="fa-solid fa-volume-xmark"></i> <span>Unmute</span>
+                        </button>
                     `;
+                    if (typeof window.initHeroSoundToggle === 'function') window.initHeroSoundToggle();
                     if (rawInput.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
                         resolveMediaUrl(rawInput).then(resolved => {
                             const vidEl = document.getElementById('heroMainVideo');
