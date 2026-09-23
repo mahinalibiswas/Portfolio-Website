@@ -4419,10 +4419,6 @@ button {
 }
 
 /* Video rendered / inline playing: fade out poster image seamlessly */
-.work-card:hover .card-img,
-.card-media-frame:hover .card-img,
-.short-card:hover .short-card-img,
-.short-media-frame:hover .short-card-img,
 .card-media-frame.video-rendered .card-img,
 .card-media-frame.inline-playing .card-img,
 .short-media-frame.video-rendered .short-card-img,

@@ -2845,7 +2845,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 playDirect(directTarget);
             }
         } else if (mediaSource.isYt && mediaSource.ytId) {
-            // Clean YouTube embed fallback when no local MP4 is available
+            // Clean YouTube embed of that EXACT card video
             const oldVid = frame.querySelector('.' + vidClass);
             if (oldVid) {
                 try { oldVid.pause(); oldVid.currentTime = 0; } catch (e) {}
@@ -2859,24 +2859,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 ifr.className = ifrClass;
                 ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
                 ifr.setAttribute('allowfullscreen', 'true');
+                ifr.src = targetSrc;
                 frame.appendChild(ifr);
+            } else {
+                if (ifr.src !== targetSrc) {
+                    ifr.src = targetSrc;
+                } else {
+                    // Send instant playVideo command to already mounted/pre-warmed iframe
+                    try {
+                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                    } catch (e) {}
+                }
             }
 
             ifr.onload = function() {
                 if (frame.classList.contains('video-playing')) {
                     frame.classList.add('video-ready', 'video-rendered');
+                    try {
+                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                    } catch (e) {}
                 }
             };
 
-            if (ifr.src !== targetSrc) {
-                ifr.src = targetSrc;
-            }
-
+            // Fast transition once iframe starts buffering
             setTimeout(() => {
                 if (frame.classList.contains('video-playing')) {
                     frame.classList.add('video-ready', 'video-rendered');
                 }
-            }, 300);
+            }, 250);
         }
     }
 
@@ -2895,8 +2905,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const ifr = frame.querySelector('.card-hover-iframe, .short-hover-iframe');
         if (ifr) {
-            try { ifr.src = 'about:blank'; } catch (e) {}
-            ifr.remove();
+            try {
+                // Pause video via postMessage without destroying the iframe, keeping it pre-warmed for instant re-hover
+                ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }), '*');
+            } catch (e) {}
         }
     }
 
@@ -2942,10 +2954,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 frame.appendChild(badge);
             }
 
-            // If YouTube card, remove any dummy video element that might have been copied from template
-            if (mediaSource.isYt) {
+            // If YouTube card, pre-warm iframe in background with autoplay=0 so initial hover is instant!
+            if (mediaSource.isYt && mediaSource.ytId) {
                 const dummyVid = frame.querySelector('.card-hover-video');
                 if (dummyVid) dummyVid.remove();
+
+                if (!frame.querySelector('.card-hover-iframe')) {
+                    const ifr = document.createElement('iframe');
+                    ifr.className = 'card-hover-iframe';
+                    ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                    ifr.setAttribute('allowfullscreen', 'true');
+                    ifr.loading = 'lazy';
+                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+                    frame.appendChild(ifr);
+                }
             } else if (mediaSource.previewSrc) {
                 let vid = frame.querySelector('.card-hover-video');
                 if (!vid) {
@@ -3009,10 +3031,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 frame.appendChild(badge);
             }
 
-            // If YouTube card, remove any dummy video element that might have been copied from template
-            if (mediaSource.isYt) {
+            // If YouTube card, pre-warm iframe in background with autoplay=0 so initial hover is instant!
+            if (mediaSource.isYt && mediaSource.ytId) {
                 const dummyVid = frame.querySelector('.short-hover-video');
                 if (dummyVid) dummyVid.remove();
+
+                if (!frame.querySelector('.short-hover-iframe')) {
+                    const ifr = document.createElement('iframe');
+                    ifr.className = 'short-hover-iframe';
+                    ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                    ifr.setAttribute('allowfullscreen', 'true');
+                    ifr.loading = 'lazy';
+                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+                    frame.appendChild(ifr);
+                }
             } else if (mediaSource.previewSrc) {
                 let vid = frame.querySelector('.short-hover-video');
                 if (!vid) {
