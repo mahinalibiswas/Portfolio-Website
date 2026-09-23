@@ -128,7 +128,7 @@ function renderSiteData(customData) {
                 const ytId = extractYoutubeId(rawInput);
                 if (ytId) {
                     heroMainCard.innerHTML = `
-                        <iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1" 
+                        <iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" 
                                 title="Hero Showreel Video" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                                 referrerpolicy="strict-origin-when-cross-origin"
@@ -313,7 +313,7 @@ function renderSiteData(customData) {
             }
 
             if (ytId) {
-                const iframeSrc = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&enablejsapi=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${ytId}`;
+                const iframeSrc = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&enablejsapi=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${ytId}&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
                 const existingIframe = playerBox.querySelector('iframe');
                 if (!existingIframe || !existingIframe.src.includes(ytId)) {
                     playerBox.innerHTML = `

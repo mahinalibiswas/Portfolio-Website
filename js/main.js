@@ -499,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ytId = extractYoutubeId(raw);
                 if (ytId) {
                     wrapper.style.cssText = wrapperStyle;
-                    wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="${iframeStyle}"></iframe>`;
+                    wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="${iframeStyle}"></iframe>`;
                 } else {
                     wrapper.style.cssText = wrapperStyle;
                     wrapper.innerHTML = `<video id="modalHtml5Video" src="${raw}" preload="metadata" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;"></video>`;
@@ -982,7 +982,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Synchronous iframe injection — user gesture still active → sound from second 0!
                     mediaLayer.innerHTML = `<iframe id="reelIframe"
                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; transform: none; background: #000000;"
-                        src="https://www.youtube.com/embed/${ytIdSync}?autoplay=1&mute=0&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${ytIdSync}&rel=0"
+                        src="https://www.youtube.com/embed/${ytIdSync}?autoplay=1&mute=0&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${ytIdSync}&rel=0&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen></iframe>`;
@@ -1121,7 +1121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; transform: none; background: #000000;"
-                        src="https://www.youtube.com/embed/${_ytId1}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId1}&rel=0&origin=${encodeURIComponent(location.origin)}"
+                        src="https://www.youtube.com/embed/${_ytId1}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId1}&rel=0&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3&origin=${encodeURIComponent(location.origin)}"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
@@ -1140,7 +1140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     mediaLayer.innerHTML = `
                         <iframe id="reelIframe"
                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; transform: none; background: #000000;"
-                            src="https://www.youtube.com/embed/${_ytId2}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId2}&rel=0&origin=${encodeURIComponent(location.origin)}"
+                            src="https://www.youtube.com/embed/${_ytId2}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId2}&rel=0&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3&origin=${encodeURIComponent(location.origin)}"
                             title="${short.title || 'Reel'}"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen>
@@ -1164,7 +1164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mediaLayer.innerHTML = `
                     <iframe id="reelIframe"
                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; transform: none; background: #000000;"
-                        src="https://www.youtube.com/embed/${_ytId3}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId3}&rel=0&origin=${encodeURIComponent(location.origin)}"
+                        src="https://www.youtube.com/embed/${_ytId3}?autoplay=1&mute=1&enablejsapi=1&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${_ytId3}&rel=0&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3&origin=${encodeURIComponent(location.origin)}"
                         title="${short.title || 'Reel'}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
@@ -1518,9 +1518,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const isPlaceholderFile = !rawVideo || rawVideo.includes('assets/videos/');
             if (hasExplicitYt && isPlaceholderFile) {
                 const targetYt = data.youtubeId || extractYoutubeId(data.youtubeUrl);
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${targetYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${targetYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else if (extractedYt) {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${extractedYt}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else if (isEmbedCode) {
                 let clean = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
                 if (!clean.includes('style=')) {
@@ -1530,7 +1530,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (isDirectVideo) {
                 playerHtml = `<video src="${rawVideo}" preload="metadata" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
             } else if (data.youtubeId) {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" title="${data.title || 'Project'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; display: block; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else {
                 playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" preload="metadata" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
             }
@@ -2044,7 +2044,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rawVideo.includes('<iframe')) {
                 playerHtml = rawVideo.replace(/width="[^"]*"/g, 'width="100%"').replace(/height="[^"]*"/g, 'height="100%"');
             } else if (ytId) {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; transform: scale(1.015); transform-origin: center;"></iframe>`;
+                playerHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" title="${data.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 100%; border: none; transform: scale(1.015); transform-origin: center;"></iframe>`;
             } else {
                 playerHtml = `<video src="${rawVideo || 'assets/videos/main_showreel.mp4'}" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; border: none; transform: scale(1.015); transform-origin: center;"></video>`;
             }
@@ -2611,7 +2611,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (oldVid) { oldVid.pause(); }
 
             let ifr = frame.querySelector('.card-hover-iframe');
-            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=0&controls=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=0&controls=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
 
             if (!ifr) {
                 ifr = document.createElement('iframe');
@@ -2623,12 +2623,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ifr.onload = function() {
                 frame.classList.add('video-ready', 'video-rendered');
+                suppressIframeCaptions(ifr);
+                setTimeout(() => suppressIframeCaptions(ifr), 300);
+                setTimeout(() => suppressIframeCaptions(ifr), 800);
             };
 
             if (ifr.src !== targetSrc) {
                 ifr.src = targetSrc;
             } else {
                 frame.classList.add('video-ready', 'video-rendered');
+                suppressIframeCaptions(ifr);
             }
         } else {
             const oldIfr = frame.querySelector('.card-hover-iframe');
@@ -2692,7 +2696,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (oldVid) { oldVid.pause(); }
 
             let ifr = frame.querySelector('.short-hover-iframe');
-            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=0&controls=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=0&controls=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
 
             if (!ifr) {
                 ifr = document.createElement('iframe');
@@ -2704,12 +2708,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ifr.onload = function() {
                 frame.classList.add('video-ready', 'video-rendered');
+                suppressIframeCaptions(ifr);
+                setTimeout(() => suppressIframeCaptions(ifr), 300);
+                setTimeout(() => suppressIframeCaptions(ifr), 800);
             };
 
             if (ifr.src !== targetSrc) {
                 ifr.src = targetSrc;
             } else {
                 frame.classList.add('video-ready', 'video-rendered');
+                suppressIframeCaptions(ifr);
             }
         } else {
             const oldIfr = frame.querySelector('.short-hover-iframe');
@@ -2757,6 +2765,32 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
+
+    // Helper: Suppress closed captions (subtitles/CC) on YouTube iframes
+    function suppressIframeCaptions(ifr) {
+        if (!ifr || !ifr.contentWindow) return;
+        try {
+            ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadModule', args: ['captions'] }), '*');
+            ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadModule', args: ['cc'] }), '*');
+            ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'setOption', args: ['captions', 'track', {}] }), '*');
+            ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'setOption', args: ['cc', 'track', {}] }), '*');
+        } catch (e) {}
+    }
+
+    // Global listener to suppress captions whenever any YouTube iframe emits playing state
+    if (!window._ytCcListenerAttached) {
+        window._ytCcListenerAttached = true;
+        window.addEventListener('message', (e) => {
+            try {
+                const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+                if (data && (data.event === 'onStateChange' || (data.info && data.info.playerState === 1))) {
+                    document.querySelectorAll('.card-hover-iframe, .short-hover-iframe, #directShowreelIframe, #reelIframe').forEach(ifr => {
+                        suppressIframeCaptions(ifr);
+                    });
+                }
+            } catch (err) {}
+        });
+    }
 
     // Helper: Start instant muted hover video playback for a card frame
     function startFrameHoverPlayback(frame) {
@@ -2852,7 +2886,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let ifr = frame.querySelector('.' + ifrClass);
-            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
 
             if (!ifr) {
                 ifr = document.createElement('iframe');
@@ -2868,6 +2902,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Send instant playVideo command to already mounted/pre-warmed iframe
                     try {
                         ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                        suppressIframeCaptions(ifr);
+                        setTimeout(() => suppressIframeCaptions(ifr), 300);
+                        setTimeout(() => suppressIframeCaptions(ifr), 800);
                     } catch (e) {}
                 }
             }
@@ -2877,6 +2914,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     frame.classList.add('video-ready', 'video-rendered');
                     try {
                         ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                        suppressIframeCaptions(ifr);
+                        setTimeout(() => suppressIframeCaptions(ifr), 300);
+                        setTimeout(() => suppressIframeCaptions(ifr), 800);
                     } catch (e) {}
                 }
             };
@@ -2885,6 +2925,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 if (frame.classList.contains('video-playing')) {
                     frame.classList.add('video-ready', 'video-rendered');
+                    suppressIframeCaptions(ifr);
                 }
             }, 250);
         }
@@ -2965,7 +3006,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
                     ifr.setAttribute('allowfullscreen', 'true');
                     ifr.loading = 'lazy';
-                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
                     frame.appendChild(ifr);
                 }
             } else if (mediaSource.previewSrc) {
@@ -3042,7 +3083,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
                     ifr.setAttribute('allowfullscreen', 'true');
                     ifr.loading = 'lazy';
-                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
                     frame.appendChild(ifr);
                 }
             } else if (mediaSource.previewSrc) {
