@@ -379,22 +379,23 @@ function renderSiteData(customData) {
     if (data.projects && Array.isArray(data.projects)) {
         const worksGrid = document.getElementById('worksGrid');
         if (worksGrid) {
-            const projectPreviews = [
-                'assets/videos/main_showreel.mp4',
-                'assets/videos/showreel.mp4',
-                'assets/videos/hero_teaser.mp4'
-            ];
             worksGrid.innerHTML = data.projects.map((proj, index) => {
                 const pId = proj.id || ('project-' + (index + 1));
                 const pVideo = (proj.video || '').trim();
-                const pYt = (proj.youtubeId || '').trim();
-                const isDirect = pVideo && !pVideo.includes('youtube') && !pVideo.includes('youtu.be') && !pVideo.includes('<iframe');
-                const previewUrl = isDirect ? pVideo : projectPreviews[index % projectPreviews.length];
+                let pYt = (proj.youtubeId || '').trim();
+                if (!pYt && typeof extractYoutubeId === 'function') {
+                    pYt = extractYoutubeId(pVideo) || '';
+                }
+                const isDirect = Boolean(pVideo) && !pYt && !pVideo.includes('youtube') && !pVideo.includes('youtu.be') && !pVideo.includes('<iframe');
+                const videoElHtml = isDirect 
+                    ? `<video class="card-hover-video" src="${pVideo.startsWith('idb:') ? '' : pVideo}" data-src="${pVideo}" muted loop playsinline preload="metadata"></video>`
+                    : '';
+
                 return `
                 <div class="work-card" data-category="${proj.category || 'featured'}" data-id="${pId}" data-video="${pVideo}" data-yt="${pYt}">
                     <div class="card-media-frame" data-project-id="${pId}" data-video="${pVideo}" data-yt="${pYt}">
                         <img src="${proj.image}" alt="${proj.title}" class="card-img" loading="lazy" decoding="async">
-                        <video class="card-hover-video" src="${previewUrl}" muted loop playsinline preload="metadata"></video>
+                        ${videoElHtml}
                         <div class="card-preview-badge"><i class="fa-solid fa-play"></i> Preview</div>
                         <div class="card-video-shield" aria-hidden="true"></div>
                         <button class="card-glass-play-btn view-project-btn" data-id="${pId}" aria-label="Play Video">
@@ -426,6 +427,18 @@ function renderSiteData(customData) {
                 </div>
             `;
             }).join('');
+
+            // Resolve any idb: video sources for project cards immediately
+            worksGrid.querySelectorAll('video.card-hover-video').forEach(async (vid) => {
+                const raw = vid.getAttribute('data-src') || vid.getAttribute('src');
+                if (raw && raw.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                    const resolved = await resolveMediaUrl(raw);
+                    if (resolved) {
+                        vid.src = resolved;
+                        vid.load();
+                    }
+                }
+            });
 
             // Re-initialize details buttons event listeners
             if (typeof initProjectDetailEvents === 'function') {
@@ -474,23 +487,23 @@ function renderSiteData(customData) {
     if (shortsData && Array.isArray(shortsData) && shortsData.length > 0) {
         const shortsTrack = document.getElementById('shortsTrack');
         if (shortsTrack) {
-            const shortPreviews = [
-                'assets/videos/short_color_grading.mp4',
-                'assets/videos/short_2_raw_edit.mp4',
-                'assets/videos/short_3_before_after.mp4',
-                'assets/videos/short_4_client_edit.mp4'
-            ];
             shortsTrack.innerHTML = shortsData.map((short, idx) => {
                 const sId = short.id || ('short-' + (idx + 1));
                 const sVideo = (short.video || short.videoUrl || '').trim();
-                const sYt = (short.youtubeId || '').trim();
-                const isDirect = sVideo && !sVideo.includes('youtube') && !sVideo.includes('youtu.be') && !sVideo.includes('<iframe');
-                const previewUrl = isDirect ? sVideo : shortPreviews[idx % shortPreviews.length];
+                let sYt = (short.youtubeId || '').trim();
+                if (!sYt && typeof extractYoutubeId === 'function') {
+                    sYt = extractYoutubeId(sVideo) || '';
+                }
+                const isDirect = Boolean(sVideo) && !sYt && !sVideo.includes('youtube') && !sVideo.includes('youtu.be') && !sVideo.includes('<iframe');
+                const videoElHtml = isDirect 
+                    ? `<video class="short-hover-video" src="${sVideo.startsWith('idb:') ? '' : sVideo}" data-src="${sVideo}" muted loop playsinline preload="metadata"></video>`
+                    : '';
+
                 return `
                 <div class="short-card" id="${sId}" data-short-id="${sId}" data-video="${sVideo}" data-yt="${sYt}">
                     <div class="short-media-frame" data-short-id="${sId}" data-video="${sVideo}" data-yt="${sYt}">
                         <img src="${short.image}" alt="${short.title}" class="short-card-img" loading="lazy" decoding="async">
-                        <video class="short-hover-video" src="${previewUrl}" muted loop playsinline preload="metadata"></video>
+                        ${videoElHtml}
                         <div class="card-preview-badge"><i class="fa-solid fa-play"></i> Preview</div>
                         <div class="short-video-shield" aria-hidden="true"></div>
                         <button class="short-play-btn open-reel-btn" data-short-id="${sId}" aria-label="Play Reel">
@@ -508,6 +521,18 @@ function renderSiteData(customData) {
                 </div>
             `;
             }).join('');
+
+            // Resolve any idb: video sources for short cards immediately
+            shortsTrack.querySelectorAll('video.short-hover-video').forEach(async (vid) => {
+                const raw = vid.getAttribute('data-src') || vid.getAttribute('src');
+                if (raw && raw.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                    const resolved = await resolveMediaUrl(raw);
+                    if (resolved) {
+                        vid.src = resolved;
+                        vid.load();
+                    }
+                }
+            });
 
             // Re-init shorts carousel if available
             if (typeof window.initShortsCarousel === 'function') {

@@ -2485,19 +2485,6 @@ document.addEventListener('DOMContentLoaded', () => {
        Work Cards (16:9) & Short Cards (9:16)
        ========================================================================== */
 
-    const PROJECT_PREVIEWS = [
-        'assets/videos/main_showreel.mp4',
-        'assets/videos/showreel.mp4',
-        'assets/videos/hero_teaser.mp4'
-    ];
-
-    const SHORT_PREVIEWS = [
-        'assets/videos/short_color_grading.mp4',
-        'assets/videos/short_2_raw_edit.mp4',
-        'assets/videos/short_3_before_after.mp4',
-        'assets/videos/short_4_client_edit.mp4'
-    ];
-
     // Helper: Safely compare and set video src without relative/absolute path mismatch bugs
     function setVideoSrcSafe(vid, targetSrc) {
         if (!vid || !targetSrc) return;
@@ -2509,7 +2496,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Helper: Determine video source details for a project card
     // Helper: Determine video source details for a project card
     function getProjectVideoSource(proj, frame, card, index = 0) {
         let rawVideo = '';
@@ -2531,19 +2517,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!ytId) ytId = proj.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(proj.youtubeUrl || proj.video) : '');
         }
 
-        if (!ytId && (rawVideo.includes('youtube') || rawVideo.includes('youtu.be'))) {
+        if (!ytId && (rawVideo.includes('youtube') || rawVideo.includes('youtu.be') || rawVideo.includes('<iframe'))) {
             ytId = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : '';
         }
 
-        const isDirect = rawVideo && !rawVideo.includes('youtube') && !rawVideo.includes('youtu.be') && !rawVideo.includes('<iframe');
-        const localPreview = PROJECT_PREVIEWS[index % PROJECT_PREVIEWS.length];
-        const previewSrc = isDirect ? rawVideo : (localPreview || '');
+        const isDirect = Boolean(rawVideo) && !ytId && !rawVideo.includes('youtube') && !rawVideo.includes('youtu.be') && !rawVideo.includes('<iframe');
 
         return {
             isYt: Boolean(ytId),
             ytId: ytId || null,
-            previewSrc: previewSrc,
-            directSrc: isDirect ? rawVideo : (localPreview || '')
+            previewSrc: isDirect ? rawVideo : null,
+            directSrc: isDirect ? rawVideo : null
         };
     }
 
@@ -2568,20 +2552,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!ytId) ytId = shortObj.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(shortObj.youtubeUrl || rawVideo) : '');
         }
 
-        if (!ytId && (rawVideo.includes('youtube') || rawVideo.includes('youtu.be'))) {
+        if (!ytId && (rawVideo.includes('youtube') || rawVideo.includes('youtu.be') || rawVideo.includes('<iframe'))) {
             ytId = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : '';
         }
 
-        const isDirect = rawVideo && !rawVideo.includes('youtube') && !rawVideo.includes('youtu.be') && !rawVideo.includes('<iframe');
-        // Match shorts 1-4 directly to bundled 1080p MP4 preview files for instant 0-latency hover playback
-        const localPreview = SHORT_PREVIEWS[index % SHORT_PREVIEWS.length];
-        const previewSrc = isDirect ? rawVideo : (localPreview || '');
+        const isDirect = Boolean(rawVideo) && !ytId && !rawVideo.includes('youtube') && !rawVideo.includes('youtu.be') && !rawVideo.includes('<iframe');
 
         return {
             isYt: Boolean(ytId),
             ytId: ytId || null,
-            previewSrc: previewSrc,
-            directSrc: isDirect ? rawVideo : (localPreview || '')
+            previewSrc: isDirect ? rawVideo : null,
+            directSrc: isDirect ? rawVideo : null
         };
     }
 
@@ -2961,20 +2942,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 frame.appendChild(badge);
             }
 
-            // Pre-mount video element with metadata for instantaneous 0ms playback
-            if (mediaSource.previewSrc && !frame.querySelector('.card-hover-video')) {
-                const vid = document.createElement('video');
-                vid.className = 'card-hover-video';
-                vid.loop = true;
-                vid.setAttribute('loop', '');
-                vid.playsInline = true;
-                vid.setAttribute('playsinline', '');
-                vid.muted = true;
-                vid.defaultMuted = true;
-                vid.setAttribute('muted', '');
-                vid.preload = 'metadata';
-                setVideoSrcSafe(vid, mediaSource.previewSrc);
-                frame.appendChild(vid);
+            // If YouTube card, remove any dummy video element that might have been copied from template
+            if (mediaSource.isYt) {
+                const dummyVid = frame.querySelector('.card-hover-video');
+                if (dummyVid) dummyVid.remove();
+            } else if (mediaSource.previewSrc) {
+                let vid = frame.querySelector('.card-hover-video');
+                if (!vid) {
+                    vid = document.createElement('video');
+                    vid.className = 'card-hover-video';
+                    vid.loop = true;
+                    vid.setAttribute('loop', '');
+                    vid.playsInline = true;
+                    vid.setAttribute('playsinline', '');
+                    vid.muted = true;
+                    vid.defaultMuted = true;
+                    vid.setAttribute('muted', '');
+                    vid.preload = 'metadata';
+                    frame.appendChild(vid);
+                }
+                const target = mediaSource.previewSrc;
+                if (typeof target === 'string' && target.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                    resolveMediaUrl(target).then(res => {
+                        if (res) setVideoSrcSafe(vid, res);
+                    });
+                } else {
+                    setVideoSrcSafe(vid, target);
+                }
             }
         });
 
@@ -3015,20 +3009,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 frame.appendChild(badge);
             }
 
-            // Pre-mount video element with metadata for instantaneous 0ms playback
-            if (mediaSource.previewSrc && !frame.querySelector('.short-hover-video')) {
-                const vid = document.createElement('video');
-                vid.className = 'short-hover-video';
-                vid.loop = true;
-                vid.setAttribute('loop', '');
-                vid.playsInline = true;
-                vid.setAttribute('playsinline', '');
-                vid.muted = true;
-                vid.defaultMuted = true;
-                vid.setAttribute('muted', '');
-                vid.preload = 'metadata';
-                setVideoSrcSafe(vid, mediaSource.previewSrc);
-                frame.appendChild(vid);
+            // If YouTube card, remove any dummy video element that might have been copied from template
+            if (mediaSource.isYt) {
+                const dummyVid = frame.querySelector('.short-hover-video');
+                if (dummyVid) dummyVid.remove();
+            } else if (mediaSource.previewSrc) {
+                let vid = frame.querySelector('.short-hover-video');
+                if (!vid) {
+                    vid = document.createElement('video');
+                    vid.className = 'short-hover-video';
+                    vid.loop = true;
+                    vid.setAttribute('loop', '');
+                    vid.playsInline = true;
+                    vid.setAttribute('playsinline', '');
+                    vid.muted = true;
+                    vid.defaultMuted = true;
+                    vid.setAttribute('muted', '');
+                    vid.preload = 'metadata';
+                    frame.appendChild(vid);
+                }
+                const target = mediaSource.previewSrc;
+                if (typeof target === 'string' && target.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                    resolveMediaUrl(target).then(res => {
+                        if (res) setVideoSrcSafe(vid, res);
+                    });
+                } else {
+                    setVideoSrcSafe(vid, target);
+                }
             }
         });
     };
@@ -3036,7 +3043,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // Global Delegated Hover Engine (100% resilient across re-renders & transforms)
     // =========================================================================
-    let currentHoverCard = null;
     document.addEventListener('mouseover', (e) => {
         const card = e.target.closest('.work-card, .short-card');
         if (!card) return;
@@ -3044,23 +3050,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const frame = card.querySelector('.card-media-frame, .short-media-frame');
         if (!frame || frame.classList.contains('inline-playing')) return;
 
-        frame.classList.add('video-playing', 'video-ready', 'video-rendered');
-
-        let vid = frame.querySelector('video.card-hover-video, video.short-hover-video');
-        if (vid) {
-            vid.muted = true;
-            vid.defaultMuted = true;
-            vid.setAttribute('muted', '');
-            if (vid.paused) {
-                const p = vid.play();
-                if (p && p.catch) {
-                    p.catch(() => {
-                        vid.muted = true;
-                        vid.play().catch(() => {});
-                    });
-                }
-            }
-        }
+        startFrameHoverPlayback(frame);
     }, { passive: true });
 
     document.addEventListener('mouseout', (e) => {
@@ -3075,15 +3065,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const frame = card.querySelector('.card-media-frame, .short-media-frame');
         if (!frame || frame.classList.contains('inline-playing')) return;
 
-        frame.classList.remove('video-playing', 'video-ready', 'video-rendered');
-
-        const vid = frame.querySelector('video.card-hover-video, video.short-hover-video');
-        if (vid) {
-            try {
-                vid.pause();
-                vid.currentTime = 0;
-            } catch (err) {}
-        }
+        stopFrameHoverPlayback(frame);
     }, { passive: true });
 
     // Initialize on page load
