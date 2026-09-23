@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=79.0">
+    <link rel="stylesheet" href="css/styles.css?v=82.0">
     <link rel="stylesheet" href="css/admin.css?v=79.0">
 </head>
 <body class="admin-body">
@@ -236,8 +236,52 @@
                                     <textarea id="heroSubtitle" rows="3" placeholder="Enter your hero bio paragraph..." oninput="renderLiveHeroPreview()"></textarea>
                                 </div>
                                 <div class="form-group full-width">
-                                    <label>Hero Video Teaser (YouTube Embed Code / Video URL)</label>
-                                    <textarea id="heroShowreelVideo" rows="3" placeholder="Enter your YouTube video URL or embed code..." oninput="renderLiveHeroPreview()"></textarea>
+                                    <label>Hero Card Video — Direct Upload or YouTube URL</label>
+
+                                    <!-- Mode Toggle Tabs -->
+                                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                        <button type="button" id="heroVideoModeUpload" onclick="switchHeroVideoMode('upload')" class="btn btn-primary btn-sm" style="border-radius: 8px; padding: 0.4rem 1rem; font-size: 0.8rem;">
+                                            <i class="fa-solid fa-file-video"></i> Direct Upload
+                                        </button>
+                                        <button type="button" id="heroVideoModeUrl" onclick="switchHeroVideoMode('url')" class="btn btn-hero-secondary btn-sm" style="border-radius: 8px; padding: 0.4rem 1rem; font-size: 0.8rem;">
+                                            <i class="fa-brands fa-youtube"></i> YouTube / URL
+                                        </button>
+                                    </div>
+
+                                    <!-- Mode 1: Direct Video Upload Drop Zone -->
+                                    <div id="heroVideoUploadZone" style="border: 2px dashed rgba(163, 230, 53, 0.4); border-radius: 14px; padding: 2rem 1.5rem; text-align: center; background: rgba(163, 230, 53, 0.04); transition: all 0.25s; cursor: pointer; position: relative;"
+                                         onclick="document.getElementById('heroVideoFileInput').click()"
+                                         ondragover="event.preventDefault(); this.style.borderColor='var(--accent-neon)'; this.style.background='rgba(163,230,53,0.1)';"
+                                         ondragleave="this.style.borderColor='rgba(163,230,53,0.4)'; this.style.background='rgba(163,230,53,0.04)';"
+                                         ondrop="event.preventDefault(); this.style.borderColor='rgba(163,230,53,0.4)'; this.style.background='rgba(163,230,53,0.04)'; handleHeroVideoDrop(event);">
+                                        <input type="file" id="heroVideoFileInput" accept="video/mp4,video/webm,video/ogg,video/*" style="display: none;" onchange="handleHeroVideoUpload(event)">
+
+                                        <!-- Empty state -->
+                                        <div id="heroVideoDropEmpty">
+                                            <div style="width: 56px; height: 56px; background: rgba(163,230,53,0.12); border: 1px solid rgba(163,230,53,0.3); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem;">
+                                                <i class="fa-solid fa-film" style="font-size: 1.4rem; color: var(--accent-neon);"></i>
+                                            </div>
+                                            <p style="color: #ffffff; font-weight: 700; font-size: 0.92rem; margin: 0 0 0.3rem;">Drop video here or click to browse</p>
+                                            <p style="color: var(--text-dim); font-size: 0.78rem; margin: 0;">Supports MP4, WebM, MOV — Large files stored via IndexedDB</p>
+                                        </div>
+
+                                        <!-- Uploaded state -->
+                                        <div id="heroVideoPreviewWrap" style="display: none; flex-direction: column; align-items: center; gap: 0.7rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.6rem; background: rgba(163,230,53,0.1); border: 1px solid var(--accent-neon); border-radius: 8px; padding: 0.5rem 1rem;">
+                                                <i class="fa-solid fa-circle-play" style="color: var(--accent-neon); font-size: 1.1rem;"></i>
+                                                <span id="heroVideoFileName" style="color: #ffffff; font-size: 0.85rem; font-weight: 600; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">video.mp4</span>
+                                            </div>
+                                            <button type="button" onclick="event.stopPropagation(); removeHeroVideo()" style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); color: #ef4444; cursor: pointer; border-radius: 8px; padding: 0.3rem 0.8rem; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                                <i class="fa-solid fa-trash"></i> Remove Video
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mode 2: YouTube / URL Textarea -->
+                                    <div id="heroVideoUrlZone" style="display: none; margin-top: 0;">
+                                        <textarea id="heroShowreelVideo" rows="3" placeholder="Paste YouTube video URL, embed code, or direct video URL..." oninput="renderLiveHeroPreview()" style="margin-top: 0;"></textarea>
+                                        <p style="color: var(--text-dim); font-size: 0.75rem; margin-top: 0.4rem;"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> Supports youtube.com/watch, youtu.be, embed URLs, and direct .mp4/.webm links</p>
+                                    </div>
                                 </div>
                                 <div class="form-group full-width">
                                     <label>Hero Video Poster Cover Image</label>
@@ -253,6 +297,7 @@
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <div class="form-section-title full-width" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: 2rem;">
                                     <h4>Hero Call-To-Action (CTA) Buttons</h4>
@@ -1209,6 +1254,12 @@
                     </div>
                 </div>
 
+                <div class="form-group full-width">
+                    <label>Tools & Software Used (Comma separated)</label>
+                    <input type="text" id="editShortTools" placeholder="Adobe Premiere Pro, After Effects, CapCut Pro, DaVinci Resolve">
+                    <p style="color: var(--text-dim); font-size: 0.75rem; margin-top: 0.4rem;"><i class="fa-solid fa-layer-group" style="color: var(--accent-neon);"></i> These will appear as pills in the Reel Details modal (e.g. Adobe Premiere Pro, After Effects)</p>
+                </div>
+
                 <!-- Section 2: Media Assets -->
                 <div class="admin-modal-section-divider">
                     <span class="admin-modal-section-badge" style="color: #60a5fa; border-color: rgba(96, 165, 250, 0.3);">
@@ -1406,7 +1457,7 @@
 
     <!-- JS Files -->
     <script src="js/sortable.min.js"></script>
-    <script src="js/siteData.js?v=80.0"></script>
-    <script src="js/admin.js?v=80.0"></script>
+    <script src="js/siteData.js?v=82.0"></script>
+    <script src="js/admin.js?v=82.0"></script>
 </body>
 </html>

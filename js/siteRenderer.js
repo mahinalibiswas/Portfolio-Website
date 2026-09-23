@@ -379,12 +379,29 @@ function renderSiteData(customData) {
     if (data.projects && Array.isArray(data.projects)) {
         const worksGrid = document.getElementById('worksGrid');
         if (worksGrid) {
-            worksGrid.innerHTML = data.projects.map((proj, index) => `
-                <div class="work-card" data-category="${proj.category || 'featured'}" data-id="${proj.id || 'project-' + (index + 1)}">
-                    <div class="card-media-frame">
+            const projectPreviews = [
+                'assets/videos/main_showreel.mp4',
+                'assets/videos/showreel.mp4',
+                'assets/videos/hero_teaser.mp4'
+            ];
+            worksGrid.innerHTML = data.projects.map((proj, index) => {
+                const pId = proj.id || ('project-' + (index + 1));
+                const pVideo = (proj.video || '').trim();
+                const pYt = (proj.youtubeId || '').trim();
+                const isDirect = pVideo && !pVideo.includes('youtube') && !pVideo.includes('youtu.be') && !pVideo.includes('<iframe');
+                const previewUrl = isDirect ? pVideo : projectPreviews[index % projectPreviews.length];
+                return `
+                <div class="work-card" data-category="${proj.category || 'featured'}" data-id="${pId}" data-video="${pVideo}" data-yt="${pYt}">
+                    <div class="card-media-frame" data-project-id="${pId}" data-video="${pVideo}" data-yt="${pYt}">
                         <img src="${proj.image}" alt="${proj.title}" class="card-img" loading="lazy" decoding="async">
-                        <button class="card-glass-play-btn view-project-btn" data-id="${proj.id}" aria-label="Play Video">
+                        <video class="card-hover-video" src="${previewUrl}" muted loop playsinline preload="metadata"></video>
+                        <div class="card-preview-badge"><i class="fa-solid fa-play"></i> Preview</div>
+                        <div class="card-video-shield" aria-hidden="true"></div>
+                        <button class="card-glass-play-btn view-project-btn" data-id="${pId}" aria-label="Play Video">
                             <i class="fa-solid fa-play"></i>
+                        </button>
+                        <button type="button" class="card-fullscreen-btn" data-project-id="${pId}" title="Watch Fullscreen Modal" aria-label="Open Fullscreen Modal">
+                            <i class="fa-solid fa-expand"></i>
                         </button>
                     </div>
 
@@ -407,7 +424,8 @@ function renderSiteData(customData) {
                         <span class="project-date">${proj.date || '2026'}</span>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
 
             // Re-initialize details buttons event listeners
             if (typeof initProjectDetailEvents === 'function') {
@@ -423,6 +441,16 @@ function renderSiteData(customData) {
                     window.updatePortfolioFilterCounts();
                 }
             }
+
+            // Immediate & scheduled re-init for hover-to-play video cards
+            if (typeof window.initHoverVideoCards === 'function') {
+                window.initHoverVideoCards();
+            }
+            setTimeout(() => {
+                if (typeof window.initHoverVideoCards === 'function') {
+                    window.initHoverVideoCards();
+                }
+            }, 40);
         }
     }
 
@@ -446,26 +474,55 @@ function renderSiteData(customData) {
     if (shortsData && Array.isArray(shortsData) && shortsData.length > 0) {
         const shortsTrack = document.getElementById('shortsTrack');
         if (shortsTrack) {
-            shortsTrack.innerHTML = shortsData.map((short, idx) => `
-                <div class="short-card" id="${short.id || 'short-' + (idx + 1)}" data-short-id="${short.id || 'short-' + (idx + 1)}">
-                    <div class="short-media-frame">
+            const shortPreviews = [
+                'assets/videos/short_color_grading.mp4',
+                'assets/videos/short_2_raw_edit.mp4',
+                'assets/videos/short_3_before_after.mp4',
+                'assets/videos/short_4_client_edit.mp4'
+            ];
+            shortsTrack.innerHTML = shortsData.map((short, idx) => {
+                const sId = short.id || ('short-' + (idx + 1));
+                const sVideo = (short.video || short.videoUrl || '').trim();
+                const sYt = (short.youtubeId || '').trim();
+                const isDirect = sVideo && !sVideo.includes('youtube') && !sVideo.includes('youtu.be') && !sVideo.includes('<iframe');
+                const previewUrl = isDirect ? sVideo : shortPreviews[idx % shortPreviews.length];
+                return `
+                <div class="short-card" id="${sId}" data-short-id="${sId}" data-video="${sVideo}" data-yt="${sYt}">
+                    <div class="short-media-frame" data-short-id="${sId}" data-video="${sVideo}" data-yt="${sYt}">
                         <img src="${short.image}" alt="${short.title}" class="short-card-img" loading="lazy" decoding="async">
-                        <button class="short-play-btn open-reel-btn" data-short-id="${short.id}" aria-label="Play Reel">
+                        <video class="short-hover-video" src="${previewUrl}" muted loop playsinline preload="metadata"></video>
+                        <div class="card-preview-badge"><i class="fa-solid fa-play"></i> Preview</div>
+                        <div class="short-video-shield" aria-hidden="true"></div>
+                        <button class="short-play-btn open-reel-btn" data-short-id="${sId}" aria-label="Play Reel">
                             <i class="fa-solid fa-play"></i>
+                        </button>
+                        <button type="button" class="short-fullscreen-btn" data-short-id="${sId}" title="Watch Fullscreen Modal" aria-label="Open Fullscreen Modal">
+                            <i class="fa-solid fa-expand"></i>
                         </button>
                     </div>
                     <div class="short-card-body">
                         <h4 class="short-card-title">${short.title}</h4>
                         <p class="short-card-meta"><i class="fa-regular fa-clock"></i> ${(typeof resolveShortDuration === 'function' ? resolveShortDuration(short, idx) : short.duration) || '1:24'} &nbsp;•&nbsp; ${short.client || 'Client'}</p>
-                        <button class="card-details-btn short-reel-details-btn" data-short-id="${short.id}">Details</button>
+                        <button class="card-details-btn short-reel-details-btn" data-short-id="${sId}">Details</button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
 
             // Re-init shorts carousel if available
             if (typeof window.initShortsCarousel === 'function') {
                 window.initShortsCarousel();
             }
+
+            // Immediate & scheduled re-init for hover-to-play video cards on shorts
+            if (typeof window.initHoverVideoCards === 'function') {
+                window.initHoverVideoCards();
+            }
+            setTimeout(() => {
+                if (typeof window.initHoverVideoCards === 'function') {
+                    window.initHoverVideoCards();
+                }
+            }, 40);
         }
     }
 

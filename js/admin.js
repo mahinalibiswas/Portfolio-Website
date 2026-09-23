@@ -389,6 +389,29 @@ function renderAdminFormsWithData(data) {
         if (document.getElementById('heroStatsClients')) document.getElementById('heroStatsClients').value = data.hero.statsClients || '50+';
         if (document.getElementById('heroStatsDelivery')) document.getElementById('heroStatsDelivery').value = data.hero.statsDelivery || '100%';
         renderAdminCtaButtons(data.hero.ctaButtons || []);
+
+        // Load hero video file preview if it's an uploaded file (data URL or local file path)
+        const heroVid = data.hero.showreelVideo || '';
+        const heroVideoWrap = document.getElementById('heroVideoPreviewWrap');
+        const heroVideoName = document.getElementById('heroVideoFileName');
+        const heroVideoDropEmpty = document.getElementById('heroVideoDropEmpty');
+        if (heroVid && (heroVid.startsWith('data:video') || heroVid.startsWith('blob:') || heroVid.startsWith('idb:') || /\.(mp4|webm|mov|ogg)($|\?)/i.test(heroVid))) {
+            // It's a direct uploaded video — show Upload mode
+            if (typeof switchHeroVideoMode === 'function') switchHeroVideoMode('upload');
+            if (heroVideoWrap) heroVideoWrap.style.display = 'flex';
+            if (heroVideoDropEmpty) heroVideoDropEmpty.style.display = 'none';
+            if (heroVideoName) heroVideoName.textContent = heroVid.startsWith('idb:') ? 'Uploaded Direct Video' : (heroVid.startsWith('data:video') ? 'Uploaded Video File' : heroVid.split('/').pop());
+        } else if (heroVid) {
+            // It's a YouTube URL or embed — show URL mode
+            if (typeof switchHeroVideoMode === 'function') switchHeroVideoMode('url');
+            if (heroVideoWrap) heroVideoWrap.style.display = 'none';
+            if (heroVideoDropEmpty) heroVideoDropEmpty.style.display = 'block';
+        } else {
+            // Nothing set — default to Upload mode
+            if (typeof switchHeroVideoMode === 'function') switchHeroVideoMode('upload');
+            if (heroVideoWrap) heroVideoWrap.style.display = 'none';
+            if (heroVideoDropEmpty) heroVideoDropEmpty.style.display = 'block';
+        }
     }
 
     // 1.5 Load Showreel Section Data
@@ -1342,6 +1365,63 @@ function removeHeroPosterImage() {
     showToast('Hero cover image removed', 'info');
 }
 
+/* --- Hero Video Mode Toggle & Upload --- */
+function switchHeroVideoMode(mode) {
+    const uploadZone = document.getElementById('heroVideoUploadZone');
+    const urlZone = document.getElementById('heroVideoUrlZone');
+    const btnUpload = document.getElementById('heroVideoModeUpload');
+    const btnUrl = document.getElementById('heroVideoModeUrl');
+
+    if (mode === 'upload') {
+        if (uploadZone) uploadZone.style.display = 'block';
+        if (urlZone) urlZone.style.display = 'none';
+        if (btnUpload) { btnUpload.className = 'btn btn-primary btn-sm'; btnUpload.style.cssText = 'border-radius:8px; padding:0.4rem 1rem; font-size:0.8rem;'; }
+        if (btnUrl) { btnUrl.className = 'btn btn-hero-secondary btn-sm'; btnUrl.style.cssText = 'border-radius:8px; padding:0.4rem 1rem; font-size:0.8rem;'; }
+    } else {
+        if (uploadZone) uploadZone.style.display = 'none';
+        if (urlZone) urlZone.style.display = 'block';
+        if (btnUrl) { btnUrl.className = 'btn btn-primary btn-sm'; btnUrl.style.cssText = 'border-radius:8px; padding:0.4rem 1rem; font-size:0.8rem;'; }
+        if (btnUpload) { btnUpload.className = 'btn btn-hero-secondary btn-sm'; btnUpload.style.cssText = 'border-radius:8px; padding:0.4rem 1rem; font-size:0.8rem;'; }
+    }
+}
+window.switchHeroVideoMode = switchHeroVideoMode;
+
+function handleHeroVideoDrop(event) {
+    const file = event.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith('video/')) {
+        showToast('Please drop a valid video file (MP4, WebM, MOV)', 'error');
+        return;
+    }
+    processUploadedVideoFile(file, 'heroShowreelVideo', 'heroVideoPreviewWrap', 'heroVideoFileName', () => {
+        const emptyState = document.getElementById('heroVideoDropEmpty');
+        if (emptyState) emptyState.style.display = 'none';
+        if (typeof renderLiveHeroPreview === 'function') renderLiveHeroPreview();
+    });
+}
+window.handleHeroVideoDrop = handleHeroVideoDrop;
+
+function handleHeroVideoUpload(event) {
+    const file = event.target.files[0];
+    processUploadedVideoFile(file, 'heroShowreelVideo', 'heroVideoPreviewWrap', 'heroVideoFileName', () => {
+        const emptyState = document.getElementById('heroVideoDropEmpty');
+        if (emptyState) emptyState.style.display = 'none';
+        if (typeof renderLiveHeroPreview === 'function') renderLiveHeroPreview();
+    });
+}
+
+function removeHeroVideo() {
+    const input = document.getElementById('heroShowreelVideo');
+    if (input) input.value = '';
+    const wrap = document.getElementById('heroVideoPreviewWrap');
+    if (wrap) wrap.style.display = 'none';
+    const emptyState = document.getElementById('heroVideoDropEmpty');
+    if (emptyState) emptyState.style.display = 'block';
+    const fileInput = document.getElementById('heroVideoFileInput');
+    if (fileInput) fileInput.value = '';
+    if (typeof renderLiveHeroPreview === 'function') renderLiveHeroPreview();
+    showToast('Hero video removed', 'info');
+}
+
 async function handleProjImageUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -2068,6 +2148,8 @@ function removeShortVideo() {
     showToast('Short video removed', 'info');
 }
 
+window.handleHeroVideoUpload = handleHeroVideoUpload;
+window.removeHeroVideo = removeHeroVideo;
 window.handleShowreelVideoUpload = handleShowreelVideoUpload;
 window.removeShowreelVideo = removeShowreelVideo;
 window.handleShowreelPosterUpload = handleShowreelPosterUpload;
@@ -3814,7 +3896,8 @@ function clearShortEditForm(notify = true) {
         'editShortDuration',
         'editShortClient',
         'editShortDate',
-        'editShortDesc'
+        'editShortDesc',
+        'editShortTools'
     ];
     fields.forEach(id => {
         const el = document.getElementById(id);
@@ -3876,6 +3959,7 @@ function openEditShortModal(shortId) {
         if (document.getElementById('editShortClient')) document.getElementById('editShortClient').value = short.client || '';
         if (document.getElementById('editShortDate')) document.getElementById('editShortDate').value = short.date || '2026';
         if (document.getElementById('editShortDesc')) document.getElementById('editShortDesc').value = short.desc || '';
+        if (document.getElementById('editShortTools')) document.getElementById('editShortTools').value = Array.isArray(short.tools) ? short.tools.join(', ') : (short.tools || '');
 
         if (short.image) {
             const previewImg = document.getElementById('editShortImagePreview');
@@ -3975,7 +4059,11 @@ document.getElementById('shortEditForm')?.addEventListener('submit', async (e) =
         duration: document.getElementById('editShortDuration')?.value.trim() || '0:50',
         client: document.getElementById('editShortClient')?.value.trim() || 'Client',
         date: document.getElementById('editShortDate')?.value.trim() || '2026',
-        desc: document.getElementById('editShortDesc')?.value.trim() || ''
+        desc: document.getElementById('editShortDesc')?.value.trim() || '',
+        tools: (document.getElementById('editShortTools')?.value.trim() || '')
+            .split(',')
+            .map(t => t.trim())
+            .filter(t => t.length > 0)
     };
 
     if (shortId) {

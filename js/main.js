@@ -1772,7 +1772,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 2b. Reel Video Play Trigger on Cards (play button or thumbnail)
+        // 2a. Short / Reel Expand to Fullscreen Modal Button
+        const shortFsBtn = e.target.closest('.short-fullscreen-btn');
+        if (shortFsBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof window.stopAllInlineCards === 'function') window.stopAllInlineCards();
+            const shortCard = shortFsBtn.closest('.short-card');
+            const shortId = shortFsBtn.getAttribute('data-short-id') || shortCard?.getAttribute('data-short-id') || shortCard?.id;
+            openReelModal(shortId);
+            return;
+        }
+
+        // 2b. Reel Video Play Trigger on Cards (play button or thumbnail) -> Plays Inline with Sound
         const openReelTrigger = e.target.closest('.open-reel-btn, .short-play-btn');
         if (openReelTrigger) {
             e.preventDefault();
@@ -1782,16 +1794,29 @@ document.addEventListener('DOMContentLoaded', () => {
                             openReelTrigger.getAttribute('data-id') || 
                             shortCard?.getAttribute('data-short-id') || 
                             shortCard?.id;
-            openReelModal(shortId);
+            if (typeof window.playShortCardInline === 'function') {
+                window.playShortCardInline(shortId, shortCard?.querySelector('.short-media-frame'));
+            } else {
+                openReelModal(shortId);
+            }
             return;
         }
 
-        const shortCardClicked = e.target.closest('.short-card');
-        if (shortCardClicked && !e.target.closest('button, a')) {
+        const shortMediaFrameClicked = e.target.closest('.short-media-frame, .short-video-shield');
+        if (shortMediaFrameClicked && !e.target.closest('button, a')) {
+            const frame = shortMediaFrameClicked.closest('.short-media-frame') || shortMediaFrameClicked;
+            if (frame && frame.classList.contains('inline-playing')) {
+                return; // Let user interact with player controls
+            }
             e.preventDefault();
             e.stopPropagation();
-            const shortId = shortCardClicked.getAttribute('data-short-id') || shortCardClicked.id;
-            openReelModal(shortId);
+            const shortCard = frame.closest('.short-card');
+            const shortId = shortCard?.getAttribute('data-short-id') || shortCard?.id;
+            if (typeof window.playShortCardInline === 'function') {
+                window.playShortCardInline(shortId, frame);
+            } else {
+                openReelModal(shortId);
+            }
             return;
         }
 
@@ -1859,12 +1884,49 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // 4a. Work Card Expand to Fullscreen Modal Button
+        const workFsBtn = e.target.closest('.card-fullscreen-btn');
+        if (workFsBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof window.stopAllInlineCards === 'function') window.stopAllInlineCards();
+            const card = workFsBtn.closest('.work-card');
+            const projectId = workFsBtn.getAttribute('data-project-id') || workFsBtn.getAttribute('data-id') || card?.getAttribute('data-id') || 'project-1';
+            openProjectVideoModal(projectId);
+            return;
+        }
+
+        // 4b. Work Card Play Button -> Plays Inline with Sound
         const playBtn = e.target.closest('.view-project-btn, .card-glass-play-btn');
         if (playBtn) {
             e.preventDefault();
             e.stopPropagation();
-            const projectId = playBtn.getAttribute('data-id') || playBtn.closest('.work-card')?.getAttribute('data-id') || 'project-1';
-            openProjectVideoModal(projectId);
+            const card = playBtn.closest('.work-card');
+            const projectId = playBtn.getAttribute('data-id') || card?.getAttribute('data-id') || 'project-1';
+            if (typeof window.playWorkCardInline === 'function') {
+                window.playWorkCardInline(projectId, card?.querySelector('.card-media-frame'));
+            } else {
+                openProjectVideoModal(projectId);
+            }
+            return;
+        }
+
+        // 4c. Clicking thumbnail / media area directly -> Plays Inline with Sound
+        const workMediaFrameClicked = e.target.closest('.card-media-frame, .card-video-shield');
+        if (workMediaFrameClicked && !e.target.closest('button, a')) {
+            const frame = workMediaFrameClicked.closest('.card-media-frame') || workMediaFrameClicked;
+            if (frame && frame.classList.contains('inline-playing')) {
+                return; // Already playing with sound - let user interact with player
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            const card = frame.closest('.work-card');
+            const projectId = card?.getAttribute('data-id') || 'project-1';
+            if (typeof window.playWorkCardInline === 'function') {
+                window.playWorkCardInline(projectId, frame);
+            } else {
+                openProjectVideoModal(projectId);
+            }
             return;
         }
     });
@@ -2417,6 +2479,615 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.initShortsCarousel();
+
+    /* ==========================================================================
+       12. Hover-to-Play Video Preview + Inline Playback with Sound + Fullscreen Expand Button
+       Work Cards (16:9) & Short Cards (9:16)
+       ========================================================================== */
+
+    const PROJECT_PREVIEWS = [
+        'assets/videos/main_showreel.mp4',
+        'assets/videos/showreel.mp4',
+        'assets/videos/hero_teaser.mp4'
+    ];
+
+    const SHORT_PREVIEWS = [
+        'assets/videos/short_color_grading.mp4',
+        'assets/videos/short_2_raw_edit.mp4',
+        'assets/videos/short_3_before_after.mp4',
+        'assets/videos/short_4_client_edit.mp4'
+    ];
+
+    // Helper: Safely compare and set video src without relative/absolute path mismatch bugs
+    function setVideoSrcSafe(vid, targetSrc) {
+        if (!vid || !targetSrc) return;
+        const currentSrcAttr = vid.getAttribute('src') || '';
+        const currentFull = vid.currentSrc || vid.src || '';
+        if (currentSrcAttr !== targetSrc && !currentFull.endsWith(targetSrc)) {
+            vid.src = targetSrc;
+            try { vid.load(); } catch (e) {}
+        }
+    }
+
+    // Helper: Determine video source details for a project card
+    // Helper: Determine video source details for a project card
+    function getProjectVideoSource(proj, frame, card, index = 0) {
+        let rawVideo = '';
+        let ytId = '';
+
+        if (frame) {
+            rawVideo = frame.dataset?.video || frame.getAttribute('data-video') || '';
+            ytId = frame.dataset?.yt || frame.getAttribute('data-yt') || '';
+        }
+        if (!rawVideo && card) {
+            rawVideo = card.dataset?.video || card.getAttribute('data-video') || '';
+        }
+        if (!ytId && card) {
+            ytId = card.dataset?.yt || card.getAttribute('data-yt') || '';
+        }
+
+        if (proj) {
+            if (!rawVideo) rawVideo = (proj.video || '').trim();
+            if (!ytId) ytId = proj.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(proj.youtubeUrl || proj.video) : '');
+        }
+
+        if (!ytId && (rawVideo.includes('youtube') || rawVideo.includes('youtu.be'))) {
+            ytId = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : '';
+        }
+
+        const isDirect = rawVideo && !rawVideo.includes('youtube') && !rawVideo.includes('youtu.be') && !rawVideo.includes('<iframe');
+        const localPreview = PROJECT_PREVIEWS[index % PROJECT_PREVIEWS.length];
+        const previewSrc = isDirect ? rawVideo : (localPreview || '');
+
+        return {
+            isYt: Boolean(ytId),
+            ytId: ytId || null,
+            previewSrc: previewSrc,
+            directSrc: isDirect ? rawVideo : (localPreview || '')
+        };
+    }
+
+    // Helper: Determine video source details for a short card
+    function getShortVideoSource(shortObj, frame, card, index = 0) {
+        let rawVideo = '';
+        let ytId = '';
+
+        if (frame) {
+            rawVideo = frame.dataset?.video || frame.getAttribute('data-video') || '';
+            ytId = frame.dataset?.yt || frame.getAttribute('data-yt') || '';
+        }
+        if (!rawVideo && card) {
+            rawVideo = card.dataset?.video || card.getAttribute('data-video') || '';
+        }
+        if (!ytId && card) {
+            ytId = card.dataset?.yt || card.getAttribute('data-yt') || '';
+        }
+
+        if (shortObj) {
+            if (!rawVideo) rawVideo = (shortObj.video || shortObj.videoUrl || '').trim();
+            if (!ytId) ytId = shortObj.youtubeId || (typeof extractYoutubeId === 'function' ? extractYoutubeId(shortObj.youtubeUrl || rawVideo) : '');
+        }
+
+        if (!ytId && (rawVideo.includes('youtube') || rawVideo.includes('youtu.be'))) {
+            ytId = typeof extractYoutubeId === 'function' ? extractYoutubeId(rawVideo) : '';
+        }
+
+        const isDirect = rawVideo && !rawVideo.includes('youtube') && !rawVideo.includes('youtu.be') && !rawVideo.includes('<iframe');
+        // Match shorts 1-4 directly to bundled 1080p MP4 preview files for instant 0-latency hover playback
+        const localPreview = SHORT_PREVIEWS[index % SHORT_PREVIEWS.length];
+        const previewSrc = isDirect ? rawVideo : (localPreview || '');
+
+        return {
+            isYt: Boolean(ytId),
+            ytId: ytId || null,
+            previewSrc: previewSrc,
+            directSrc: isDirect ? rawVideo : (localPreview || '')
+        };
+    }
+
+    // Global helper to stop any playing inline or hover video across the whole page
+    window.stopAllInlineCards = function(exceptFrame) {
+        document.querySelectorAll('.card-media-frame, .short-media-frame').forEach(frame => {
+            if (frame === exceptFrame) return;
+
+            frame.classList.remove('inline-playing', 'video-playing', 'video-ready', 'video-rendered');
+
+            const vid = frame.querySelector('.card-hover-video, .short-hover-video');
+            if (vid) {
+                try {
+                    vid.pause();
+                    vid.currentTime = 0;
+                    vid.muted = true;
+                } catch (e) {}
+            }
+
+            const ifr = frame.querySelector('.card-hover-iframe, .short-hover-iframe');
+            if (ifr) {
+                try { ifr.src = 'about:blank'; } catch (e) {}
+                ifr.remove();
+            }
+        });
+    };
+
+    // Helper: Play Work Card (16:9) Inline with Sound & Controls
+    window.playWorkCardInline = function(projectId, frame) {
+        if (!frame) return;
+        const card = frame.closest('.work-card');
+        const projId = projectId || (card ? card.getAttribute('data-id') : null) || 'project-1';
+
+        const sd = (typeof getSiteData === 'function') ? getSiteData() : { projects: [] };
+        const proj = (sd.projects || []).find(p => String(p.id) === String(projId)) || (typeof getProjectDataById === 'function' ? getProjectDataById(projId) : null);
+
+        // Stop all other cards playing inline
+        window.stopAllInlineCards(frame);
+
+        frame.classList.add('inline-playing', 'video-playing', 'video-ready', 'video-rendered');
+
+        const mediaSource = getProjectVideoSource(proj, frame, card);
+
+        if (mediaSource.isYt) {
+            const oldVid = frame.querySelector('.card-hover-video');
+            if (oldVid) { oldVid.pause(); }
+
+            let ifr = frame.querySelector('.card-hover-iframe');
+            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=0&controls=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+
+            if (!ifr) {
+                ifr = document.createElement('iframe');
+                ifr.className = 'card-hover-iframe';
+                ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                ifr.allowFullscreen = true;
+                frame.appendChild(ifr);
+            }
+
+            ifr.onload = function() {
+                frame.classList.add('video-ready', 'video-rendered');
+            };
+
+            if (ifr.src !== targetSrc) {
+                ifr.src = targetSrc;
+            } else {
+                frame.classList.add('video-ready', 'video-rendered');
+            }
+        } else {
+            const oldIfr = frame.querySelector('.card-hover-iframe');
+            if (oldIfr) oldIfr.remove();
+
+            let vid = frame.querySelector('.card-hover-video');
+            if (!vid) {
+                vid = document.createElement('video');
+                vid.className = 'card-hover-video';
+                vid.loop = true;
+                vid.playsInline = true;
+                vid.setAttribute('playsinline', '');
+                frame.appendChild(vid);
+            }
+
+            const playDirect = (srcUrl) => {
+                setVideoSrcSafe(vid, srcUrl);
+                vid.muted = false;
+                vid.defaultMuted = false;
+                vid.removeAttribute('muted');
+                vid.controls = true;
+                vid.onplaying = () => frame.classList.add('video-ready', 'video-rendered');
+                const p = vid.play();
+                if (p && p.catch) {
+                    p.catch(() => {
+                        vid.muted = true;
+                        vid.play().catch(() => {});
+                    });
+                }
+            };
+
+            const directSrc = mediaSource.directSrc;
+            if (typeof directSrc === 'string' && directSrc.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                resolveMediaUrl(directSrc).then(resolved => {
+                    playDirect(resolved || directSrc);
+                }).catch(() => playDirect(directSrc));
+            } else {
+                playDirect(directSrc);
+            }
+        }
+    };
+
+    // Helper: Play Short Card (9:16) Inline with Sound
+    window.playShortCardInline = function(shortId, frame) {
+        if (!frame) return;
+        const card = frame.closest('.short-card');
+        const sId = shortId || (card ? (card.getAttribute('data-short-id') || card.id) : null);
+
+        const sd = (typeof getSiteData === 'function') ? getSiteData() : { shorts: [] };
+        const shortObj = (sd.shorts || []).find(s => String(s.id) === String(sId));
+
+        // Stop other playing cards
+        window.stopAllInlineCards(frame);
+
+        frame.classList.add('inline-playing', 'video-playing', 'video-ready', 'video-rendered');
+
+        const mediaSource = getShortVideoSource(shortObj, frame, card);
+
+        if (mediaSource.isYt) {
+            const oldVid = frame.querySelector('.short-hover-video');
+            if (oldVid) { oldVid.pause(); }
+
+            let ifr = frame.querySelector('.short-hover-iframe');
+            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=0&controls=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+
+            if (!ifr) {
+                ifr = document.createElement('iframe');
+                ifr.className = 'short-hover-iframe';
+                ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                ifr.allowFullscreen = true;
+                frame.appendChild(ifr);
+            }
+
+            ifr.onload = function() {
+                frame.classList.add('video-ready', 'video-rendered');
+            };
+
+            if (ifr.src !== targetSrc) {
+                ifr.src = targetSrc;
+            } else {
+                frame.classList.add('video-ready', 'video-rendered');
+            }
+        } else {
+            const oldIfr = frame.querySelector('.short-hover-iframe');
+            if (oldIfr) oldIfr.remove();
+
+            let vid = frame.querySelector('.short-hover-video');
+            if (!vid) {
+                vid = document.createElement('video');
+                vid.className = 'short-hover-video';
+                vid.loop = true;
+                vid.playsInline = true;
+                vid.setAttribute('playsinline', '');
+                frame.appendChild(vid);
+            }
+
+            vid.onclick = function(e) {
+                e.stopPropagation();
+                if (vid.paused) vid.play();
+                else vid.pause();
+            };
+
+            const playShort = (srcUrl) => {
+                setVideoSrcSafe(vid, srcUrl);
+                vid.muted = false;
+                vid.defaultMuted = false;
+                vid.removeAttribute('muted');
+                vid.controls = false;
+                vid.onplaying = () => frame.classList.add('video-ready', 'video-rendered');
+                const p = vid.play();
+                if (p && p.catch) {
+                    p.catch(() => {
+                        vid.muted = true;
+                        vid.play().catch(() => {});
+                    });
+                }
+            };
+
+            const directSrc = mediaSource.directSrc;
+            if (typeof directSrc === 'string' && directSrc.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                resolveMediaUrl(directSrc).then(resolved => {
+                    playShort(resolved || directSrc);
+                }).catch(() => playShort(directSrc));
+            } else {
+                playShort(directSrc);
+            }
+        }
+    };
+
+    // Helper: Start instant muted hover video playback for a card frame
+    function startFrameHoverPlayback(frame) {
+        if (!frame || frame.classList.contains('inline-playing')) return;
+
+        const isShort = frame.classList.contains('short-media-frame');
+        const card = isShort ? frame.closest('.short-card') : frame.closest('.work-card');
+
+        const allCards = isShort 
+            ? Array.from(document.querySelectorAll('.short-card'))
+            : Array.from(document.querySelectorAll('.work-card'));
+        const index = card ? allCards.indexOf(card) : 0;
+
+        const sd = (typeof getSiteData === 'function') ? getSiteData() : { projects: [], shorts: [] };
+        let mediaSource;
+
+        if (isShort) {
+            const shortId = (card ? (card.getAttribute('data-short-id') || card.id) : null);
+            const shortObj = (sd.shorts || []).find(s => String(s.id) === String(shortId));
+            mediaSource = getShortVideoSource(shortObj, frame, card, index >= 0 ? index : 0);
+        } else {
+            const projId = (card ? card.getAttribute('data-id') : null);
+            const proj = (sd.projects || []).find(p => String(p.id) === String(projId)) || (typeof getProjectDataById === 'function' ? getProjectDataById(projId) : null);
+            mediaSource = getProjectVideoSource(proj, frame, card, index >= 0 ? index : 0);
+        }
+
+        frame.classList.add('video-playing');
+
+        const vidClass = isShort ? 'short-hover-video' : 'card-hover-video';
+        const ifrClass = isShort ? 'short-hover-iframe' : 'card-hover-iframe';
+
+        // 1. If direct MP4 / local preview is available -> 0ms HTML5 Video Autoplay
+        if (mediaSource.previewSrc) {
+            const oldIfr = frame.querySelector('.' + ifrClass);
+            if (oldIfr) {
+                try { oldIfr.src = 'about:blank'; } catch (e) {}
+                oldIfr.remove();
+            }
+
+            let vid = frame.querySelector('.' + vidClass);
+            if (!vid) {
+                vid = document.createElement('video');
+                vid.className = vidClass;
+                vid.loop = true;
+                vid.setAttribute('loop', '');
+                vid.playsInline = true;
+                vid.setAttribute('playsinline', '');
+                vid.muted = true;
+                vid.defaultMuted = true;
+                vid.setAttribute('muted', '');
+                vid.preload = 'auto';
+                frame.appendChild(vid);
+            }
+
+            const playDirect = (srcUrl) => {
+                if (!srcUrl) return;
+                setVideoSrcSafe(vid, srcUrl);
+                vid.muted = true;
+                vid.defaultMuted = true;
+                vid.setAttribute('muted', '');
+                vid.onplaying = () => {
+                    if (frame.classList.contains('video-playing')) {
+                        frame.classList.add('video-ready', 'video-rendered');
+                    }
+                };
+                const p = vid.play();
+                if (p && p.catch) {
+                    p.catch(() => {
+                        vid.muted = true;
+                        vid.play().catch(() => {});
+                    });
+                }
+                setTimeout(() => {
+                    if (frame.classList.contains('video-playing')) {
+                        frame.classList.add('video-ready', 'video-rendered');
+                    }
+                }, 80);
+            };
+
+            const directTarget = mediaSource.previewSrc;
+            if (typeof directTarget === 'string' && directTarget.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
+                resolveMediaUrl(directTarget).then(resolved => {
+                    playDirect(resolved || directTarget);
+                }).catch(() => playDirect(directTarget));
+            } else {
+                playDirect(directTarget);
+            }
+        } else if (mediaSource.isYt && mediaSource.ytId) {
+            // Clean YouTube embed fallback when no local MP4 is available
+            const oldVid = frame.querySelector('.' + vidClass);
+            if (oldVid) {
+                try { oldVid.pause(); oldVid.currentTime = 0; } catch (e) {}
+            }
+
+            let ifr = frame.querySelector('.' + ifrClass);
+            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+
+            if (!ifr) {
+                ifr = document.createElement('iframe');
+                ifr.className = ifrClass;
+                ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                ifr.setAttribute('allowfullscreen', 'true');
+                frame.appendChild(ifr);
+            }
+
+            ifr.onload = function() {
+                if (frame.classList.contains('video-playing')) {
+                    frame.classList.add('video-ready', 'video-rendered');
+                }
+            };
+
+            if (ifr.src !== targetSrc) {
+                ifr.src = targetSrc;
+            }
+
+            setTimeout(() => {
+                if (frame.classList.contains('video-playing')) {
+                    frame.classList.add('video-ready', 'video-rendered');
+                }
+            }, 300);
+        }
+    }
+
+    // Helper: Stop muted hover video playback for a card frame
+    function stopFrameHoverPlayback(frame) {
+        if (!frame || frame.classList.contains('inline-playing')) return;
+        frame.classList.remove('video-playing', 'video-ready', 'video-rendered');
+
+        const vid = frame.querySelector('.card-hover-video, .short-hover-video');
+        if (vid) {
+            try {
+                vid.pause();
+                vid.currentTime = 0;
+            } catch (e) {}
+        }
+
+        const ifr = frame.querySelector('.card-hover-iframe, .short-hover-iframe');
+        if (ifr) {
+            try { ifr.src = 'about:blank'; } catch (e) {}
+            ifr.remove();
+        }
+    }
+
+    // Initialize Hover-to-Play Video + Fullscreen Expand Button Pre-mounting
+    window.initHoverVideoCards = function() {
+        const sd = (typeof getSiteData === 'function') ? getSiteData() : { projects: [], shorts: [] };
+
+        /* ========================
+           1. WORK CARDS (16:9)
+           ======================== */
+        document.querySelectorAll('.card-media-frame').forEach((frame, idx) => {
+            const card = frame.closest('.work-card');
+            const playBtn = frame.querySelector('.card-glass-play-btn');
+            const projId = (playBtn ? playBtn.getAttribute('data-id') : null) || (card ? card.getAttribute('data-id') : null) || ('project-' + (idx + 1));
+            const proj = (sd.projects || []).find(p => String(p.id) === String(projId)) || (typeof getProjectDataById === 'function' ? getProjectDataById(projId) : null);
+            const mediaSource = getProjectVideoSource(proj, frame, card, idx);
+
+            // Ensure Card Video Shield exists
+            if (!frame.querySelector('.card-video-shield')) {
+                const shield = document.createElement('div');
+                shield.className = 'card-video-shield';
+                shield.setAttribute('aria-hidden', 'true');
+                frame.appendChild(shield);
+            }
+
+            // Ensure Fullscreen Expand Button exists in bottom-right corner
+            if (!frame.querySelector('.card-fullscreen-btn')) {
+                const fsBtn = document.createElement('button');
+                fsBtn.type = 'button';
+                fsBtn.className = 'card-fullscreen-btn';
+                fsBtn.setAttribute('data-project-id', projId);
+                fsBtn.title = 'Watch Fullscreen Modal';
+                fsBtn.setAttribute('aria-label', 'Open video fullscreen');
+                fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i>';
+                frame.appendChild(fsBtn);
+            }
+
+            // Ensure Preview Badge exists
+            if (!frame.querySelector('.card-preview-badge')) {
+                const badge = document.createElement('div');
+                badge.className = 'card-preview-badge';
+                badge.innerHTML = '<i class="fa-solid fa-play"></i> Preview';
+                frame.appendChild(badge);
+            }
+
+            // Pre-mount video element with metadata for instantaneous 0ms playback
+            if (mediaSource.previewSrc && !frame.querySelector('.card-hover-video')) {
+                const vid = document.createElement('video');
+                vid.className = 'card-hover-video';
+                vid.loop = true;
+                vid.setAttribute('loop', '');
+                vid.playsInline = true;
+                vid.setAttribute('playsinline', '');
+                vid.muted = true;
+                vid.defaultMuted = true;
+                vid.setAttribute('muted', '');
+                vid.preload = 'metadata';
+                setVideoSrcSafe(vid, mediaSource.previewSrc);
+                frame.appendChild(vid);
+            }
+        });
+
+        /* ========================
+           2. SHORT CARDS (9:16)
+           ======================== */
+        document.querySelectorAll('.short-media-frame').forEach((frame, idx) => {
+            const card = frame.closest('.short-card');
+            const shortId = (card ? (card.getAttribute('data-short-id') || card.id) : null) || ('short-' + (idx + 1));
+            const shortObj = (sd.shorts || []).find(s => String(s.id) === String(shortId));
+            const mediaSource = getShortVideoSource(shortObj, frame, card, idx);
+
+            // Ensure Short Video Shield exists
+            if (!frame.querySelector('.short-video-shield')) {
+                const shield = document.createElement('div');
+                shield.className = 'short-video-shield';
+                shield.setAttribute('aria-hidden', 'true');
+                frame.appendChild(shield);
+            }
+
+            // Ensure Fullscreen Expand Button exists in bottom-right corner
+            if (!frame.querySelector('.short-fullscreen-btn')) {
+                const fsBtn = document.createElement('button');
+                fsBtn.type = 'button';
+                fsBtn.className = 'short-fullscreen-btn';
+                fsBtn.setAttribute('data-short-id', shortId);
+                fsBtn.title = 'Watch Fullscreen Modal';
+                fsBtn.setAttribute('aria-label', 'Open reel fullscreen');
+                fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i>';
+                frame.appendChild(fsBtn);
+            }
+
+            // Ensure Preview Badge exists
+            if (!frame.querySelector('.card-preview-badge')) {
+                const badge = document.createElement('div');
+                badge.className = 'card-preview-badge';
+                badge.innerHTML = '<i class="fa-solid fa-play"></i> Preview';
+                frame.appendChild(badge);
+            }
+
+            // Pre-mount video element with metadata for instantaneous 0ms playback
+            if (mediaSource.previewSrc && !frame.querySelector('.short-hover-video')) {
+                const vid = document.createElement('video');
+                vid.className = 'short-hover-video';
+                vid.loop = true;
+                vid.setAttribute('loop', '');
+                vid.playsInline = true;
+                vid.setAttribute('playsinline', '');
+                vid.muted = true;
+                vid.defaultMuted = true;
+                vid.setAttribute('muted', '');
+                vid.preload = 'metadata';
+                setVideoSrcSafe(vid, mediaSource.previewSrc);
+                frame.appendChild(vid);
+            }
+        });
+    };
+
+    // =========================================================================
+    // Global Delegated Hover Engine (100% resilient across re-renders & transforms)
+    // =========================================================================
+    let currentHoverCard = null;
+    document.addEventListener('mouseover', (e) => {
+        const card = e.target.closest('.work-card, .short-card');
+        if (!card) return;
+
+        const frame = card.querySelector('.card-media-frame, .short-media-frame');
+        if (!frame || frame.classList.contains('inline-playing')) return;
+
+        frame.classList.add('video-playing', 'video-ready', 'video-rendered');
+
+        let vid = frame.querySelector('video.card-hover-video, video.short-hover-video');
+        if (vid) {
+            vid.muted = true;
+            vid.defaultMuted = true;
+            vid.setAttribute('muted', '');
+            if (vid.paused) {
+                const p = vid.play();
+                if (p && p.catch) {
+                    p.catch(() => {
+                        vid.muted = true;
+                        vid.play().catch(() => {});
+                    });
+                }
+            }
+        }
+    }, { passive: true });
+
+    document.addEventListener('mouseout', (e) => {
+        const card = e.target.closest('.work-card, .short-card');
+        if (!card) return;
+
+        const nextTarget = e.relatedTarget;
+        if (nextTarget && card.contains(nextTarget)) {
+            return; // Moving between elements inside the same card
+        }
+
+        const frame = card.querySelector('.card-media-frame, .short-media-frame');
+        if (!frame || frame.classList.contains('inline-playing')) return;
+
+        frame.classList.remove('video-playing', 'video-ready', 'video-rendered');
+
+        const vid = frame.querySelector('video.card-hover-video, video.short-hover-video');
+        if (vid) {
+            try {
+                vid.pause();
+                vid.currentTime = 0;
+            } catch (err) {}
+        }
+    }, { passive: true });
+
+    // Initialize on page load
+    window.initHoverVideoCards();
 });
 
 // Safeguard on window load: lock viewport to top (hero section)
