@@ -2954,20 +2954,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (ifr.src !== targetSrc) {
                     ifr.src = targetSrc;
                 } else {
-                    // Send instant playVideo and unMute command to already mounted/pre-warmed iframe
                     sendPlayAndUnmute(ifr);
-                    setTimeout(() => sendPlayAndUnmute(ifr), 150);
-                    setTimeout(() => sendPlayAndUnmute(ifr), 400);
                 }
             }
 
             ifr.onload = function() {
-                if (frame.classList.contains('video-playing')) {
-                    frame.classList.add('video-ready', 'video-rendered');
-                    sendPlayAndUnmute(ifr);
-                    setTimeout(() => sendPlayAndUnmute(ifr), 200);
-                    setTimeout(() => sendPlayAndUnmute(ifr), 500);
+                // If user moved cursor away while iframe was loading, instantly destroy it so no audio plays!
+                if (!frame.classList.contains('video-playing')) {
+                    try { ifr.src = 'about:blank'; } catch (e) {}
+                    ifr.remove();
+                    return;
                 }
+                frame.classList.add('video-ready', 'video-rendered');
+                sendPlayAndUnmute(ifr);
             };
 
             // Fast transition once iframe starts buffering
@@ -2985,24 +2984,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!frame || frame.classList.contains('inline-playing')) return;
         frame.classList.remove('video-playing', 'video-ready', 'video-rendered');
 
+        // Stop direct HTML5 video and release audio buffer
         const vid = frame.querySelector('.card-hover-video, .short-hover-video');
         if (vid) {
             try {
                 vid.pause();
                 vid.currentTime = 0;
                 vid.muted = true;
+                vid.removeAttribute('src');
+                vid.load();
             } catch (e) {}
         }
 
+        // Stop and completely destroy hover iframe so audio can NEVER continue playing in the background
         const ifr = frame.querySelector('.card-hover-iframe, .short-hover-iframe');
-        if (ifr && ifr.contentWindow) {
+        if (ifr) {
             try {
-                // Immediately mute and pause video via postMessage so audio cuts off cleanly
                 ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute', args: [] }), '*');
-                ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute', args: '' }), '*');
                 ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
-                ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }), '*');
+                ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'stopVideo', args: [] }), '*');
             } catch (e) {}
+            try {
+                ifr.src = 'about:blank';
+            } catch (e) {}
+            ifr.remove();
         }
     }
 
@@ -3017,8 +3022,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = frame.closest('.work-card');
             const playBtn = frame.querySelector('.card-glass-play-btn');
             const projId = (playBtn ? playBtn.getAttribute('data-id') : null) || (card ? card.getAttribute('data-id') : null) || ('project-' + (idx + 1));
-            const proj = (sd.projects || []).find(p => String(p.id) === String(projId)) || (typeof getProjectDataById === 'function' ? getProjectDataById(projId) : null);
-            const mediaSource = getProjectVideoSource(proj, frame, card, idx);
 
             // Ensure Card Video Shield exists
             if (!frame.querySelector('.card-video-shield')) {
@@ -3048,44 +3051,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 frame.appendChild(badge);
             }
 
-            // If YouTube card, pre-warm iframe in background with autoplay=0 so initial hover is instant!
-            if (mediaSource.isYt && mediaSource.ytId) {
-                const dummyVid = frame.querySelector('.card-hover-video');
-                if (dummyVid) dummyVid.remove();
-
-                if (!frame.querySelector('.card-hover-iframe')) {
-                    const ifr = document.createElement('iframe');
-                    ifr.className = 'card-hover-iframe';
-                    ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-                    ifr.setAttribute('allowfullscreen', 'true');
-                    ifr.loading = 'lazy';
-                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=0&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
-                    frame.appendChild(ifr);
-                }
-            } else if (mediaSource.previewSrc) {
-                let vid = frame.querySelector('.card-hover-video');
-                if (!vid) {
-                    vid = document.createElement('video');
-                    vid.className = 'card-hover-video';
-                    vid.loop = true;
-                    vid.setAttribute('loop', '');
-                    vid.playsInline = true;
-                    vid.setAttribute('playsinline', '');
-                    vid.muted = true;
-                    vid.defaultMuted = true;
-                    vid.setAttribute('muted', '');
-                    vid.preload = 'metadata';
-                    frame.appendChild(vid);
-                }
-                const target = mediaSource.previewSrc;
-                if (typeof target === 'string' && target.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
-                    resolveMediaUrl(target).then(res => {
-                        if (res) setVideoSrcSafe(vid, res);
-                    });
-                } else {
-                    setVideoSrcSafe(vid, target);
-                }
-            }
+            // Remove any stale leftover iframe from previous render
+            const staleIfr = frame.querySelector('.card-hover-iframe');
+            if (staleIfr) staleIfr.remove();
         });
 
         /* ========================
@@ -3094,8 +3062,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.short-media-frame').forEach((frame, idx) => {
             const card = frame.closest('.short-card');
             const shortId = (card ? (card.getAttribute('data-short-id') || card.id) : null) || ('short-' + (idx + 1));
-            const shortObj = (sd.shorts || []).find(s => String(s.id) === String(shortId));
-            const mediaSource = getShortVideoSource(shortObj, frame, card, idx);
 
             // Ensure Short Video Shield exists
             if (!frame.querySelector('.short-video-shield')) {
@@ -3125,44 +3091,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 frame.appendChild(badge);
             }
 
-            // If YouTube card, pre-warm iframe in background with autoplay=0 so initial hover is instant!
-            if (mediaSource.isYt && mediaSource.ytId) {
-                const dummyVid = frame.querySelector('.short-hover-video');
-                if (dummyVid) dummyVid.remove();
-
-                if (!frame.querySelector('.short-hover-iframe')) {
-                    const ifr = document.createElement('iframe');
-                    ifr.className = 'short-hover-iframe';
-                    ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-                    ifr.setAttribute('allowfullscreen', 'true');
-                    ifr.loading = 'lazy';
-                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=0&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
-                    frame.appendChild(ifr);
-                }
-            } else if (mediaSource.previewSrc) {
-                let vid = frame.querySelector('.short-hover-video');
-                if (!vid) {
-                    vid = document.createElement('video');
-                    vid.className = 'short-hover-video';
-                    vid.loop = true;
-                    vid.setAttribute('loop', '');
-                    vid.playsInline = true;
-                    vid.setAttribute('playsinline', '');
-                    vid.muted = true;
-                    vid.defaultMuted = true;
-                    vid.setAttribute('muted', '');
-                    vid.preload = 'metadata';
-                    frame.appendChild(vid);
-                }
-                const target = mediaSource.previewSrc;
-                if (typeof target === 'string' && target.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
-                    resolveMediaUrl(target).then(res => {
-                        if (res) setVideoSrcSafe(vid, res);
-                    });
-                } else {
-                    setVideoSrcSafe(vid, target);
-                }
-            }
+            // Remove any stale leftover iframe from previous render
+            const staleIfr = frame.querySelector('.short-hover-iframe');
+            if (staleIfr) staleIfr.remove();
         });
     };
 
