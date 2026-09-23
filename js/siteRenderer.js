@@ -127,58 +127,48 @@ function renderSiteData(customData) {
                     if (!newSrc.includes('mute=1')) newSrc += '&mute=1';
                     if (!newSrc.includes('playsinline=1')) newSrc += '&playsinline=1';
                     if (!newSrc.includes('enablejsapi=1')) newSrc += '&enablejsapi=1';
-                    if (!newSrc.includes('loop=1')) newSrc += '&loop=1';
+                    if (!newSrc.includes('controls=0')) newSrc += '&controls=0';
+                    if (!newSrc.includes('disablekb=1')) newSrc += '&disablekb=1';
+                    if (!newSrc.includes('fs=0')) newSrc += '&fs=0';
                     if (!newSrc.includes('cc_load_policy=3')) newSrc += '&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3';
+                    newSrc = newSrc.replace(/(&|\?)loop=1/g, '').replace(/(&|\?)playlist=[^&]*/g, '');
                     return `src="${newSrc}"`;
                 });
+                if (!cleanIframe.includes('id=')) {
+                    cleanIframe = cleanIframe.replace('<iframe', '<iframe id="heroShowreelIframe"');
+                }
                 if (!cleanIframe.includes('style=')) {
-                    cleanIframe = cleanIframe.replace('<iframe', '<iframe style="width:100%; height:100%; border:none; border-radius:inherit; display:block;"');
+                    cleanIframe = cleanIframe.replace('<iframe', '<iframe style="width:100%; height:100%; border:none; border-radius:inherit; display:block; pointer-events:none;"');
                 }
                 heroMainCard.innerHTML = cleanIframe + `
-                    <button type="button" class="hero-sound-toggle-btn" id="heroSoundToggleBtn" aria-label="Toggle Sound" title="Click to Unmute / Mute">
-                        <i class="fa-solid fa-volume-xmark"></i> <span>Unmute</span>
-                    </button>
+                    <img id="heroFinalFrameImg" src="assets/images/hero_final_frame.jpg?v=102.0" alt="Mahin Ali Biswas" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; z-index: 2;">
                 `;
-                if (typeof window.initHeroSoundToggle === 'function') window.initHeroSoundToggle();
+                if (typeof window.initHeroSinglePlayback === 'function') window.initHeroSinglePlayback();
             } else {
                 const ytId = extractYoutubeId(rawInput);
                 if (ytId) {
                     heroMainCard.innerHTML = `
                         <iframe id="heroShowreelIframe"
-                                src="https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&playsinline=1&enablejsapi=1&loop=1&playlist=${ytId}&rel=0&modestbranding=1&controls=0&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" 
+                                src="https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&playsinline=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&disablekb=1&fs=0&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3" 
                                 title="Hero Showreel Video" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                                 referrerpolicy="strict-origin-when-cross-origin"
                                 allowfullscreen 
-                                style="width: 100%; height: 100%; border: none; border-radius: inherit; display: block;">
+                                style="width: 100%; height: 100%; border: none; border-radius: inherit; display: block; pointer-events: none;">
                         </iframe>
-                        <button type="button" class="hero-sound-toggle-btn" id="heroSoundToggleBtn" aria-label="Toggle Sound" title="Click to Unmute / Mute">
-                            <i class="fa-solid fa-volume-xmark"></i> <span>Unmute</span>
-                        </button>
+                        <img id="heroFinalFrameImg" src="assets/images/hero_final_frame.jpg?v=102.0" alt="Mahin Ali Biswas" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; z-index: 2;">
                     `;
-                    if (typeof window.initHeroSoundToggle === 'function') window.initHeroSoundToggle();
+                    if (typeof window.initHeroSinglePlayback === 'function') window.initHeroSinglePlayback();
                 } else {
                     heroMainCard.innerHTML = `
-                        <video id="heroMainVideo" src="${rawInput}" class="main-card-video" autoplay loop muted playsinline poster="${posterUrl}"></video>
-                        <button type="button" class="hero-sound-toggle-btn" id="heroSoundToggleBtn" aria-label="Toggle Sound" title="Click to Unmute / Mute">
-                            <i class="fa-solid fa-volume-xmark"></i> <span>Unmute</span>
-                        </button>
+                        <video id="heroMainVideo" src="${rawInput}" class="main-card-video" autoplay muted playsinline poster="${posterUrl}" style="pointer-events: none;"></video>
+                        <img id="heroFinalFrameImg" src="assets/images/hero_final_frame.jpg?v=102.0" alt="Mahin Ali Biswas" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; z-index: 2;">
                     `;
-                    if (typeof window.initHeroSoundToggle === 'function') window.initHeroSoundToggle();
+                    if (typeof window.initHeroSinglePlayback === 'function') window.initHeroSinglePlayback();
                     if (rawInput.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
                         resolveMediaUrl(rawInput).then(resolved => {
                             const vidEl = document.getElementById('heroMainVideo');
                             if (vidEl && resolved) vidEl.src = resolved;
-                        });
-                    }
-                    const bigPlayBtn = document.getElementById('heroBigPlayBtn');
-                    if (bigPlayBtn) {
-                        bigPlayBtn.addEventListener('click', async () => {
-                            let playUrl = rawInput;
-                            if (playUrl.startsWith('idb:') && typeof resolveMediaUrl === 'function') {
-                                playUrl = await resolveMediaUrl(playUrl);
-                            }
-                            if (typeof openDirectVideoModal === 'function') openDirectVideoModal(playUrl);
                         });
                     }
                 }

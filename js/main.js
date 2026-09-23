@@ -425,63 +425,113 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 4b. Hero Video Autoplay & Sound Toggle Handler --- */
-    window.initHeroSoundToggle = function() {
-        const soundBtn = document.getElementById('heroSoundToggleBtn');
+    /* --- 4b. Hero Video Single Playback & Freeze on Last Frame --- */
+    window.initHeroSinglePlayback = function() {
         const heroCard = document.getElementById('heroMainCard');
         if (!heroCard) return;
 
         const ifr = heroCard.querySelector('iframe');
         const vid = heroCard.querySelector('video');
 
-        // Ensure video is playing automatically
+        // Case A: HTML5 Video element
+        if (vid) {
+            vid.loop = false;
+            vid.removeAttribute('loop');
+            vid.muted = true;
+            vid.play().catch(() => {});
+            const revealFinal = () => {
+                const finalImg = document.getElementById('heroFinalFrameImg');
+                if (finalImg) finalImg.style.opacity = '1';
+                vid.pause();
+            };
+            vid.onended = revealFinal;
+            vid.ontimeupdate = () => {
+                if (vid.duration && vid.currentTime >= vid.duration - 0.3) {
+                    revealFinal();
+                }
+            };
+        }
+
+        // Case B: YouTube IFrame element
         if (ifr) {
-            const triggerAutoplay = () => {
+            let hasFrozen = false;
+
+            const sendIfr = (func, args = '') => {
                 try {
                     if (ifr.contentWindow) {
-                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
-                        if (typeof suppressIframeCaptions === 'function') suppressIframeCaptions(ifr);
+                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args }), '*');
                     }
                 } catch(e) {}
             };
-            triggerAutoplay();
-            ifr.addEventListener('load', triggerAutoplay, { once: true });
-            setTimeout(triggerAutoplay, 400);
-            setTimeout(triggerAutoplay, 1200);
-        }
-        if (vid && vid.paused) {
-            vid.muted = true;
-            vid.play().catch(() => {});
-        }
 
-        if (!soundBtn) return;
-        let isMuted = true;
+            const freezeOnLastFrame = () => {
+                if (hasFrozen) return;
+                hasFrozen = true;
+                const finalImg = document.getElementById('heroFinalFrameImg');
+                if (finalImg) {
+                    finalImg.style.opacity = '1';
+                }
+                setTimeout(() => {
+                    sendIfr('pauseVideo');
+                }, 350);
+                if (typeof suppressIframeCaptions === 'function') suppressIframeCaptions(ifr);
+            };
 
-        soundBtn.onclick = function(e) {
-            e.stopPropagation();
-            isMuted = !isMuted;
-            if (ifr && ifr.contentWindow) {
+            // 1. Initial play trigger
+            const startPlay = () => {
+                sendIfr('playVideo');
+                if (typeof suppressIframeCaptions === 'function') suppressIframeCaptions(ifr);
                 try {
-                    const func = isMuted ? 'mute' : 'unMute';
-                    ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: '' }), '*');
-                    ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                    ifr.contentWindow.postMessage(JSON.stringify({ event: 'listening' }), '*');
+                } catch(e) {}
+            };
+
+            startPlay();
+            ifr.addEventListener('load', startPlay, { once: true });
+            setTimeout(startPlay, 300);
+
+            // 2. Global message listener for YouTube API events (time & state)
+            const handleMessage = (e) => {
+                if (hasFrozen) return;
+                try {
+                    const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+                    if (!data) return;
+
+                    // When playback starts, schedule backup freeze at 4.25s
+                    if (data.event === 'onStateChange' || (data.info && data.info.playerState !== undefined)) {
+                        const state = data.info ? data.info.playerState : data.data;
+                        if (state === 1) { // PLAYING
+                            setTimeout(freezeOnLastFrame, 4250);
+                        } else if (state === 0) { // ENDED
+                            freezeOnLastFrame();
+                        }
+                    }
+
+                    // Precise time tracking
+                    if (data.info && typeof data.info.currentTime === 'number') {
+                        const cur = data.info.currentTime;
+                        if (cur >= 4.15) {
+                            freezeOnLastFrame();
+                        }
+                    }
                 } catch(err) {}
-            }
-            if (vid) {
-                vid.muted = isMuted;
-                if (!isMuted && vid.paused) vid.play();
-            }
-            soundBtn.innerHTML = isMuted 
-                ? '<i class="fa-solid fa-volume-xmark"></i> <span>Unmute</span>'
-                : '<i class="fa-solid fa-volume-high"></i> <span>Mute</span>';
-            soundBtn.classList.toggle('active', !isMuted);
-        };
+            };
+
+            window.addEventListener('message', handleMessage);
+
+            // 3. Fallback absolute safety timer: 5s after load, ensure it freezes on final frame
+            setTimeout(() => {
+                if (!hasFrozen) {
+                    freezeOnLastFrame();
+                }
+            }, 5000);
+        }
     };
 
-    window.initHeroSoundToggle();
+    window.initHeroSinglePlayback();
     setTimeout(() => {
-        if (typeof window.initHeroSoundToggle === 'function') window.initHeroSoundToggle();
-    }, 600);
+        if (typeof window.initHeroSinglePlayback === 'function') window.initHeroSinglePlayback();
+    }, 500);
 
     /* --- 5. Direct HTML5 Video Modal Lightbox --- */
     const videoModal = document.getElementById('videoModal');
