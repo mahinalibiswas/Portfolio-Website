@@ -2826,9 +2826,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Helper: Start instant muted hover video playback for a card frame
+    // Helper: Start instant hover video playback with audio for a card frame
     function startFrameHoverPlayback(frame) {
         if (!frame || frame.classList.contains('inline-playing')) return;
+
+        // Ensure any other currently playing hover video stops sound immediately
+        document.querySelectorAll('.card-media-frame.video-playing, .short-media-frame.video-playing').forEach(otherFrame => {
+            if (otherFrame !== frame) {
+                stopFrameHoverPlayback(otherFrame);
+            }
+        });
 
         const isShort = frame.classList.contains('short-media-frame');
         const card = isShort ? frame.closest('.short-card') : frame.closest('.work-card');
@@ -2856,7 +2863,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const vidClass = isShort ? 'short-hover-video' : 'card-hover-video';
         const ifrClass = isShort ? 'short-hover-iframe' : 'card-hover-iframe';
 
-        // 1. If direct MP4 / local preview is available -> 0ms HTML5 Video Autoplay
+        // 1. If direct MP4 / local preview is available -> 0ms HTML5 Video Autoplay with Sound
         if (mediaSource.previewSrc) {
             const oldIfr = frame.querySelector('.' + ifrClass);
             if (oldIfr) {
@@ -2872,9 +2879,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 vid.setAttribute('loop', '');
                 vid.playsInline = true;
                 vid.setAttribute('playsinline', '');
-                vid.muted = true;
-                vid.defaultMuted = true;
-                vid.setAttribute('muted', '');
+                vid.muted = false;
+                vid.defaultMuted = false;
+                vid.volume = 1.0;
                 vid.preload = 'auto';
                 frame.appendChild(vid);
             }
@@ -2882,9 +2889,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const playDirect = (srcUrl) => {
                 if (!srcUrl) return;
                 setVideoSrcSafe(vid, srcUrl);
-                vid.muted = true;
-                vid.defaultMuted = true;
-                vid.setAttribute('muted', '');
+                vid.muted = false;
+                vid.defaultMuted = false;
+                vid.removeAttribute('muted');
+                vid.volume = 1.0;
                 vid.onplaying = () => {
                     if (frame.classList.contains('video-playing')) {
                         frame.classList.add('video-ready', 'video-rendered');
@@ -2893,6 +2901,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const p = vid.play();
                 if (p && p.catch) {
                     p.catch(() => {
+                        // Fallback if browser autoplay policy blocks audio before user gesture
                         vid.muted = true;
                         vid.play().catch(() => {});
                     });
@@ -2913,14 +2922,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 playDirect(directTarget);
             }
         } else if (mediaSource.isYt && mediaSource.ytId) {
-            // Clean YouTube embed of that EXACT card video
+            // Clean YouTube embed of that EXACT card video with sound enabled
             const oldVid = frame.querySelector('.' + vidClass);
             if (oldVid) {
                 try { oldVid.pause(); oldVid.currentTime = 0; } catch (e) {}
             }
 
             let ifr = frame.querySelector('.' + ifrClass);
-            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
+            const targetSrc = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=1&mute=0&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
+
+            const sendPlayAndUnmute = (targetIfr) => {
+                if (!targetIfr || !targetIfr.contentWindow) return;
+                try {
+                    targetIfr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*');
+                    targetIfr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: '' }), '*');
+                    targetIfr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'setVolume', args: [100] }), '*');
+                    targetIfr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*');
+                    targetIfr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                    suppressIframeCaptions(targetIfr);
+                } catch (e) {}
+            };
 
             if (!ifr) {
                 ifr = document.createElement('iframe');
@@ -2933,25 +2954,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (ifr.src !== targetSrc) {
                     ifr.src = targetSrc;
                 } else {
-                    // Send instant playVideo command to already mounted/pre-warmed iframe
-                    try {
-                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
-                        suppressIframeCaptions(ifr);
-                        setTimeout(() => suppressIframeCaptions(ifr), 300);
-                        setTimeout(() => suppressIframeCaptions(ifr), 800);
-                    } catch (e) {}
+                    // Send instant playVideo and unMute command to already mounted/pre-warmed iframe
+                    sendPlayAndUnmute(ifr);
+                    setTimeout(() => sendPlayAndUnmute(ifr), 150);
+                    setTimeout(() => sendPlayAndUnmute(ifr), 400);
                 }
             }
 
             ifr.onload = function() {
                 if (frame.classList.contains('video-playing')) {
                     frame.classList.add('video-ready', 'video-rendered');
-                    try {
-                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
-                        suppressIframeCaptions(ifr);
-                        setTimeout(() => suppressIframeCaptions(ifr), 300);
-                        setTimeout(() => suppressIframeCaptions(ifr), 800);
-                    } catch (e) {}
+                    sendPlayAndUnmute(ifr);
+                    setTimeout(() => sendPlayAndUnmute(ifr), 200);
+                    setTimeout(() => sendPlayAndUnmute(ifr), 500);
                 }
             };
 
@@ -2959,13 +2974,13 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 if (frame.classList.contains('video-playing')) {
                     frame.classList.add('video-ready', 'video-rendered');
-                    suppressIframeCaptions(ifr);
+                    sendPlayAndUnmute(ifr);
                 }
             }, 250);
         }
     }
 
-    // Helper: Stop muted hover video playback for a card frame
+    // Helper: Stop hover video playback and sound for a card frame
     function stopFrameHoverPlayback(frame) {
         if (!frame || frame.classList.contains('inline-playing')) return;
         frame.classList.remove('video-playing', 'video-ready', 'video-rendered');
@@ -2975,13 +2990,17 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 vid.pause();
                 vid.currentTime = 0;
+                vid.muted = true;
             } catch (e) {}
         }
 
         const ifr = frame.querySelector('.card-hover-iframe, .short-hover-iframe');
-        if (ifr) {
+        if (ifr && ifr.contentWindow) {
             try {
-                // Pause video via postMessage without destroying the iframe, keeping it pre-warmed for instant re-hover
+                // Immediately mute and pause video via postMessage so audio cuts off cleanly
+                ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute', args: [] }), '*');
+                ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute', args: '' }), '*');
+                ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
                 ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }), '*');
             } catch (e) {}
         }
@@ -3025,7 +3044,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!frame.querySelector('.card-preview-badge')) {
                 const badge = document.createElement('div');
                 badge.className = 'card-preview-badge';
-                badge.innerHTML = '<i class="fa-solid fa-play"></i> Preview';
+                badge.innerHTML = '<i class="fa-solid fa-volume-high"></i> Preview';
                 frame.appendChild(badge);
             }
 
@@ -3040,7 +3059,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
                     ifr.setAttribute('allowfullscreen', 'true');
                     ifr.loading = 'lazy';
-                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
+                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=0&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
                     frame.appendChild(ifr);
                 }
             } else if (mediaSource.previewSrc) {
@@ -3102,7 +3121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!frame.querySelector('.card-preview-badge')) {
                 const badge = document.createElement('div');
                 badge.className = 'card-preview-badge';
-                badge.innerHTML = '<i class="fa-solid fa-play"></i> Preview';
+                badge.innerHTML = '<i class="fa-solid fa-volume-high"></i> Preview';
                 frame.appendChild(badge);
             }
 
@@ -3117,7 +3136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
                     ifr.setAttribute('allowfullscreen', 'true');
                     ifr.loading = 'lazy';
-                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
+                    ifr.src = `https://www.youtube.com/embed/${mediaSource.ytId}?autoplay=0&mute=0&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&cc_load_policy=3&cc_lang_pref=none&iv_load_policy=3`;
                     frame.appendChild(ifr);
                 }
             } else if (mediaSource.previewSrc) {
@@ -3146,6 +3165,32 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+
+    // Global gesture listener: Unblock browser autoplay audio policy upon first user gesture (touch, scroll, click, pointerdown)
+    if (!window._audioGestureUnlocked) {
+        const unlockAudio = () => {
+            window._audioGestureUnlocked = true;
+            const activeFrame = document.querySelector('.card-media-frame.video-playing, .short-media-frame.video-playing');
+            if (activeFrame) {
+                const ifr = activeFrame.querySelector('.card-hover-iframe, .short-hover-iframe');
+                if (ifr && ifr.contentWindow) {
+                    try {
+                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*');
+                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: '' }), '*');
+                        ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'setVolume', args: [100] }), '*');
+                    } catch (e) {}
+                }
+                const vid = activeFrame.querySelector('.card-hover-video, .short-hover-video');
+                if (vid) {
+                    vid.muted = false;
+                    vid.volume = 1.0;
+                }
+            }
+        };
+        ['pointerdown', 'click', 'keydown', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, unlockAudio, { passive: true });
+        });
+    }
 
     // =========================================================================
     // Global Delegated Hover Engine (100% resilient across re-renders & transforms)
